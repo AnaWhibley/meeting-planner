@@ -1,5 +1,5 @@
 import {createAction, createSlice} from '@reduxjs/toolkit';
-import {LoginResponse} from "../services/UserService";
+import {LoginResponse} from "../services/userService";
 const incrementByAmount = createAction<number>('counter/incrementByAmount');
 const setUser = createAction<LoginResponse>('login/setUser');
 const showErrorMessage = createAction<boolean>('login/showErrorMessage');

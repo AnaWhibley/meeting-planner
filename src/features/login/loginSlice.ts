@@ -1,13 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { requesting } from '../../app/uiStateSlice';
-import UserService, {LoginResponse} from "../../services/UserService";
+import UserService, {LoginResponse} from "../../services/userService";
+import { Dispatch } from '@reduxjs/toolkit';
 
 export const slice = createSlice({
     name: 'login',
     initialState: {
         username: '',
         password: '',
-        user: null,
+        loggedInUser: null,
         showErrorMessage: false
     },
     reducers: {
@@ -21,7 +22,7 @@ export const slice = createSlice({
             state.showErrorMessage = true;
         },
         setUser: (state, action) => {
-            state.user = action.payload;
+            state.loggedInUser = action.payload;
             state.showErrorMessage = false;
         }
     },
@@ -29,7 +30,7 @@ export const slice = createSlice({
 
 export const { setUsername, setPassword, showErrorMessage, setUser } = slice.actions;
 
-export const login = () => (dispatch: any, getState: any) => {
+export const login = () => (dispatch: Dispatch<any>, getState: any) => {
     dispatch(requesting());
     const { login } = getState();
     UserService.login(login.username, login.password).subscribe((response: LoginResponse) => {
@@ -43,7 +44,7 @@ export const login = () => (dispatch: any, getState: any) => {
 
 export const selectUsername = (state: any) => state.login.username;
 export const selectPassword = (state: any) => state.login.password;
-export const selectUser = (state: any) => state.login.user;
+export const selectLoggedInUser = (state: any) => state.login.loggedInUser;
 export const selectShowErrorMessage = (state: any) => state.login.showErrorMessage;
 
 export default slice.reducer;
