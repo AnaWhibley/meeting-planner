@@ -3,7 +3,7 @@ import counterReducer from '../features/counter/counterSlice';
 import uiStateReducer from './uiStateSlice';
 import loginReducer from "../features/login/loginSlice";
 
-export default configureStore({
+export const store = configureStore({
     reducer: {
         counter: counterReducer,
         login: loginReducer,
@@ -13,3 +13,5 @@ export default configureStore({
         uiState: uiStateReducer
     },
 });
+
+export type RootState = ReturnType<typeof store.getState>

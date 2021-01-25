@@ -19,7 +19,7 @@ export function Login() {
     const username = useSelector(selectUsername);
     const password = useSelector(selectPassword);
     const showErrorMessage = useSelector(selectShowErrorMessage);
-    const loggedInUser: User = useSelector(selectLoggedInUser);
+    const loggedInUser: User | undefined = useSelector(selectLoggedInUser);
 
     if (loggedInUser) {
         if(loggedInUser.role === Role.ADMIN){
