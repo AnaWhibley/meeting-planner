@@ -8,12 +8,14 @@ import {
     setAmount,
     incrementAsync,
     selectCount,
+    selectAmount,
 } from './counterSlice';
+import {selectIsBusy} from "../../app/uiStateSlice";
 
 export function Counter() {
     const count = useSelector(selectCount);
-    const amount = useSelector((state: any) => state.counter.amount);
-    const isBusy = useSelector((state: any) => state.uiState.isBusy);
+    const amount = useSelector(selectAmount);
+    const isBusy = useSelector(selectIsBusy);
     const dispatch = useDispatch();
     const [incrementAmount, setIncrementAmount] = useState('2');
 

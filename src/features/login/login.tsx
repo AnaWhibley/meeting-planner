@@ -1,19 +1,33 @@
 import React from 'react';
 import {
-    setUsername,
-    setPassword,
     login,
+    selectLoggedInUser,
+    selectPassword,
+    selectShowErrorMessage,
     selectUsername,
-    selectPassword, selectShowErrorMessage
+    setPassword,
+    setUsername
 } from "./loginSlice";
 import {useDispatch, useSelector} from "react-redux";
+import {Dispatch} from '@reduxjs/toolkit';
+import {Redirect} from 'react-router-dom';
+import {Role, User} from "../../services/userService";
 
 export function Login() {
 
-    const dispatch = useDispatch();
+    const dispatch: Dispatch<any> = useDispatch();
     const username = useSelector(selectUsername);
     const password = useSelector(selectPassword);
     const showErrorMessage = useSelector(selectShowErrorMessage);
+    const loggedInUser: User | undefined = useSelector(selectLoggedInUser);
+
+    if (loggedInUser) {
+        if(loggedInUser.role === Role.ADMIN){
+            return <Redirect to="/dashboard" />
+        } else {
+            return <Redirect to="/" />
+        }
+    }
 
     return(
         <div>

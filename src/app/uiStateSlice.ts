@@ -1,5 +1,6 @@
 import {createAction, createSlice} from '@reduxjs/toolkit';
-import {LoginResponse} from "../services/UserService";
+import {LoginResponse} from "../services/userService";
+import {RootState} from "./store";
 const incrementByAmount = createAction<number>('counter/incrementByAmount');
 const setUser = createAction<LoginResponse>('login/setUser');
 const showErrorMessage = createAction<boolean>('login/showErrorMessage');
@@ -16,18 +17,20 @@ export const slice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(incrementByAmount, (state, action) => {
+            .addCase(incrementByAmount, (state) => {
                 state.isBusy = false;
             })
-            .addCase(setUser, (state, action) => {
+            .addCase(setUser, (state) => {
                 state.isBusy = false;
             })
-            .addCase(showErrorMessage, (state, action) => {
+            .addCase(showErrorMessage, (state) => {
                 state.isBusy = false;
             })
             .addDefaultCase((state, action) => {})
     },
 });
 export const { requesting } = slice.actions;
+
+export const selectIsBusy = (state: RootState) => state.uiState.isBusy;
 
 export default slice.reducer;
