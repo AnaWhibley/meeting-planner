@@ -1,15 +1,14 @@
 import React from 'react';
 import './App.css';
-import {Login} from "./features/login/login";
+import {Login} from "./features/login/Login";
 import {useSelector} from "react-redux";
 import {selectLoggedInUser} from "./features/login/loginSlice";
 import {BrowserRouter as Router, Redirect, Route, Switch, Link} from "react-router-dom";
 import {User} from "./services/userService";
-
-const Dashboard = () => <h3>Dashboard</h3>
-const Wizard = () => <h3>Wizard</h3>
-const Profile = () => <h3>Profile</h3>
-const Calendar = () => <h3>Calendar <Link to="/profile">Profile</Link></h3>
+import {Dashboard} from "./features/dashboard/Dashboard";
+import {Profile} from "./features/profile/Profile";
+import {Wizard} from "./features/wizard/Wizard";
+import { Calendar } from './features/calendar/Calendar';
 
 function App() {
 
@@ -32,7 +31,6 @@ function App() {
                 <PrivateRoute path='/wizard' component={<Wizard/>} />
                 <PrivateRoute path='/profile' component={<Profile/>} />
                 <PrivateRoute path='/' component={<Calendar/>}/>
-
             </Switch>
         </Router>
     );
