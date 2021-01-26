@@ -12,7 +12,7 @@ import {
     selectStage,
     setFrom,
     setName
-} from './eventCreatorSlice';
+} from '../../app/eventCreatorSlice';
 import {DateTime} from 'luxon';
 
 export function EventCreator() {
