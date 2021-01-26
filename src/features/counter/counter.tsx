@@ -10,7 +10,7 @@ import {
     selectCount,
     selectAmount,
 } from './counterSlice';
-import {selectIsBusy} from "../../app/uiStateSlice";
+import {selectIsBusy} from '../../app/uiStateSlice';
 
 export function Counter() {
     const count = useSelector(selectCount);

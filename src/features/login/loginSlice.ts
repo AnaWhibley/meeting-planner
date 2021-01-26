@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { requesting } from '../../app/uiStateSlice';
-import UserService, {LoginResponse, User} from "../../services/userService";
+import UserService, {LoginResponse, User} from '../../services/userService';
 import { Dispatch } from '@reduxjs/toolkit';
-import {RootState} from "../../app/store";
+import {RootState} from '../../app/store';
 
 export interface LoginState {
     username: string;

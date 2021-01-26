@@ -1,5 +1,5 @@
-import {Observable, of} from "rxjs";
-import {delay} from "rxjs/operators";
+import {Observable, of} from 'rxjs';
+import {delay} from 'rxjs/operators';
 
 export interface CreateResponse {
     success: boolean;
