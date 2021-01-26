@@ -17,6 +17,8 @@ import AlternateEmailIcon from '@material-ui/icons/AlternateEmail';
 import LockIcon from '@material-ui/icons/Lock';
 import {Color} from '../../styles/theme';
 import ActionButton, {ButtonVariant} from '../../components/actionButton/ActionButton';
+import './Login.scss';
+import logo from '../../assets/logo.png';
 
 export function Login() {
 
@@ -36,27 +38,37 @@ export function Login() {
 
     return(
         <div>
-            { showErrorMessage ? <span>Nombre de usuario o contraseña incorrecto.</span> : null }
-            <br/>
-            <TextInput
-                placeholder="Nombre de usuario"
-                value={username}
-                icon={<AlternateEmailIcon color={Color.PRIMARY}/>}
-                onChange={(value: string) => dispatch(setUsername(value))}
-            />
-            <TextInput
-                placeholder="Contraseña"
-                type="password"
-                icon={<LockIcon color={Color.PRIMARY}/>}
-                value={password}
-                onChange={value => dispatch(setPassword(value))}
-            />
-            <ActionButton
-                innerText={'Entrar'}
-                color={Color.PRIMARY}
-                variant={ButtonVariant.CONTAINED}
-                onClick={() => dispatch(login())}
-            />
+            <div className={'LoginContainer'}>
+                <div className={'LoginForm'}>
+                    <img src={logo}
+                         className={'LoginImage'}
+                         alt="Logo MeetingPlanner"/>
+                    <TextInput
+                        placeholder="Nombre de usuario"
+                        fullWidth={true}
+                        value={username}
+                        icon={<AlternateEmailIcon color={Color.PRIMARY}/>}
+                        onChange={(value: string) => dispatch(setUsername(value))}
+                    />
+                    <TextInput
+                        placeholder="Contraseña"
+                        fullWidth={true}
+                        type="password"
+                        icon={<LockIcon color={Color.PRIMARY}/>}
+                        value={password}
+                        onChange={value => dispatch(setPassword(value))}
+                    />
+                    <ActionButton
+                        innerText={'Entrar'}
+                        color={Color.PRIMARY}
+                        variant={ButtonVariant.CONTAINED}
+                        onClick={() => dispatch(login())}
+                    />
+                </div>
+            </div>
+
+            <div className='backgroundImage'/>
+            {/*{ showErrorMessage ? <span>Nombre de usuario o contraseña incorrecto.</span> : null }*/}
         </div>
     );
 }

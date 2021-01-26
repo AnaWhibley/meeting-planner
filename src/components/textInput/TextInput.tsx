@@ -7,29 +7,35 @@ interface TextInputProps {
     className?: string;
     icon?: any;
     type?: string;
+    fullWidth?: boolean;
     onChange: (value: string) => void;
     value: string;
 }
 
 export default class TextInput extends Component<TextInputProps>{
     render() {
+        const {icon, placeholder, fullWidth, value, type, onChange} = this.props;
+        const textField = (
+            <TextField label={placeholder}
+                       fullWidth={fullWidth}
+                       type={type}
+                       value={value}
+                       onChange={(ev) => onChange(ev.target.value)}
+            />
+        );
         return (
-            <div>
-                {this.props.icon ?
-                    <Grid container spacing={1} alignItems="flex-end" className={"TextInputHasIcon"}>
-                        <Grid item>
-                            {this.props.icon}
+            <>
+                {icon ?
+                    <Grid container spacing={1} alignItems="flex-end" className={"TextInputWrapper"}>
+                        <Grid>
+                            {icon}
                         </Grid>
                         <Grid item>
-                            <TextField label={this.props.placeholder}
-                                       type={this.props.type}
-                                       value={this.props.value}
-                                       onChange={(ev) => this.props.onChange(ev.target.value)}
-                            />
+                            {textField}
                         </Grid>
                     </Grid>
-                    : <TextField label={this.props.placeholder} type={this.props.type}/> }
-            </div>
+                    : textField}
+            </>
         );
     }
 }
