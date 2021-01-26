@@ -1,13 +1,13 @@
 import React from 'react';
 import './App.css';
-import {Login} from "./features/login/Login";
-import {useSelector} from "react-redux";
-import {selectLoggedInUser} from "./features/login/loginSlice";
-import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
-import {User} from "./services/userService";
-import {Dashboard} from "./features/dashboard/Dashboard";
-import {Profile} from "./features/profile/Profile";
-import {EventCreator} from "./features/eventCreator/EventCreator";
+import {Login} from './features/login/Login';
+import {useSelector} from 'react-redux';
+import {selectLoggedInUser} from './features/login/loginSlice';
+import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
+import {User} from './services/userService';
+import {Dashboard} from './features/dashboard/Dashboard';
+import {Profile} from './features/profile/Profile';
+import {EventCreator} from './features/eventCreator/EventCreator';
 import { Calendar } from './features/calendar/Calendar';
 
 function App() {

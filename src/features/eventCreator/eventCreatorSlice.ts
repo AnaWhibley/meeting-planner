@@ -1,9 +1,7 @@
 import {createSlice, Dispatch} from '@reduxjs/toolkit';
 import { DateTime } from 'luxon';
-import {RootState} from "../../app/store";
+import {RootState} from '../../app/store';
 import {requesting} from '../../app/uiStateSlice';
-import UserService, {LoginResponse} from '../../services/userService';
-import {setUser, showErrorMessage} from '../login/loginSlice';
 import EventService, {CreateResponse} from '../../services/eventService';
 
 const createDefaultState = () => {

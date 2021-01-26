@@ -1,5 +1,5 @@
-import {Observable, of} from "rxjs";
-import {delay} from "rxjs/operators";
+import {Observable, of} from 'rxjs';
+import {delay} from 'rxjs/operators';
 
 export interface User {
    name: string;
@@ -7,8 +7,8 @@ export interface User {
 }
 
 export enum Role {
-    ADMIN = "ADMIN",
-    USER = "USER"
+    ADMIN = 'ADMIN',
+    USER = 'USER'
 }
 
 export interface LoginResponse {
