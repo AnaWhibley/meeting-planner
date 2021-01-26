@@ -3,11 +3,11 @@ import './App.css';
 import {Login} from "./features/login/Login";
 import {useSelector} from "react-redux";
 import {selectLoggedInUser} from "./features/login/loginSlice";
-import {BrowserRouter as Router, Redirect, Route, Switch, Link} from "react-router-dom";
+import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import {User} from "./services/userService";
 import {Dashboard} from "./features/dashboard/Dashboard";
 import {Profile} from "./features/profile/Profile";
-import {Wizard} from "./features/wizard/Wizard";
+import {EventCreator} from "./features/eventCreator/EventCreator";
 import { Calendar } from './features/calendar/Calendar';
 
 function App() {
@@ -28,7 +28,7 @@ function App() {
                     <Login />
                 </Route>
                 <PrivateRoute path='/dashboard' component={<Dashboard/>} />
-                <PrivateRoute path='/wizard' component={<Wizard/>} />
+                <PrivateRoute path='/wizard' component={<EventCreator/>} />
                 <PrivateRoute path='/profile' component={<Profile/>} />
                 <PrivateRoute path='/' component={<Calendar/>}/>
             </Switch>
