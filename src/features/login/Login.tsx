@@ -7,11 +7,11 @@ import {
     selectUsername,
     setPassword,
     setUsername
-} from "./loginSlice";
-import {useDispatch, useSelector} from "react-redux";
+} from './loginSlice';
+import {useDispatch, useSelector} from 'react-redux';
 import {Dispatch} from '@reduxjs/toolkit';
 import {Redirect} from 'react-router-dom';
-import {Role, User} from "../../services/userService";
+import {Role, User} from '../../services/userService';
 
 export function Login() {
 
