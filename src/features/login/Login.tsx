@@ -7,11 +7,16 @@ import {
     selectUsername,
     setPassword,
     setUsername
-} from './loginSlice';
+} from '../../app/loginSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import {Dispatch} from '@reduxjs/toolkit';
 import {Redirect} from 'react-router-dom';
 import {Role, User} from '../../services/userService';
+import TextInput from '../../components/textInput/TextInput';
+import AlternateEmailIcon from '@material-ui/icons/AlternateEmail';
+import LockIcon from '@material-ui/icons/Lock';
+import {Color} from '../../styles/theme';
+import ActionButton, {ButtonVariant} from '../../components/actionButton/ActionButton';
 
 export function Login() {
 
@@ -33,25 +38,25 @@ export function Login() {
         <div>
             { showErrorMessage ? <span>Nombre de usuario o contraseña incorrecto.</span> : null }
             <br/>
-            <input
-                aria-label="Nombre de usuario"
+            <TextInput
                 placeholder="Nombre de usuario"
                 value={username}
-                onChange={e => dispatch(setUsername(e.target.value))}
+                icon={<AlternateEmailIcon color={Color.PRIMARY}/>}
+                onChange={(value: string) => dispatch(setUsername(value))}
             />
-            <input
-                aria-label="Contraseña"
+            <TextInput
                 placeholder="Contraseña"
                 type="password"
+                icon={<LockIcon color={Color.PRIMARY}/>}
                 value={password}
-                onChange={e => dispatch(setPassword(e.target.value))}
+                onChange={value => dispatch(setPassword(value))}
             />
-            <button
-                aria-label="Login"
+            <ActionButton
+                innerText={'Entrar'}
+                color={Color.PRIMARY}
+                variant={ButtonVariant.CONTAINED}
                 onClick={() => dispatch(login())}
-            >
-                Entrar
-            </button>
+            />
         </div>
     );
 }

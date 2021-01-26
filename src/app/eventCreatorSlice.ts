@@ -1,8 +1,8 @@
 import {createSlice, Dispatch} from '@reduxjs/toolkit';
 import { DateTime } from 'luxon';
-import {RootState} from '../../app/store';
-import {requesting} from '../../app/uiStateSlice';
-import EventService, {CreateResponse} from '../../services/eventService';
+import {RootState} from './store';
+import {requesting} from './uiStateSlice';
+import EventService, {CreateResponse} from '../services/eventService';
 
 const createDefaultState = () => {
     return {
