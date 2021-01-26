@@ -10,3 +10,11 @@
 .MuiInput-underline:before {
   border-bottom-color: $textPrimaryLight !important;
 }
+
+.TextInputWrapper {
+  display: flex;
+  .MuiGrid-item {
+    flex: 1 1;
+  }
+}
+
