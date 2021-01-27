@@ -1,25 +1,35 @@
 .LoginContainer {
-  display: flex;
-  justify-content: center;
-
-  .LoginForm {
-    position: absolute;
-    text-align: center;
-    top: 30%;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .LoginImage {
-    align-self: center;
-    width: 30%;
-  }
-}
-
-.backgroundImage {
   background-image: url("../../assets/background.png");
   height: 100vh;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+
+  .LoginFormContainer {
+    display: flex;
+    justify-content: center;
+
+    .LoginForm {
+      position: absolute;
+      text-align: center;
+      top: 30%;
+      display: flex;
+      flex-direction: column;
+      width: 30%;
+
+      .LoginInputContainer {
+        margin-top: 1.5em;
+      }
+
+      .LoginButton {
+        margin-top: 4em;
+      }
+
+      .LoginLogo {
+        align-self: center;
+        width: 80%;
+        margin-bottom: 1em;
+      }
+    }
+  }
 }

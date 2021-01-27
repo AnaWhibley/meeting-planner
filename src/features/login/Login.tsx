@@ -37,37 +37,38 @@ export function Login() {
     }
 
     return(
-        <div>
-            <div className={'LoginContainer'}>
+        <div className={'LoginContainer'}>
+            <div className={'LoginFormContainer'}>
                 <div className={'LoginForm'}>
                     <img src={logo}
-                         className={'LoginImage'}
+                         className={'LoginLogo'}
                          alt="Logo MeetingPlanner"/>
                     <TextInput
-                        placeholder="Nombre de usuario"
+                        label="Nombre de usuario"
                         fullWidth={true}
                         value={username}
                         icon={<AlternateEmailIcon color={Color.PRIMARY}/>}
                         onChange={(value: string) => dispatch(setUsername(value))}
+                        containerClassName={'LoginInputContainer'}
                     />
                     <TextInput
-                        placeholder="Contraseña"
+                        label="Contraseña"
                         fullWidth={true}
                         type="password"
                         icon={<LockIcon color={Color.PRIMARY}/>}
                         value={password}
                         onChange={value => dispatch(setPassword(value))}
+                        containerClassName={'LoginInputContainer'}
                     />
                     <ActionButton
                         innerText={'Entrar'}
                         color={Color.PRIMARY}
                         variant={ButtonVariant.CONTAINED}
                         onClick={() => dispatch(login())}
+                        className={'LoginButton'}
                     />
                 </div>
             </div>
-
-            <div className='backgroundImage'/>
             {/*{ showErrorMessage ? <span>Nombre de usuario o contraseña incorrecto.</span> : null }*/}
         </div>
     );
