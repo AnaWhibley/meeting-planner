@@ -33,7 +33,7 @@ export default class TextInput extends Component<TextInputProps>{
             <>
                 {icon ?
                     <Grid container spacing={1} alignItems="flex-end" className={cn('TextInputWrapper', containerClassName)}>
-                        <Grid>
+                        <Grid className={'TextInputIcon'}>
                             {icon}
                         </Grid>
                         <Grid item>
