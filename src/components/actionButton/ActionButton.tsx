@@ -21,16 +21,17 @@ export enum ButtonVariant {
 
 export default class ActionButton extends Component<ActionButtonProps>{
     render() {
+        const {variant, color, icon, innerText, onClick, className, labelClassName} = this.props;
         return (
             <Button
-                className={cn('ActionButton', this.props.className)}
-                variant={this.props.variant}
-                color={this.props.color}
-                onClick={this.props.onClick}
+                className={cn('ActionButton', className)}
+                variant={variant}
+                color={color}
+                onClick={onClick}
             >
-                <span className={this.props.labelClassName}>
-                    {this.props.icon || null}
-                    {this.props.innerText}
+                <span className={labelClassName}>
+                    {icon || null}
+                    {innerText}
                 </span>
             </Button>
         );
