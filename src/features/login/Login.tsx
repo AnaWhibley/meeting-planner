@@ -19,6 +19,7 @@ import {Color} from '../../styles/theme';
 import ActionButton, {ButtonVariant} from '../../components/actionButton/ActionButton';
 import './Login.scss';
 import logo from '../../assets/logo.png';
+import {Typography} from '@material-ui/core';
 
 export function Login() {
 
@@ -60,6 +61,13 @@ export function Login() {
                         onChange={value => dispatch(setPassword(value))}
                         containerClassName={'LoginInputContainer'}
                     />
+                    { showErrorMessage ?
+                        <Typography variant="subtitle1"
+                                    display="inline"
+                                    className={"LoginError"}
+                                    color={"error"}>Nombre de usuario o contraseña incorrecto.</Typography>
+                        : null
+                    }
                     <ActionButton
                         innerText={'Entrar'}
                         color={Color.PRIMARY}
@@ -67,9 +75,11 @@ export function Login() {
                         onClick={() => dispatch(login())}
                         className={'LoginButton'}
                     />
+                    <Typography variant="subtitle1"
+                                className={'LoginLink'}
+                                display={'inline'}>¿Olvidaste tu contraseña?</Typography>
                 </div>
             </div>
-            {/*{ showErrorMessage ? <span>Nombre de usuario o contraseña incorrecto.</span> : null }*/}
         </div>
     );
 }

@@ -17,12 +17,16 @@
       flex-direction: column;
       width: 30%;
 
-      .LoginInputContainer {
+      .LoginInputContainer, .LoginLink {
         margin-top: 1.5em;
       }
 
+      .LoginError {
+        margin-top: 2.5em;
+      }
+
       .LoginButton {
-        margin-top: 4em;
+        margin-top: 3em;
       }
 
       .LoginLogo {
