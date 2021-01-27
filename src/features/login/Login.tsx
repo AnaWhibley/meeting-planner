@@ -13,13 +13,13 @@ import {Dispatch} from '@reduxjs/toolkit';
 import {Redirect} from 'react-router-dom';
 import {Role, User} from '../../services/userService';
 import TextInput from '../../components/textInput/TextInput';
-import AlternateEmailIcon from '@material-ui/icons/AlternateEmail';
-import LockIcon from '@material-ui/icons/Lock';
 import {Color} from '../../styles/theme';
 import ActionButton, {ButtonVariant} from '../../components/actionButton/ActionButton';
 import './Login.scss';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/images/logo.png';
 import {Typography} from '@material-ui/core';
+import {ReactComponent as AtSignIcon} from '../../assets/icons/at-sign.svg';
+import {ReactComponent as KeyIcon} from '../../assets/icons/key.svg';
 
 export function Login() {
 
@@ -48,7 +48,7 @@ export function Login() {
                         label="Nombre de usuario"
                         fullWidth={true}
                         value={username}
-                        icon={<AlternateEmailIcon color={Color.PRIMARY}/>}
+                        icon={<AtSignIcon/>}
                         onChange={(value: string) => dispatch(setUsername(value))}
                         containerClassName={'LoginInputContainer'}
                     />
@@ -56,7 +56,7 @@ export function Login() {
                         label="Contraseña"
                         fullWidth={true}
                         type="password"
-                        icon={<LockIcon color={Color.PRIMARY}/>}
+                        icon={<KeyIcon/>}
                         value={password}
                         onChange={value => dispatch(setPassword(value))}
                         containerClassName={'LoginInputContainer'}
