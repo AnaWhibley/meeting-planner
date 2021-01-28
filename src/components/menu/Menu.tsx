@@ -41,7 +41,6 @@ export default function Menu(props: MenuProps) {
                 <MenuIcon className={'MenuIcon'}/>
             </Button>
             <MaterialMenu
-                id="simple-menu"
                 anchorEl={anchorEl}
                 keepMounted
                 open={Boolean(anchorEl)}
