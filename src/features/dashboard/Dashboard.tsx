@@ -6,6 +6,7 @@ export function Dashboard() {
     return (
         <>
             <NavBar/>
+
         </>
     );
 }

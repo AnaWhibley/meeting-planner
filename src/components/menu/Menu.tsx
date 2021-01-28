@@ -3,11 +3,12 @@ import Button from '@material-ui/core/Button';
 import MaterialMenu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {ListItemIcon, Typography} from '@material-ui/core';
-import {ReactComponent as MenuIcon} from '../../assets/icons/menu.svg';
+import {ReactComponent as MenuIcon} from '../../assets/icons/evericons/menu.svg';
 import './Menu.scss';
 
 interface MenuProps {
     menuItems: Array<{label: string, icon: JSX.Element, onClick: () => void}>
+    className?: string;
 }
 
 export default function Menu(props: MenuProps) {
@@ -36,7 +37,7 @@ export default function Menu(props: MenuProps) {
         </MenuItem>;
     });
     return (
-        <div>
+        <div className={props.className}>
             <Button onClick={handleClick}>
                 <MenuIcon className={'MenuIcon'}/>
             </Button>
