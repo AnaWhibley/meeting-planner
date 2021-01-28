@@ -30,7 +30,7 @@ export function NavBar() {
     }];
 
     if(loggedInUser && loggedInUser.role === Role.ADMIN) {
-        menuItems.push(
+        menuItems.splice(1, 0,
             {
                 label: 'Crear eventos',
                 icon: <CalendarCreateIcon/>,
