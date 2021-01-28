@@ -63,5 +63,5 @@ export const theme = createMuiTheme({
 
 export enum Color {
     PRIMARY = "primary",
-    SECONDARY = "secondary"
+    SECONDARY = "secondary",
 }

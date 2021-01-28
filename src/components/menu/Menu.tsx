@@ -5,6 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import {ListItemIcon, Typography} from '@material-ui/core';
 import {ReactComponent as MenuIcon} from '../../assets/icons/evericons/menu.svg';
 import './Menu.scss';
+import '../../styles/common.scss';
 
 interface MenuProps {
     menuItems: Array<{label: string, icon: JSX.Element, onClick: () => void}>
@@ -39,7 +40,7 @@ export default function Menu(props: MenuProps) {
     return (
         <div className={props.className}>
             <Button onClick={handleClick}>
-                <MenuIcon className={'MenuIcon'}/>
+                <MenuIcon className={'FillPrimary'}/>
             </Button>
             <MaterialMenu
                 anchorEl={anchorEl}
