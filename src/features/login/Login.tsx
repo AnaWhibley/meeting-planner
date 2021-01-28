@@ -18,8 +18,8 @@ import ActionButton, {ButtonVariant} from '../../components/actionButton/ActionB
 import './Login.scss';
 import logo from '../../assets/images/logo.png';
 import {Typography} from '@material-ui/core';
-import {ReactComponent as AtSignIcon} from '../../assets/icons/at-sign.svg';
-import {ReactComponent as KeyIcon} from '../../assets/icons/key.svg';
+import {ReactComponent as AtSignIcon} from '../../assets/icons/evericons/at-sign.svg';
+import {ReactComponent as KeyIcon} from '../../assets/icons/evericons/key.svg';
 
 export function Login() {
 
