@@ -5,8 +5,8 @@ export function Calendar() {
 
     return (
         <div>
-            Calendar
             <NavBar/>
+            Calendar
         </div>
     );
 }
