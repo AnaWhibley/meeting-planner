@@ -27,7 +27,7 @@ export function NavBar() {
     }, {
         label: 'Cerrar sesión',
         icon: <SignOutIcon className={'SignOutIcon'}/>,
-        onClick: () => history.push('/wizard')
+        onClick: () => history.push('/login')
     }];
 
     if(loggedInUser && loggedInUser.role === Role.ADMIN) {
@@ -35,7 +35,7 @@ export function NavBar() {
             {
                 label: 'Crear eventos',
                 icon: <CalendarCreateIcon/>,
-                onClick: () => history.push('/wizard')
+                onClick: () => history.push('/createEvents')
             }
         );
     }

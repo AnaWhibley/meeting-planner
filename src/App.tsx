@@ -7,11 +7,12 @@ import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom
 import {Role, User} from './services/userService';
 import {Dashboard} from './features/dashboard/Dashboard';
 import {Profile} from './features/profile/Profile';
-import {EventCreator} from './features/eventCreator/EventCreator';
 import {Calendar} from './features/calendar/Calendar';
 import {theme} from './styles/theme';
 import {ThemeProvider} from '@material-ui/core';
 import {ErrorPage} from './components/errorPage/errorPage';
+import { CreateEvents } from './features/createEvents/CreateEvents';
+import './styles/common.scss';
 
 function App() {
 
@@ -33,22 +34,24 @@ function App() {
     };
 
     return (
-        <ThemeProvider theme={theme}>
-            <Router>
-                <Switch>
-                    <Route path="/login">
-                        <Login />
-                    </Route>
-                    <Route path="/errorPage">
-                        <ErrorPage />
-                    </Route>
-                    <PrivateRoute path='/dashboard' component={<Dashboard/>} admin={true}/>
-                    <PrivateRoute path='/wizard' component={<EventCreator/>} admin={true}/>
-                    <PrivateRoute path='/profile' component={<Profile/>} />
-                    <PrivateRoute path='/' component={<Calendar/>}/>
-                </Switch>
-            </Router>
-        </ThemeProvider>
+        <div className={'GeneralContainer'}>
+            <ThemeProvider theme={theme}>
+                <Router>
+                    <Switch>
+                        <Route path="/login">
+                            <Login />
+                        </Route>
+                        <Route path="/errorPage">
+                            <ErrorPage />
+                        </Route>
+                        <PrivateRoute path='/dashboard' component={<Dashboard/>} admin={true}/>
+                        <PrivateRoute path='/createEvents' component={<CreateEvents/>} admin={true}/>
+                        <PrivateRoute path='/profile' component={<Profile/>} />
+                        <PrivateRoute path='/' component={<Calendar/>}/>
+                    </Switch>
+                </Router>
+            </ThemeProvider>
+        </div>
     );
 
 }
