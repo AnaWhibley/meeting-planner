@@ -17,7 +17,7 @@ export const theme = createMuiTheme({
         h1: {
             //bold
             fontWeight: 700,
-            fontSize:  64,
+            fontSize:  58,
         },
         h2: {
             //semibold

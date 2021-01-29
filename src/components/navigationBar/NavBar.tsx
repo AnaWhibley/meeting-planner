@@ -8,7 +8,7 @@ import {ReactComponent as SignOutIcon} from '../../assets/icons/evericons/share-
 import {useSelector} from 'react-redux';
 import {selectLoggedInUser} from '../../app/loginSlice';
 import {Role} from '../../services/userService';
-import logoSmall from '../../assets/images/logo_small.png';
+import logo from '../../assets/images/logo.svg';
 import './NavBar.scss';
 
 export function NavBar() {
@@ -42,7 +42,7 @@ export function NavBar() {
 
     return (
         <div className={'NavBarContainer'}>
-            <img src={logoSmall} alt="Logo MeetingPlanner" className={'NavBarLogo'}/>
+            <img src={logo} alt="Logo MeetingPlanner" className={'NavBarLogo'}/>
             <Menu menuItems={menuItems} className={'NavBarMenu'}/>
         </div>
     );
