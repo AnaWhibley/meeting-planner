@@ -1,8 +1,44 @@
-.DashboardImage {
-  width: 20%;
+.DashboardContainer {
+  margin-top: 5em;
+  display: flex;
+  flex-direction: column;
+
+  .DashboardButtonsContainer {
+    display: flex;
+    justify-content: center;
+
+    .DashboardButtonLeft {
+      padding-right: 15em;
+    }
+
+    .DashboardButtonRight{
+      padding-left: 15em;
+    }
+
+    .DashboardButtonWrapper {
+      display: flex;
+      flex-direction: column;
+      margin-top: 7em;
+
+      .DashboardButton {
+        display: flex;
+        padding: 1em 2em;
+        svg {
+          margin-right: 0.5em;
+        }
+      }
+
+      .DashboardButtonText {
+        width: 300px;
+        margin-top: 2em;
+      }
+    }
+  }
+
+  .DashboardImage {
+    width: 20%;
+    margin-top: 5em;
+    align-self: center;
+  }
 }
 
-.DashboardButtonsContainer {
-  display: flex;
-  justify-content: space-between;
-}
