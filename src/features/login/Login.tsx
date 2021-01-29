@@ -16,10 +16,11 @@ import TextInput from '../../components/textInput/TextInput';
 import {Color} from '../../styles/theme';
 import ActionButton, {ButtonVariant} from '../../components/actionButton/ActionButton';
 import './Login.scss';
-import logo from '../../assets/images/logo.png';
+import logo from '../../assets/images/logo.svg';
 import {Typography} from '@material-ui/core';
 import {ReactComponent as AtSignIcon} from '../../assets/icons/evericons/at-sign.svg';
 import {ReactComponent as KeyIcon} from '../../assets/icons/evericons/key.svg';
+import '../../styles/common.scss';
 
 export function Login() {
 
@@ -38,7 +39,7 @@ export function Login() {
     }
 
     return(
-        <div className={'LoginContainer'}>
+        <div className={'GeneralContainer'}>
             <div className={'LoginFormContainer'}>
                 <div className={'LoginForm'}>
                     <img src={logo}

@@ -1,39 +1,31 @@
-.LoginContainer {
-  background-image: url("../../assets/images/background.png");
-  height: 100vh;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+.LoginFormContainer {
+  display: flex;
+  justify-content: center;
 
-  .LoginFormContainer {
+  .LoginForm {
+    position: absolute;
+    text-align: center;
+    top: 30%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    width: 30%;
 
-    .LoginForm {
-      position: absolute;
-      text-align: center;
-      top: 30%;
-      display: flex;
-      flex-direction: column;
-      width: 30%;
+    .LoginInputContainer, .LoginLink {
+      margin-top: 1.5em;
+    }
 
-      .LoginInputContainer, .LoginLink {
-        margin-top: 1.5em;
-      }
+    .LoginError {
+      margin-top: 2.5em;
+    }
 
-      .LoginError {
-        margin-top: 2.5em;
-      }
+    .LoginButton {
+      margin-top: 3em;
+    }
 
-      .LoginButton {
-        margin-top: 3em;
-      }
-
-      .LoginLogo {
-        align-self: center;
-        width: 80%;
-        margin-bottom: 1em;
-      }
+    .LoginLogo {
+      align-self: center;
+      width: 80%;
+      margin-bottom: 1em;
     }
   }
 }

@@ -20,31 +20,43 @@ export function Dashboard() {
     const history = useHistory();
 
     return (
-        <div>
+        <div className={'GeneralContainer'}>
             <NavBar/>
-            <Typography variant='subtitle1' display={'block'} align={'center'}>Bienvenido, {loggedInUser?.name}</Typography>
-            <Typography variant='h1' color={Color.PRIMARY} display={'block'} align={'center'}>¿Qué quieres hacer?</Typography>
-            <div className={'DashboardButtonsContainer'}>
-                <div>
-                    <ActionButton color={Color.PRIMARY}
-                                  onClick={() => history.push('/wizard')}
-                                  innerText={'Crear uno o varios eventos'}
-                                  variant={ButtonVariant.CONTAINED}
-                                  icon={<CalendarCreateIcon className={'FillWhite'}/>}
-                    />
-                    <Typography variant='subtitle1' align={'center'}>Crea o importa nuevos eventos</Typography>
+            <div className={'DashboardContainer'}>
+                <Typography variant='subtitle1' display={'block'} align={'center'}>Bienvenido, {loggedInUser?.name}</Typography>
+                <Typography variant='h1' color={Color.PRIMARY} display={'block'} align={'center'}>¿Qué quieres hacer?</Typography>
+                <div className={'DashboardButtonsContainer'}>
+                    <div className={'DashboardButtonWrapper DashboardButtonLeft'}>
+                        <ActionButton color={Color.PRIMARY}
+                                      onClick={() => history.push('/wizard')}
+                                      innerText={'Crear uno o varios eventos'}
+                                      variant={ButtonVariant.CONTAINED}
+                                      labelClassName={'DashboardButton'}
+                                      icon={<CalendarCreateIcon className={'FillWhite'}/>}
+                        />
+                        <Typography variant='subtitle1'
+                                    align={'center'}
+                                    className={'DashboardButtonText'}>
+                            Crea o importa nuevos eventos
+                        </Typography>
+                    </div>
+                    <div className={'DashboardButtonWrapper DashboardButtonRight'}>
+                        <ActionButton color={Color.PRIMARY}
+                                      onClick={() => history.push('/calendar')}
+                                      innerText={'Editar eventos existentes'}
+                                      variant={ButtonVariant.OUTLINED}
+                                      labelClassName={'DashboardButton'}
+                                      icon={<CalendarDatesIcon className={'FillPrimary'}/>}
+                        />
+                        <Typography variant='subtitle1'
+                                    align={'center'}
+                                    className={'DashboardButtonText'}>
+                            Observa, modifica y elimina todos los eventos creados anteriormente
+                        </Typography>
+                    </div>
                 </div>
-                <div>
-                    <ActionButton color={Color.PRIMARY}
-                                  onClick={() => history.push('/calendar')}
-                                  innerText={'Editar eventos existentes'}
-                                  variant={ButtonVariant.OUTLINED}
-                                  icon={<CalendarDatesIcon className={'FillPrimary'}/>}
-                    />
-                    <Typography variant='subtitle1' align={'center'}>Observa, modifica y elimina todos los eventos creados anteriormente</Typography>
-                </div>
+                <img src={choice} alt="" className={'DashboardImage'}/>
             </div>
-            <img src={choice} alt="" className={'DashboardImage'}/>
         </div>
     );
 }
