@@ -39,47 +39,45 @@ export function Login() {
     }
 
     return(
-        <div className={'GeneralContainer'}>
-            <div className={'LoginFormContainer'}>
-                <div className={'LoginForm'}>
-                    <img src={logo}
-                         className={'LoginLogo'}
-                         alt="Logo MeetingPlanner"/>
-                    <TextInput
-                        label="Nombre de usuario"
-                        fullWidth={true}
-                        value={username}
-                        icon={<AtSignIcon/>}
-                        onChange={(value: string) => dispatch(setUsername(value))}
-                        containerClassName={'LoginInputContainer'}
-                    />
-                    <TextInput
-                        label="Contraseña"
-                        fullWidth={true}
-                        type="password"
-                        icon={<KeyIcon/>}
-                        value={password}
-                        onChange={value => dispatch(setPassword(value))}
-                        containerClassName={'LoginInputContainer'}
-                    />
-                    { showErrorMessage ?
-                        <Typography variant="subtitle1"
-                                    display="inline"
-                                    className={"LoginError"}
-                                    color={"error"}>Nombre de usuario o contraseña incorrecto.</Typography>
-                        : null
-                    }
-                    <ActionButton
-                        innerText={'Entrar'}
-                        color={Color.PRIMARY}
-                        variant={ButtonVariant.CONTAINED}
-                        onClick={() => dispatch(login())}
-                        className={'LoginButton'}
-                    />
+        <div className={'LoginFormContainer'}>
+            <div className={'LoginForm'}>
+                <img src={logo}
+                     className={'LoginLogo'}
+                     alt="Logo MeetingPlanner"/>
+                <TextInput
+                    label="Nombre de usuario"
+                    fullWidth={true}
+                    value={username}
+                    icon={<AtSignIcon/>}
+                    onChange={(value: string) => dispatch(setUsername(value))}
+                    containerClassName={'LoginInputContainer'}
+                />
+                <TextInput
+                    label="Contraseña"
+                    fullWidth={true}
+                    type="password"
+                    icon={<KeyIcon/>}
+                    value={password}
+                    onChange={value => dispatch(setPassword(value))}
+                    containerClassName={'LoginInputContainer'}
+                />
+                { showErrorMessage ?
                     <Typography variant="subtitle1"
-                                className={'LoginLink'}
-                                display={'inline'}>¿Olvidaste tu contraseña?</Typography>
-                </div>
+                                display="inline"
+                                className={"LoginError"}
+                                color={"error"}>Nombre de usuario o contraseña incorrecto.</Typography>
+                    : null
+                }
+                <ActionButton
+                    innerText={'Entrar'}
+                    color={Color.PRIMARY}
+                    variant={ButtonVariant.CONTAINED}
+                    onClick={() => dispatch(login())}
+                    className={'LoginButton'}
+                />
+                <Typography variant="subtitle1"
+                            className={'LoginLink'}
+                            display={'inline'}>¿Olvidaste tu contraseña?</Typography>
             </div>
         </div>
     );
