@@ -12,10 +12,10 @@ import {
     selectStage,
     setFrom,
     setName
-} from '../../app/eventCreatorSlice';
+} from '../../../app/eventCreatorSlice';
 import {DateTime} from 'luxon';
 
-export function EventCreator() {
+export function Form() {
     const stage = useSelector(selectStage);
     const isLastStage = useSelector(selectIsLastStage);
     const dispatch = useDispatch();
