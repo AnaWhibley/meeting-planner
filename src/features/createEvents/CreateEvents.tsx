@@ -5,8 +5,8 @@ import ActionButton, {ButtonVariant} from '../../components/actionButton/ActionB
 import {Color} from '../../styles/theme';
 import {useHistory} from 'react-router-dom';
 import {ReactComponent as CalendarCreateIcon} from '../../assets/icons/evericons/calendar-create.svg';
-import {ReactComponent as CalendarDatesIcon} from '../../assets/icons/evericons/calendar-dates.svg';
 import wizard from '../../assets/icons/undraw/undraw_setup_wizard.svg';
+import DragAndDrop from '../../components/dragAndDrop/DragAndDrop';
 
 export function CreateEvents() {
 
@@ -30,13 +30,7 @@ export function CreateEvents() {
                         <img src={wizard} alt="" className={'DashboardImage'}/>
                     </div>
                     <div className={'DashboardButtonWrapper DashboardButtonRight'}>
-                        <ActionButton color={Color.PRIMARY}
-                                      onClick={() => history.push('/calendar')}
-                                      innerText={'Editar eventos existentes'}
-                                      variant={ButtonVariant.OUTLINED}
-                                      labelClassName={'DashboardButton'}
-                                      icon={<CalendarDatesIcon className={'FillPrimary'}/>}
-                        />
+                        <DragAndDrop/>
                     </div>
                 </div>
             </div>
