@@ -13,6 +13,7 @@ import {ThemeProvider} from '@material-ui/core';
 import {ErrorPage} from './components/errorPage/errorPage';
 import { CreateEvents } from './features/createEvents/CreateEvents';
 import './styles/common.scss';
+import {Form} from './features/createEvents/form/Form';
 
 function App() {
 
@@ -45,6 +46,7 @@ function App() {
                             <ErrorPage />
                         </Route>
                         <PrivateRoute path='/dashboard' component={<Dashboard/>} admin={true}/>
+                        <PrivateRoute path='/createEvents/form' component={<Form/>} admin={true}/>
                         <PrivateRoute path='/createEvents' component={<CreateEvents/>} admin={true}/>
                         <PrivateRoute path='/profile' component={<Profile/>} />
                         <PrivateRoute path='/' component={<Calendar/>}/>

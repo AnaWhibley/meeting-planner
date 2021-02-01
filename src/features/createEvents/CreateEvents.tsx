@@ -21,7 +21,7 @@ export function CreateEvents() {
                 <div className={'DashboardButtonsContainer'}>
                     <div className={'DashboardButtonWrapper DashboardButtonLeft'}>
                         <ActionButton color={Color.PRIMARY}
-                                      onClick={() => history.push('/wizard')}
+                                      onClick={() => history.push('/createEvents/form')}
                                       innerText={'Crear un evento manualmente'}
                                       variant={ButtonVariant.CONTAINED}
                                       labelClassName={'DashboardButton'}
@@ -30,7 +30,7 @@ export function CreateEvents() {
                         <img src={wizard} alt="" className={'DashboardImage'}/>
                     </div>
                     <div className={'DashboardButtonWrapper DashboardButtonRight'}>
-                        <DragAndDrop/>
+                        <DragAndDrop validFileTypes={['json']}/>
                     </div>
                 </div>
             </div>

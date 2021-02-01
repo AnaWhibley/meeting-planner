@@ -66,6 +66,32 @@ export const createEvents = () => (dispatch: Dispatch<any>, getState: () => Root
     });
 };
 
+export const exportJSON = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
+    const state = getState();
+    const data = JSON.stringify(mapStateToJSON(state));
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(data);
+
+    let link: any = document.createElement('a');
+    if(link.download !== undefined) {
+        link.setAttribute('href', dataUri);
+        link.setAttribute('download', 'temp.json');
+        link.click();
+        link = null;
+    }
+};
+
+export const importJSON = (files: any) => (dispatch: Dispatch<any>, getState: () => RootState) => {
+    const fr = new FileReader();
+    console.log(files);
+    if(files.length <= 0) return false;
+    fr.onload = (e: any) => {
+        console.log("!!!! e", e);
+        const data = JSON.parse(e.target.result);
+        console.log("!!!! data", data);
+    }
+    fr.readAsText(files[0]);
+};
+
 export const { next, previous, setFrom, setName, createNew, complete } = slice.actions;
 
 export const selectStage = (state: RootState) => state.eventCreator.stage;
@@ -84,4 +110,12 @@ const mapEvents = (events: Array<any>) => {
         };
     });
 };
+
+const mapStateToJSON = (state: RootState) => {
+    return {
+        user: state.login.username,
+        events: mapEvents(state.eventCreator.events)
+    };
+};
+
 export default slice.reducer;
