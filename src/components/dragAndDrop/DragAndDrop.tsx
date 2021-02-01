@@ -6,6 +6,8 @@ import {ReactComponent as FileIcon} from '../../assets/icons/evericons/file.svg'
 import {ReactComponent as TimesIcon} from '../../assets/icons/evericons/x.svg';
 import { Color } from '../../styles/theme';
 import ActionButton, {ButtonVariant} from '../actionButton/ActionButton';
+import {connect} from 'react-redux';
+import {importJSON} from '../../app/eventCreatorSlice';
 
 interface DragAndDropState {
     validFiles: Array<File>;
@@ -17,9 +19,11 @@ interface DragAndDropState {
 interface DragAndDropProps {
     maxFiles?: number;
     validFileTypes?: Array<string>;
+    importJSON: (files: any) => void;
 }
 
-export default class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
+
+class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
 
     constructor(props: DragAndDropProps) {
         super(props);
@@ -71,8 +75,9 @@ export default class DragAndDrop extends Component<DragAndDropProps, DragAndDrop
     }
 
     private checkFile = (file: File) => {
-        const validTypes = this.state.validFileTypes;
-        return validTypes.indexOf(file.type) !== -1;
+        const validTypes = this.props.validFileTypes || this.state.validFileTypes;
+        //return validTypes.indexOf(file.type) !== -1;
+        return true;
     };
 
     private fileSize = (size: number) => {
@@ -94,10 +99,12 @@ export default class DragAndDrop extends Component<DragAndDropProps, DragAndDrop
     };
 
     private uploadFiles = () => {
-        console.log('hello');
+        console.log('hello', this.props);
+        this.props.importJSON(this.state.validFiles);
     };
 
     render() {
+
         return (
             <div className="DragAndDropContainer">
                 <div className="DragAndDropRow">
@@ -162,3 +169,14 @@ export default class DragAndDrop extends Component<DragAndDropProps, DragAndDrop
         );
     }
 }
+const mapStateToProps = () => {
+    return {};
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        importJSON: (files: any) => dispatch(importJSON(files))
+    }
+};
+export default connect(mapStateToProps, mapDispatchToProps)(DragAndDrop);
+

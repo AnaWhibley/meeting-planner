@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {
     createEvents,
-    createNew,
+    createNew, exportJSON,
     next,
     previous,
     selectFrom,
@@ -48,6 +48,7 @@ export function Form() {
                 }
             }}>{isLastStage ? 'confirmar' : 'siguiente'}</button>
             {isLastStage ?  <button onClick={() => dispatch(createNew())}>Nuevo</button>: null}
+            {isLastStage ?  <button onClick={() => dispatch(exportJSON())}>Exportar</button>: null}
         </div>
     );
 }
