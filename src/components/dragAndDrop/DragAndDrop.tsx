@@ -20,6 +20,7 @@ interface DragAndDropProps {
     maxFiles?: number;
     validFileTypes?: Array<string>;
     importJSON: (files: any) => void;
+    labelValidFileTypes?: string;
 }
 
 
@@ -120,7 +121,7 @@ class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
                         </Typography>
                         <br/>
                         <div>
-                            <Typography variant="subtitle1" display={'inline'}>Los formatos soportados son </Typography>
+                            <Typography variant="subtitle1" display={'inline'}>{ this.props.labelValidFileTypes || 'Los formatos soportados son' }</Typography>
                             {this.state.validFileTypesString.map((type: string, i) => {
                                 return <Typography variant="subtitle1" display={'inline'} key={i}>.{type} </Typography>
                             })}
