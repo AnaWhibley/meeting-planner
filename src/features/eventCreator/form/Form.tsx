@@ -2,16 +2,21 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {
+    addTutor,
     createEvents,
     createNew, exportJSON,
     next,
     previous,
+    removeTutor,
     selectFrom,
     selectIsLastStage,
-    selectName,
+    selectName, selectParticipants,
     selectStage,
+    selectTutorNumber,
     setFrom,
-    setName
+    setName,
+    setParticipants,
+    setTo
 } from '../../../app/eventCreatorSlice';
 import {DateTime} from 'luxon';
 
@@ -28,6 +33,9 @@ export function Form() {
             body = <StageTwo/>;
             break;
         case 2:
+            body = <StageThree/>;
+            break;
+        case 3:
             body = <SummaryStage/>;
             break;
         default:
@@ -35,7 +43,7 @@ export function Form() {
     }
     return (
         <div>
-            Wizard <Link to="/profile">Profile</Link>
+            Wizard
             <div>
                 {body}
             </div>
@@ -59,8 +67,7 @@ export function StageOne() {
     return (
         <div>
             <span>{name.errorMessage}</span>
-
-            <input type="text" value={name.value} onChange={(ev) => dispatch(setName(ev.target.value))}/>
+            <input type="text" value={name.value} placeholder={'Nombre del evento'} onChange={(ev) => dispatch(setName(ev.target.value))}/>
         </div>
     );
 }
@@ -68,9 +75,7 @@ export function StageOne() {
 export function StageTwo() {
     const from = DateTime.fromSeconds(useSelector(selectFrom).value);
     const dispatch = useDispatch();
-
     const today = DateTime.utc();
-    console.log('!!!', from.diff(today));
 
     return (
         <div>
@@ -78,7 +83,34 @@ export function StageTwo() {
                 const selectedDate = DateTime.fromFormat(ev.target.value, 'yyyy-MM-dd');
                 dispatch(setFrom(selectedDate.toSeconds()))
             }}/>
+
+            <input type="date" value={from.toFormat('yyyy-MM-dd')} onChange={(ev) => {
+                const selectedDate = DateTime.fromFormat(ev.target.value, 'yyyy-MM-dd');
+                dispatch(setTo(selectedDate.toSeconds()))
+            }}/>
+
             <div>{from.diff(today).milliseconds > 0 ? 'Is after' : 'Not is after'}</div>
+        </div>
+    );
+}
+
+export function StageThree() {
+    const dispatch = useDispatch();
+    const tutorNumber = useSelector(selectTutorNumber);
+    const participants = useSelector(selectParticipants).map((p, index) => {
+        return (
+            <div key={index}>
+                <span>{p.tag}</span>
+                <input type="text" placeholder={p.tag} onChange={ (event) => dispatch(setParticipants({value: event.target.value, tag: p.tag}))}/><br/>
+            </div>
+        );
+    });
+
+    return (
+        <div>
+            {participants}
+            {tutorNumber === 2 ? <button onClick={() => dispatch(removeTutor())}>Eliminar tutor</button> : null}
+            {tutorNumber === 1 ? <button onClick={() => dispatch(addTutor())}>Añadir tutor</button> : null}
         </div>
     );
 }
