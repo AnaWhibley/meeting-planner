@@ -35,7 +35,7 @@ export function NavBar() {
             {
                 label: 'Crear eventos',
                 icon: <CalendarCreateIcon/>,
-                onClick: () => history.push('/createEvents')
+                onClick: () => history.push('/eventCreator')
             }
         );
     }
