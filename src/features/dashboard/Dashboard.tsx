@@ -28,7 +28,7 @@ export function Dashboard() {
                 <div className={'DashboardButtonsContainer'}>
                     <div className={'DashboardButtonWrapper DashboardButtonLeft'}>
                         <ActionButton color={Color.PRIMARY}
-                                      onClick={() => history.push('/createEvents')}
+                                      onClick={() => history.push('/eventCreator')}
                                       innerText={'Crear uno o varios eventos'}
                                       variant={ButtonVariant.CONTAINED}
                                       labelClassName={'DashboardButton'}

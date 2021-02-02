@@ -8,7 +8,7 @@ import {ReactComponent as CalendarCreateIcon} from '../../assets/icons/evericons
 import wizard from '../../assets/icons/undraw/undraw_setup_wizard.svg';
 import DragAndDrop from '../../components/dragAndDrop/DragAndDrop';
 
-export function CreateEvents() {
+export function EventCreator() {
 
     const history = useHistory();
 
@@ -21,7 +21,7 @@ export function CreateEvents() {
                 <div className={'DashboardButtonsContainer'}>
                     <div className={'DashboardButtonWrapper DashboardButtonLeft'}>
                         <ActionButton color={Color.PRIMARY}
-                                      onClick={() => history.push('/createEvents/form')}
+                                      onClick={() => history.push('/eventCreator/form')}
                                       innerText={'Crear un evento manualmente'}
                                       variant={ButtonVariant.CONTAINED}
                                       labelClassName={'DashboardButton'}

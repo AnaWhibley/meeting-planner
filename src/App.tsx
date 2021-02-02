@@ -11,9 +11,9 @@ import {Calendar} from './features/calendar/Calendar';
 import {theme} from './styles/theme';
 import {ThemeProvider} from '@material-ui/core';
 import {ErrorPage} from './components/errorPage/errorPage';
-import { CreateEvents } from './features/createEvents/CreateEvents';
+import { EventCreator } from './features/eventCreator/EventCreator';
 import './styles/common.scss';
-import {Form} from './features/createEvents/form/Form';
+import {Form} from './features/eventCreator/form/Form';
 
 function App() {
 
@@ -47,7 +47,7 @@ function App() {
                         </Route>
                         <PrivateRoute path='/dashboard' component={<Dashboard/>} admin={true}/>
                         <PrivateRoute path='/createEvents/form' component={<Form/>} admin={true}/>
-                        <PrivateRoute path='/createEvents' component={<CreateEvents/>} admin={true}/>
+                        <PrivateRoute path='/createEvents' component={<EventCreator/>} admin={true}/>
                         <PrivateRoute path='/profile' component={<Profile/>} />
                         <PrivateRoute path='/' component={<Calendar/>}/>
                     </Switch>
