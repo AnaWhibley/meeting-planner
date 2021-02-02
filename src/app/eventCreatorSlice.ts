@@ -1,8 +1,18 @@
 import {createSlice, Dispatch} from '@reduxjs/toolkit';
-import { DateTime } from 'luxon';
+import {DateTime} from 'luxon';
 import {RootState} from './store';
 import {requesting} from './uiStateSlice';
 import EventService, {CreateResponse} from '../services/eventService';
+
+enum ParticipantType {
+    PRESIDENTE_TT = 'Presidente Tribunal Titular',
+    SECRETARIO_TT = 'Secretario Tribunal Titular',
+    VOCAL_TT = 'Vocal Tribunal Titular',
+    PRESIDENTE_TS = 'Presidente Tribunal Suplente',
+    SECRETARIO_TS = 'Secretario Tribunal Suplente',
+    VOCAL_TS = 'Vocal Tribunal Suplente',
+    TUTOR = 'Tutor'
+}
 
 const createDefaultState = () => {
     return {
@@ -10,6 +20,8 @@ const createDefaultState = () => {
         groupName: 'default',
         name: createFieldState(''),
         from: createFieldState(DateTime.utc().toSeconds()),
+        to: createFieldState(DateTime.utc().toSeconds()),
+        participants: Object.keys(ParticipantType).map((k: string) => ( { email: createFieldState(''), tag: (ParticipantType as any)[k] }))
     };
 };
 
@@ -42,6 +54,26 @@ export const slice = createSlice({
         },
         setFrom: (state, action) => {
             state.events[state.currentIndex].from.value = action.payload;
+        },
+        setTo: (state, action) => {
+            state.events[state.currentIndex].to.value = action.payload;
+        },
+        setParticipants: (state, action) => {
+            const tag = action.payload.tag;
+            const index = state.events[state.currentIndex].participants.findIndex((p) => p.tag === tag);
+            state.events[state.currentIndex].participants[index] = {
+                ...state.events[state.currentIndex].participants[index],
+                email: {
+                    value: action.payload.value,
+                    errorMessage: ''
+                }
+            };
+        },
+        addTutor: (state) => {
+            state.events[state.currentIndex].participants.push({email: createFieldState(''), tag: 'Tutor'});
+        },
+        removeTutor: (state) => {
+            state.events[state.currentIndex].participants.pop();
         },
         createNew: (state) => {
             state.events = [...state.events, createDefaultState()];
@@ -92,13 +124,18 @@ export const importJSON = (files: any) => (dispatch: Dispatch<any>, getState: ()
     fr.readAsText(files[0]);
 };
 
-export const { next, previous, setFrom, setName, createNew, complete } = slice.actions;
+export const { next, previous, setFrom, setTo, setName, createNew, complete, setParticipants, addTutor, removeTutor } = slice.actions;
 
 export const selectStage = (state: RootState) => state.eventCreator.stage;
+export const selectParticipants = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].participants;
 export const selectName = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].name;
 export const selectFrom = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].from;
-export const selectIsLastStage = (state: RootState) => state.eventCreator.stage === 2;
-
+export const selectIsLastStage = (state: RootState) => state.eventCreator.stage === 3;
+export const selectTutorNumber = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].participants.reduce((acc, current) => {
+    let newAcc = acc;
+    if(current.tag === ParticipantType.TUTOR) newAcc += 1;
+    return newAcc;
+}, 0);
 
 const mapEvents = (events: Array<any>) => {
     return events.map((event) => {
