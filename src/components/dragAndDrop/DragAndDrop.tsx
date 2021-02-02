@@ -75,9 +75,9 @@ class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
     }
 
     private checkFile = (file: File) => {
-        const validTypes = this.props.validFileTypes || this.state.validFileTypes;
-        //return validTypes.indexOf(file.type) !== -1;
-        return true;
+        const validTypes = this.state.validFileTypes;
+        return validTypes.indexOf(file.type) !== -1;
+        //return true;
     };
 
     private fileSize = (size: number) => {
