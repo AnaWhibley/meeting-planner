@@ -30,7 +30,7 @@ export function CreateEvents() {
                         <img src={wizard} alt="" className={'DashboardImage'}/>
                     </div>
                     <div className={'DashboardButtonWrapper DashboardButtonRight'}>
-                        <DragAndDrop validFileTypes={['json']}/>
+                        <DragAndDrop validFileTypes={['application/json']}/>
                     </div>
                 </div>
             </div>
