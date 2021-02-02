@@ -7,6 +7,8 @@ import {useHistory} from 'react-router-dom';
 import {ReactComponent as CalendarCreateIcon} from '../../assets/icons/evericons/calendar-create.svg';
 import wizard from '../../assets/icons/undraw/undraw_setup_wizard.svg';
 import DragAndDrop from '../../components/dragAndDrop/DragAndDrop';
+import './EventCreator.scss';
+import '../../styles/common.scss';
 
 export function EventCreator() {
 
@@ -15,22 +17,22 @@ export function EventCreator() {
     return (
         <>
             <NavBar/>
-            <div className={'DashboardContainer'}>
+            <div className={'EventCreatorContainer'}>
                 <Typography variant='h1' color={Color.PRIMARY} display={'block'} align={'center'}>¿Cómo quieres crear tu evento?</Typography>
                 <Typography variant='subtitle1' display={'block'} align={'center'}>Crear eventos nunca ha sido tan fácil.</Typography>
-                <div className={'DashboardButtonsContainer'}>
-                    <div className={'DashboardButtonWrapper DashboardButtonLeft'}>
+                <div className={'EventCreatorButtonsContainer'}>
+                    <div className={'EventCreatorButtonWrapper EventCreatorLeft'}>
                         <ActionButton color={Color.PRIMARY}
-                                      onClick={() => history.push('/eventCreator/form')}
+                                      onClick={() => history.push('/createEvents/form')}
                                       innerText={'Crear un evento manualmente'}
                                       variant={ButtonVariant.CONTAINED}
-                                      labelClassName={'DashboardButton'}
+                                      labelClassName={'EventCreatorButton'}
                                       icon={<CalendarCreateIcon className={'FillWhite'}/>}
                         />
-                        <img src={wizard} alt="" className={'DashboardImage'}/>
+                        <img src={wizard} alt="Ilustración wizard"/>
                     </div>
-                    <div className={'DashboardButtonWrapper DashboardButtonRight'}>
-                        <DragAndDrop validFileTypes={['application/json']}/>
+                    <div className={'EventCreatorButtonWrapper EventCreatorRight'}>
+                        <DragAndDrop validFileTypes={['application/json']} labelValidFileTypes={'El formato soportado es'}/>
                     </div>
                 </div>
             </div>
