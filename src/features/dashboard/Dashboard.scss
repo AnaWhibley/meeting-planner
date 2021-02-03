@@ -3,38 +3,39 @@
   display: flex;
   flex-direction: column;
 
-  .DashboardButtonsContainer {
+  .ButtonsContainer {
     display: flex;
     justify-content: center;
 
-    .DashboardButtonLeft {
+    .ButtonLeft {
       padding-right: 15em;
     }
 
-    .DashboardButtonRight{
+    .ButtonRight{
       padding-left: 15em;
     }
 
-    .DashboardButtonWrapper {
+    .Button {
       display: flex;
       flex-direction: column;
       margin-top: 7em;
 
-      .DashboardButton {
+      .Caption {
+        width: 300px;
+        margin-top: 2em;
+      }
+
+      .Label {
         padding: 1em 2em;
         svg {
           margin-right: 0.5em;
+          vertical-align: sub;
         }
-      }
-
-      .DashboardButtonText {
-        width: 300px;
-        margin-top: 2em;
       }
     }
   }
 
-  .DashboardImage {
+  .Image {
     width: 20%;
     margin-top: 5em;
     align-self: center;

@@ -4,13 +4,14 @@
 
 .NavBarContainer {
   padding: 10px;
+
+  .Logo {
+    width: 11em;
+    padding: 6px 8px;
+  }
+
+  .Menu {
+    float: right;
+  }
 }
 
-.NavBarLogo {
-  width: 11em;
-  padding: 6px 8px;
-}
-
-.NavBarMenu {
-  float: right;
-}

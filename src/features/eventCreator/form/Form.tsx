@@ -3,14 +3,19 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
     addTutor,
     createEvents,
-    createNew, DATE_FORMAT, exportJSON,
+    createNew,
+    DATE_FORMAT,
+    exportJSON,
     next,
     previous,
     removeTutor,
-    selectFrom, selectIsFirstStage,
+    selectFrom,
+    selectIsFirstStage,
     selectIsLastStage,
-    selectName, selectParticipants,
-    selectStage, selectTo,
+    selectName,
+    selectParticipants,
+    selectStage,
+    selectTo,
     selectTutorNumber,
     setFrom,
     setName,
@@ -18,8 +23,10 @@ import {
     setTo
 } from '../../../app/eventCreatorSlice';
 import {DateTime} from 'luxon';
-import { NavBar } from '../../../components/navigationBar/NavBar';
+import {NavBar} from '../../../components/navigationBar/NavBar';
 import {RootState} from '../../../app/store';
+import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
+import {Color} from '../../../styles/theme';
 
 export function Form() {
     const stage = useSelector(selectStage);
@@ -50,16 +57,16 @@ export function Form() {
                 <NavBar/>
                 {body}
             </div>
-            {!isFirstStage ? <button onClick={() => dispatch(previous())}>atras</button> : null}
-            <button onClick={() => {
+            {!isFirstStage ? <ActionButton onClick={() => dispatch(previous())} innerText={'Atrás'} color={Color.PRIMARY} variant={ButtonVariant.OUTLINED}/> : null}
+            <ActionButton onClick={() => {
                 if(isLastStage) {
                     dispatch(createEvents())
                 }else{
                     dispatch(next())
                 }
-            }}>{isLastStage ? 'confirmar' : 'siguiente'}</button>
-            {isLastStage ?  <button onClick={() => dispatch(createNew())}>Nuevo</button>: null}
-            {isLastStage ?  <button onClick={() => dispatch(exportJSON())}>Exportar</button>: null}
+            }} innerText={isLastStage ? 'Confirmar' : 'Siguiente'} variant={ButtonVariant.CONTAINED} color={Color.PRIMARY}/>
+            {isLastStage ?  <ActionButton onClick={() => dispatch(createNew())} color={Color.PRIMARY} innerText={'Nuevo'} variant={ButtonVariant.CONTAINED}/>: null}
+            {isLastStage ?  <ActionButton onClick={() => dispatch(exportJSON())} color={Color.PRIMARY} innerText={'Exportar'} variant={ButtonVariant.CONTAINED}/> : null}
         </div>
     );
 }
@@ -79,7 +86,6 @@ export function StageTwo() {
     const from = DateTime.fromFormat(useSelector(selectFrom).value, DATE_FORMAT);/*19-12-2012*/
     const to = DateTime.fromFormat(useSelector(selectTo).value, DATE_FORMAT);
     const dispatch = useDispatch();
-    const today = DateTime.utc();
 
     return (
         <div>
@@ -93,8 +99,6 @@ export function StageTwo() {
                 const selectedDate = DateTime.fromFormat(ev.target.value, 'yyyy-MM-dd');
                 dispatch(setTo(selectedDate.toFormat(DATE_FORMAT)))
             }}/>
-
-            <div>{from.diff(today).milliseconds > 0 ? 'Is after' : 'Not is after'}</div>
         </div>
     );
 }

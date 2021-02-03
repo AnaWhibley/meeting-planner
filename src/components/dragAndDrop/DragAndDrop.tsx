@@ -24,7 +24,6 @@ interface DragAndDropProps {
     labelValidFileTypes?: string;
 }
 
-
 class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
 
     constructor(props: DragAndDropProps) {
@@ -106,10 +105,10 @@ class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
     render() {
         return (
             <div className="DragAndDropContainer">
-                <div className="DragAndDropRow">
+                <div className="Row">
                     <div
                         draggable={true}
-                        className={'DragAndDropBox'}
+                        className={'Box'}
                         onDragOver={this.dragOver}
                         onDragEnter={this.dragEnter}
                         onDragLeave={this.dragLeave}
@@ -119,25 +118,42 @@ class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
                         </Typography>
                         <br/>
                         <div>
-                            <Typography variant="subtitle1" display={'inline'}>{ this.props.labelValidFileTypes || 'Los formatos soportados son' }</Typography>
+                            <Typography variant="subtitle1"
+                                        display={'inline'}>
+                                { this.props.labelValidFileTypes || 'Los formatos soportados son' }
+                            </Typography>
                             {this.state.validFileTypesString.map((type: string, i) => {
-                                return <Typography variant="subtitle1" display={'inline'} key={i}>.{type} </Typography>
+                                return <Typography variant="subtitle1"
+                                                   display={'inline'}
+                                                   key={i}>.{type}
+                                </Typography>
                             })}
                         </div>
-                        <img src={DragAndDropImage} alt="DragAndDropImage"/>
-                        <input type="file" multiple onChange={this.filesSelected} className="DragAndDropFileInput"/>
+                        <img src={DragAndDropImage} alt="Círculo con un plus en el centro"/>
+                        <input type="file"
+                               multiple
+                               onChange={this.filesSelected}
+                               className="FileInput"/>
                     </div>
                     {this.state.validFiles.length ?
                         <Typography variant="body2"
                                     display={'block'}
-                                    className={'DragAndDropFilesTitle'}>Archivos a subir</Typography>
+                                    className={'FilesTitle'}>Archivos a subir</Typography>
                         : null}
                     {this.state.validFiles.length ? this.state.validFiles.map((file: File, i) => {
-                        return (<div key={i} className={'DragAndDropValidFiles'}>
+                        return (<div key={i} className={'ValidFiles'}>
                             <FileIcon/>
-                            <Typography variant="subtitle1" display="inline" color='textPrimary'>{file.name}</Typography>
-                            <Typography variant="subtitle1" display="inline" color='textPrimary'>{this.fileSize(file.size)}</Typography>
-                            <TimesIcon className={'DragAndDropRemoveFileIcon'} onClick={() => this.removeFile(i)}/>
+                            <Typography variant="subtitle1"
+                                        display="inline"
+                                        color='textPrimary'>
+                                {file.name}
+                            </Typography>
+                            <Typography variant="subtitle1"
+                                        display="inline"
+                                        color='textPrimary'>
+                                {this.fileSize(file.size)}
+                            </Typography>
+                            <TimesIcon className={'RemoveFileIcon'} onClick={() => this.removeFile(i)}/>
                             <br/>
                         </div>)
                     }) : null}
@@ -145,15 +161,26 @@ class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
                     {this.state.invalidFiles.length ?
                         <Typography variant="body2"
                                     display={'block'}
-                                    className={'DragAndDropFilesTitle'}>Archivos que no se subirán</Typography>
+                                    className={'FilesTitle'}>Archivos que no se subirán</Typography>
                         : null}
                     {this.state.invalidFiles.length ? this.state.invalidFiles.map((file: File, i) => {
-                        return (<div key={i} className={'DragAndDropInvalidFiles'}>
+                        return (<div key={i} className={'InvalidFiles'}>
                             <FileIcon/>
-                            <Typography variant="subtitle1" display="inline" color='textPrimary'>{file.name}</Typography>
-                            <Typography variant="subtitle1" display="inline" color='textPrimary'>{this.fileSize(file.size)}</Typography>
-                            <Typography variant="subtitle1" display="inline" color={"error"}>Tipo de archivo no
-                                permitido</Typography>
+                            <Typography variant="subtitle1"
+                                        display="inline"
+                                        color='textPrimary'>
+                                {file.name}
+                            </Typography>
+                            <Typography variant="subtitle1"
+                                        display="inline"
+                                        color='textPrimary'>
+                                {this.fileSize(file.size)}
+                            </Typography>
+                            <Typography variant="subtitle1"
+                                        display="inline"
+                                        color={"error"}>
+                                Tipo de archivo no permitido
+                            </Typography>
                         </div>)
                     }) : null}
                     {this.state.validFiles.length ?
@@ -161,13 +188,14 @@ class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
                                       color={Color.PRIMARY}
                                       variant={ButtonVariant.CONTAINED}
                                       onClick={this.uploadFiles}
-                                      className={'DragAndDropUploadButton'}/> : null
+                                      className={'UploadButton'}/> : null
                     }
                 </div>
             </div>
         );
     }
 }
+
 const mapStateToProps = (state: RootState) => {
     return {};
 };
