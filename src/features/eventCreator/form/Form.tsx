@@ -1,5 +1,4 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {
     addTutor,
@@ -8,10 +7,10 @@ import {
     next,
     previous,
     removeTutor,
-    selectFrom,
+    selectFrom, selectIsFirstStage,
     selectIsLastStage,
     selectName, selectParticipants,
-    selectStage,
+    selectStage, selectTo,
     selectTutorNumber,
     setFrom,
     setName,
@@ -19,10 +18,13 @@ import {
     setTo
 } from '../../../app/eventCreatorSlice';
 import {DateTime} from 'luxon';
+import { NavBar } from '../../../components/navigationBar/NavBar';
 
 export function Form() {
     const stage = useSelector(selectStage);
     const isLastStage = useSelector(selectIsLastStage);
+    const isFirstStage = useSelector(selectIsFirstStage);
+
     const dispatch = useDispatch();
     let body;
     switch (stage) {
@@ -43,11 +45,11 @@ export function Form() {
     }
     return (
         <div>
-            Wizard
             <div>
+                <NavBar/>
                 {body}
             </div>
-            <button onClick={() => dispatch(previous())}>atras</button>
+            {!isFirstStage ? <button onClick={() => dispatch(previous())}>atras</button> : null}
             <button onClick={() => {
                 if(isLastStage) {
                     dispatch(createEvents())
@@ -74,17 +76,19 @@ export function StageOne() {
 
 export function StageTwo() {
     const from = DateTime.fromSeconds(useSelector(selectFrom).value);
+    const to = DateTime.fromSeconds(useSelector(selectTo).value);
     const dispatch = useDispatch();
     const today = DateTime.utc();
 
     return (
         <div>
+
             <input type="date" value={from.toFormat('yyyy-MM-dd')} onChange={(ev) => {
                 const selectedDate = DateTime.fromFormat(ev.target.value, 'yyyy-MM-dd');
                 dispatch(setFrom(selectedDate.toSeconds()))
             }}/>
 
-            <input type="date" value={from.toFormat('yyyy-MM-dd')} onChange={(ev) => {
+            <input type="date" value={to.toFormat('yyyy-MM-dd')} onChange={(ev) => {
                 const selectedDate = DateTime.fromFormat(ev.target.value, 'yyyy-MM-dd');
                 dispatch(setTo(selectedDate.toSeconds()))
             }}/>
@@ -116,12 +120,14 @@ export function StageThree() {
 }
 
 export function SummaryStage() {
+    const name = useSelector(selectName).value;
+    const from = DateTime.fromSeconds(useSelector(selectFrom).value);
+    const to = DateTime.fromSeconds(useSelector(selectTo).value);
+
     return (
         <div>
-            Wizard <Link to="/profile">Profile</Link>
-            <div>
-
-            </div>
+            <span>Nombre del evento: {name}</span><br/>
+            <span>Fechas: {from.toFormat('yyyy-MM-dd')} - {to.toFormat('yyyy-MM-dd')}</span>
         </div>
     );
 }
