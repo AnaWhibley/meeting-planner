@@ -19,6 +19,7 @@ import {
 } from '../../../app/eventCreatorSlice';
 import {DateTime} from 'luxon';
 import { NavBar } from '../../../components/navigationBar/NavBar';
+import {RootState} from '../../../app/store';
 
 export function Form() {
     const stage = useSelector(selectStage);
@@ -120,6 +121,24 @@ export function StageThree() {
 }
 
 export function SummaryStage() {
+    const events = useSelector((state:RootState) => state.eventCreator.events);
+
+    const elements = events.map(e => {
+        return (
+            <div>
+                <span>Nombre del evento: {e.name.value}</span><br/>
+                <span>Fechas: {DateTime.fromSeconds(e.from.value).toFormat('yyyy-MM-dd')}</span>
+            </div>
+        );
+    });
+
+    return (
+        <div>
+            {elements}
+        </div>
+    );
+}
+export function SummaryStage2() {
     const name = useSelector(selectName).value;
     const from = DateTime.fromSeconds(useSelector(selectFrom).value);
     const to = DateTime.fromSeconds(useSelector(selectTo).value);

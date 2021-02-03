@@ -85,6 +85,10 @@ export const slice = createSlice({
             state.stage = 0;
             state.currentIndex = 0;
         },
+        setImportedData: (state,action) => {
+            state.events = action.payload;
+            state.stage = 3;
+        },
     },
 });
 
@@ -120,11 +124,19 @@ export const importJSON = (files: any) => (dispatch: Dispatch<any>, getState: ()
         console.log("!!!! e", e);
         const data = JSON.parse(e.target.result);
         console.log("!!!! data", data);
+        dispatch(setImportedData(data.events.map((d: any) => {
+            return {
+                ...d,
+                name: {value: d.name},
+                from: {value: d.from},
+                to: {value: d.from},
+            }
+        })));
     }
     fr.readAsText(files[0]);
 };
 
-export const { next, previous, setFrom, setTo, setName, createNew, complete, setParticipants, addTutor, removeTutor } = slice.actions;
+export const { next, previous, setFrom, setTo, setName, createNew, complete, setParticipants, addTutor, removeTutor, setImportedData } = slice.actions;
 
 export const selectStage = (state: RootState) => state.eventCreator.stage;
 export const selectParticipants = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].participants;
