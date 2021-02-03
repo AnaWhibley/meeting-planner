@@ -21,7 +21,7 @@ export function EventCreator() {
                 <Typography variant='h1' color={Color.PRIMARY} display={'block'} align={'center'}>¿Cómo quieres crear tu evento?</Typography>
                 <Typography variant='subtitle1' display={'block'} align={'center'}>Crear eventos nunca ha sido tan fácil.</Typography>
                 <div className={'EventCreatorButtonsContainer'}>
-                    <div className={'EventCreatorButtonWrapper EventCreatorLeft'}>
+                    <div className={'EventCreatorButtonWrapper EventCreatorButtonLeft'}>
                         <ActionButton color={Color.PRIMARY}
                                       onClick={() => history.push('/createEvents/form')}
                                       innerText={'Crear un evento manualmente'}
@@ -31,7 +31,8 @@ export function EventCreator() {
                         />
                         <img src={wizard} alt="Ilustración wizard"/>
                     </div>
-                    <div className={'EventCreatorButtonWrapper EventCreatorRight'}>
+                    <div className={'separator'}/>
+                    <div className={'EventCreatorButtonWrapper EventCreatorButtonRight'}>
                         <DragAndDrop validFileTypes={['application/json']} labelValidFileTypes={'El formato soportado es'}/>
                     </div>
                 </div>
