@@ -8,6 +8,7 @@ import { Color } from '../../styles/theme';
 import ActionButton, {ButtonVariant} from '../actionButton/ActionButton';
 import {connect} from 'react-redux';
 import {importJSON} from '../../app/eventCreatorSlice';
+import {RootState} from '../../app/store';
 
 interface DragAndDropState {
     validFiles: Array<File>;
@@ -19,7 +20,7 @@ interface DragAndDropState {
 interface DragAndDropProps {
     maxFiles?: number;
     validFileTypes?: Array<string>;
-    importJSON: (files: any) => void;
+    handleUpload: (files: any) => void;
     labelValidFileTypes?: string;
 }
 
@@ -78,7 +79,6 @@ class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
     private checkFile = (file: File) => {
         const validTypes = this.state.validFileTypes;
         return validTypes.indexOf(file.type) !== -1;
-        //return true;
     };
 
     private fileSize = (size: number) => {
@@ -100,12 +100,10 @@ class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
     };
 
     private uploadFiles = () => {
-        console.log('hello', this.props);
-        this.props.importJSON(this.state.validFiles);
+        this.props.handleUpload(this.state.validFiles);
     };
 
     render() {
-
         return (
             <div className="DragAndDropContainer">
                 <div className="DragAndDropRow">
@@ -170,14 +168,15 @@ class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
         );
     }
 }
-const mapStateToProps = () => {
+const mapStateToProps = (state: RootState) => {
     return {};
 };
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        importJSON: (files: any) => dispatch(importJSON(files))
+        handleUpload: (files: any) => dispatch(importJSON(files))
     }
 };
+
 export default connect(mapStateToProps, mapDispatchToProps)(DragAndDrop);
 
