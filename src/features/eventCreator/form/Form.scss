@@ -1,0 +1,22 @@
+@import '../../../styles/variables.scss';
+
+.FormContainer {
+  margin-top: 4em;
+
+  .TitleContainer {
+    margin: 0 15em;
+
+    .Stepper {
+      margin-top: 3em;
+
+      svg {
+        height: 3em;
+        width: 3em;
+      }
+    }
+  }
+}
+
+.MuiStepConnector-line {
+  border-color: $primary;
+}

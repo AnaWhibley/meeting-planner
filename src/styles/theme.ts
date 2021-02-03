@@ -27,6 +27,7 @@ export const theme = createMuiTheme({
         h3: {
             //regular
             fontWeight: 400,
+            fontSize: 18
         },
         h4: {
             //light
