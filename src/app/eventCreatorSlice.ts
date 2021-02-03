@@ -13,14 +13,11 @@ enum ParticipantType {
     VOCAL_TS = 'Vocal Tribunal Suplente',
     TUTOR = 'Tutor'
 }
-
-const createDefaultState = () => {
+export const DATE_FORMAT = 'dd-MM-yyyy';
+const createDefaultEvent = () => {
     return {
         id: Math.random(),
-        groupName: 'default',
         name: createFieldState(''),
-        from: createFieldState(DateTime.utc().toSeconds()),
-        to: createFieldState(DateTime.utc().toSeconds()),
         participants: Object.keys(ParticipantType).map((k: string) => ( { email: createFieldState(''), tag: (ParticipantType as any)[k] }))
     };
 };
@@ -35,7 +32,10 @@ export const slice = createSlice({
     initialState: {
         stage: 0,
         currentIndex: 0,
-        events: [createDefaultState()]
+        groupName: '',
+        from: createFieldState(DateTime.utc().toFormat(DATE_FORMAT)),
+        to: createFieldState(DateTime.utc().toFormat(DATE_FORMAT)),
+        events: [createDefaultEvent()]
     },
     reducers: {
         next: state => {
@@ -53,10 +53,10 @@ export const slice = createSlice({
             }
         },
         setFrom: (state, action) => {
-            state.events[state.currentIndex].from.value = action.payload;
+            state.from.value = action.payload;
         },
         setTo: (state, action) => {
-            state.events[state.currentIndex].to.value = action.payload;
+            state.to.value = action.payload;
         },
         setParticipants: (state, action) => {
             const tag = action.payload.tag;
@@ -76,12 +76,12 @@ export const slice = createSlice({
             state.events[state.currentIndex].participants.pop();
         },
         createNew: (state) => {
-            state.events = [...state.events, createDefaultState()];
+            state.events = [...state.events, createDefaultEvent()];
             state.currentIndex = state.currentIndex + 1;
             state.stage = 0;
         },
         complete: (state) => {
-            state.events = [createDefaultState()];
+            state.events = [createDefaultEvent()];
             state.stage = 0;
             state.currentIndex = 0;
         },
@@ -128,8 +128,6 @@ export const importJSON = (files: any) => (dispatch: Dispatch<any>, getState: ()
             return {
                 ...d,
                 name: {value: d.name},
-                from: {value: d.from},
-                to: {value: d.from},
             }
         })));
     }
@@ -141,8 +139,8 @@ export const { next, previous, setFrom, setTo, setName, createNew, complete, set
 export const selectStage = (state: RootState) => state.eventCreator.stage;
 export const selectParticipants = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].participants;
 export const selectName = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].name;
-export const selectFrom = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].from;
-export const selectTo = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].to;
+export const selectFrom = (state: RootState) => state.eventCreator.from;
+export const selectTo = (state: RootState) => state.eventCreator.to;
 export const selectIsLastStage = (state: RootState) => state.eventCreator.stage === 3;
 export const selectIsFirstStage = (state: RootState) => state.eventCreator.stage === 0;
 export const selectTutorNumber = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].participants.reduce((acc, current) => {
@@ -157,7 +155,6 @@ const mapEvents = (events: Array<any>) => {
             id: event.id,
             groupName: event.groupName,
             name: event.name.value,
-            from: event.from.value
         };
     });
 };
@@ -165,7 +162,9 @@ const mapEvents = (events: Array<any>) => {
 const mapStateToJSON = (state: RootState) => {
     return {
         user: state.login.username,
-        events: mapEvents(state.eventCreator.events)
+        events: mapEvents(state.eventCreator.events),
+        from: state.eventCreator.from.value,
+        to: state.eventCreator.to.value
     };
 };
 

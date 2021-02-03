@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
     addTutor,
     createEvents,
-    createNew, exportJSON,
+    createNew, DATE_FORMAT, exportJSON,
     next,
     previous,
     removeTutor,
@@ -76,8 +76,8 @@ export function StageOne() {
 }
 
 export function StageTwo() {
-    const from = DateTime.fromSeconds(useSelector(selectFrom).value);
-    const to = DateTime.fromSeconds(useSelector(selectTo).value);
+    const from = DateTime.fromFormat(useSelector(selectFrom).value, DATE_FORMAT);/*19-12-2012*/
+    const to = DateTime.fromFormat(useSelector(selectTo).value, DATE_FORMAT);
     const dispatch = useDispatch();
     const today = DateTime.utc();
 
@@ -86,12 +86,12 @@ export function StageTwo() {
 
             <input type="date" value={from.toFormat('yyyy-MM-dd')} onChange={(ev) => {
                 const selectedDate = DateTime.fromFormat(ev.target.value, 'yyyy-MM-dd');
-                dispatch(setFrom(selectedDate.toSeconds()))
+                dispatch(setFrom(selectedDate.toFormat(DATE_FORMAT)))
             }}/>
 
             <input type="date" value={to.toFormat('yyyy-MM-dd')} onChange={(ev) => {
                 const selectedDate = DateTime.fromFormat(ev.target.value, 'yyyy-MM-dd');
-                dispatch(setTo(selectedDate.toSeconds()))
+                dispatch(setTo(selectedDate.toFormat(DATE_FORMAT)))
             }}/>
 
             <div>{from.diff(today).milliseconds > 0 ? 'Is after' : 'Not is after'}</div>
@@ -122,31 +122,20 @@ export function StageThree() {
 
 export function SummaryStage() {
     const events = useSelector((state:RootState) => state.eventCreator.events);
+    const from = useSelector(selectFrom).value;
 
     const elements = events.map(e => {
         return (
             <div>
                 <span>Nombre del evento: {e.name.value}</span><br/>
-                <span>Fechas: {DateTime.fromSeconds(e.from.value).toFormat('yyyy-MM-dd')}</span>
             </div>
         );
     });
 
     return (
         <div>
+            <span>Fechas: {from}</span>
             {elements}
-        </div>
-    );
-}
-export function SummaryStage2() {
-    const name = useSelector(selectName).value;
-    const from = DateTime.fromSeconds(useSelector(selectFrom).value);
-    const to = DateTime.fromSeconds(useSelector(selectTo).value);
-
-    return (
-        <div>
-            <span>Nombre del evento: {name}</span><br/>
-            <span>Fechas: {from.toFormat('yyyy-MM-dd')} - {to.toFormat('yyyy-MM-dd')}</span>
         </div>
     );
 }
