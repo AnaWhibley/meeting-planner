@@ -6,7 +6,7 @@
   align-items: center;
   width: 500px;
 
-  .DragAndDropRow {
+  .Row {
     width: auto;
   }
 
@@ -14,7 +14,7 @@
     border: 1px dashed rgba(188, 188, 188, 0.36);
   }
 
-  .DragAndDropBox {
+  .Box {
     border: 2px solid $primaryLight;
     width: 500px;
     height: 350px;
@@ -36,7 +36,7 @@
       margin-top: 40px;
     }
 
-    .DragAndDropFileInput {
+    .FileInput {
       opacity: 0;
       position: absolute;
       width: 500px;
@@ -47,21 +47,21 @@
     }
   }
 
-  .DragAndDropInvalidFiles, .DragAndDropValidFiles, .DragAndDropFilesTitle {
+  .InvalidFiles, .ValidFiles, .FilesTitle {
     text-align: center;
   }
 
-  .DragAndDropInvalidFiles > *, .DragAndDropValidFiles > * {
+  .InvalidFiles > *, .ValidFiles > * {
     margin-top: 5px;
     margin-right: 10px;
   }
 
-  .DragAndDropRemoveFileIcon {
+  .RemoveFileIcon {
     cursor: pointer;
     color: red;
   }
 
-  .DragAndDropUploadButton {
+  .UploadButton {
     margin-top: 10px;
     width: 100%;
   }

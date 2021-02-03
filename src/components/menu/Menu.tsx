@@ -4,7 +4,6 @@ import MaterialMenu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {ListItemIcon, Typography} from '@material-ui/core';
 import {ReactComponent as MenuIcon} from '../../assets/icons/evericons/menu.svg';
-import './Menu.scss';
 import '../../styles/common.scss';
 
 interface MenuProps {
