@@ -40,9 +40,9 @@ export function Login() {
 
     return(
         <div className={'LoginFormContainer'}>
-            <div className={'LoginForm'}>
+            <div className={'Form'}>
                 <img src={logo}
-                     className={'LoginLogo'}
+                     className={'Logo'}
                      alt="Logo MeetingPlanner"/>
                 <TextInput
                     label="Nombre de usuario"
@@ -50,7 +50,7 @@ export function Login() {
                     value={username}
                     icon={<AtSignIcon/>}
                     onChange={(value: string) => dispatch(setUsername(value))}
-                    containerClassName={'LoginInputContainer'}
+                    containerClassName={'InputContainer'}
                 />
                 <TextInput
                     label="Contraseña"
@@ -59,13 +59,15 @@ export function Login() {
                     icon={<KeyIcon/>}
                     value={password}
                     onChange={value => dispatch(setPassword(value))}
-                    containerClassName={'LoginInputContainer'}
+                    containerClassName={'InputContainer'}
                 />
                 { showErrorMessage ?
                     <Typography variant="subtitle1"
                                 display="inline"
-                                className={"LoginError"}
-                                color={"error"}>Nombre de usuario o contraseña incorrecto.</Typography>
+                                className={"ErrorMessage"}
+                                color={"error"}>
+                        Nombre de usuario o contraseña incorrecto.
+                    </Typography>
                     : null
                 }
                 <ActionButton
@@ -73,10 +75,10 @@ export function Login() {
                     color={Color.PRIMARY}
                     variant={ButtonVariant.CONTAINED}
                     onClick={() => dispatch(login())}
-                    className={'LoginButton'}
+                    className={'Button'}
                 />
                 <Typography variant="subtitle1"
-                            className={'LoginLink'}
+                            className={'Link'}
                             display={'inline'}>¿Olvidaste tu contraseña?</Typography>
             </div>
         </div>

@@ -42,8 +42,8 @@ export function NavBar() {
 
     return (
         <div className={'NavBarContainer'}>
-            <img src={logo} alt="Logo MeetingPlanner" className={'NavBarLogo'}/>
-            <Menu menuItems={menuItems} className={'NavBarMenu'}/>
+            <img src={logo} alt="Logo MeetingPlanner" className={'Logo'}/>
+            <Menu menuItems={menuItems} className={'Menu'}/>
         </div>
     );
 

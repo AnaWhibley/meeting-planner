@@ -18,22 +18,32 @@ export function EventCreator() {
         <>
             <NavBar/>
             <div className={'EventCreatorContainer'}>
-                <Typography variant='h1' color={Color.PRIMARY} display={'block'} align={'center'}>¿Cómo quieres crear tu evento?</Typography>
-                <Typography variant='subtitle1' display={'block'} align={'center'}>Crear eventos nunca ha sido tan fácil.</Typography>
-                <div className={'EventCreatorButtonsContainer'}>
-                    <div className={'EventCreatorButtonWrapper EventCreatorButtonLeft'}>
+                <Typography variant='h1'
+                            color={Color.PRIMARY}
+                            display={'block'}
+                            align={'center'}>
+                    ¿Cómo quieres crear tu evento?
+                </Typography>
+                <Typography variant='subtitle1'
+                            display={'block'}
+                            align={'center'}>
+                    Crear eventos nunca ha sido tan fácil.
+                </Typography>
+                <div className={'ButtonsContainer'}>
+                    <div className={'Button ButtonLeft'}>
                         <ActionButton color={Color.PRIMARY}
                                       onClick={() => history.push('/createEvents/form')}
                                       innerText={'Crear un evento manualmente'}
                                       variant={ButtonVariant.CONTAINED}
-                                      labelClassName={'EventCreatorButton'}
+                                      labelClassName={'Label'}
                                       icon={<CalendarCreateIcon className={'FillWhite'}/>}
                         />
                         <img src={wizard} alt="Ilustración wizard"/>
                     </div>
-                    <div className={'separator'}/>
-                    <div className={'EventCreatorButtonWrapper EventCreatorButtonRight'}>
-                        <DragAndDrop validFileTypes={['application/json']} labelValidFileTypes={'El formato soportado es'}/>
+                    <div className={'Separator'}/>
+                    <div className={'Button'}>
+                        <DragAndDrop validFileTypes={['application/json']}
+                                     labelValidFileTypes={'El formato soportado es'}/>
                     </div>
                 </div>
             </div>
