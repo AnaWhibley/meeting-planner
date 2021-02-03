@@ -17,6 +17,8 @@ import {StageOne} from './StageOne';
 import { StageTwo } from './StageTwo';
 import {StageThree} from './StageThree';
 import { SummaryStage } from './SummaryStage';
+import {Step, StepLabel, Stepper, Typography} from '@material-ui/core';
+import './Form.scss'
 
 export function Form() {
     const stage = useSelector(selectStage);
@@ -44,24 +46,44 @@ export function Form() {
     }
 
     return (
-        <div>
-            <div>
-                <NavBar/>
+        <>
+            <NavBar/>
+            <div className={'FormContainer'}>
+                <div className={'TitleContainer'}>
+                    <Typography variant='h1'
+                                color={Color.PRIMARY}
+                                display={'block'}
+
+                                align={'center'}>
+                        Simplemente sigue los pasos
+                    </Typography>
+                    <Stepper activeStep={stage} className={'Stepper'}>
+                        {[1,2,3,4].map((label, index) => {
+                            const stepProps = {};
+                            const labelProps = {};
+                            return (
+                                <Step key={index} {...stepProps}>
+                                    <StepLabel {...labelProps}/>
+                                </Step>
+                            );
+                        })}
+                    </Stepper>
+                </div>
                 {body}
+
+                {!isFirstStage ? <ActionButton onClick={() => dispatch(previous())} innerText={'Atrás'} color={Color.PRIMARY} variant={ButtonVariant.OUTLINED}/> : null}
+
+                <ActionButton onClick={() => {
+                    if(isLastStage) {
+                        dispatch(createEvents())
+                    }else{
+                        dispatch(next())
+                    }
+                }} innerText={isLastStage ? 'Confirmar' : 'Siguiente'} variant={ButtonVariant.CONTAINED} color={Color.PRIMARY}/>
+
+                {isLastStage ?  <ActionButton onClick={() => dispatch(createNew())} color={Color.PRIMARY} innerText={'Nuevo'} variant={ButtonVariant.CONTAINED}/>: null}
+                {isLastStage ?  <ActionButton onClick={() => dispatch(exportJSON())} color={Color.PRIMARY} innerText={'Exportar'} variant={ButtonVariant.CONTAINED}/> : null}
             </div>
-
-            {!isFirstStage ? <ActionButton onClick={() => dispatch(previous())} innerText={'Atrás'} color={Color.PRIMARY} variant={ButtonVariant.OUTLINED}/> : null}
-
-            <ActionButton onClick={() => {
-                if(isLastStage) {
-                    dispatch(createEvents())
-                }else{
-                    dispatch(next())
-                }
-            }} innerText={isLastStage ? 'Confirmar' : 'Siguiente'} variant={ButtonVariant.CONTAINED} color={Color.PRIMARY}/>
-
-            {isLastStage ?  <ActionButton onClick={() => dispatch(createNew())} color={Color.PRIMARY} innerText={'Nuevo'} variant={ButtonVariant.CONTAINED}/>: null}
-            {isLastStage ?  <ActionButton onClick={() => dispatch(exportJSON())} color={Color.PRIMARY} innerText={'Exportar'} variant={ButtonVariant.CONTAINED}/> : null}
-        </div>
+        </>
     );
 }

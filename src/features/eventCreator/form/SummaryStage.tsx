@@ -9,7 +9,7 @@ export function SummaryStage() {
 
     const elements = events.map(e => {
         return (
-            <div>
+            <div key={e.id}>
                 <span>Nombre del evento: {e.name.value}</span><br/>
             </div>
         );
