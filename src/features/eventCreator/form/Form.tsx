@@ -53,7 +53,6 @@ export function Form() {
                     <Typography variant='h1'
                                 color={Color.PRIMARY}
                                 display={'block'}
-
                                 align={'center'}>
                         Simplemente sigue los pasos
                     </Typography>
@@ -70,19 +69,20 @@ export function Form() {
                     </Stepper>
                 </div>
                 {body}
+                <div className={'Buttons'}>
+                    {!isFirstStage ? <ActionButton onClick={() => dispatch(previous())} innerText={'Atrás'} color={Color.PRIMARY} variant={ButtonVariant.OUTLINED}/> : null}
 
-                {!isFirstStage ? <ActionButton onClick={() => dispatch(previous())} innerText={'Atrás'} color={Color.PRIMARY} variant={ButtonVariant.OUTLINED}/> : null}
+                    <ActionButton onClick={() => {
+                        if(isLastStage) {
+                            dispatch(createEvents())
+                        }else{
+                            dispatch(next())
+                        }
+                    }} innerText={isLastStage ? 'Confirmar' : 'Siguiente'} variant={ButtonVariant.CONTAINED} color={Color.PRIMARY}/>
 
-                <ActionButton onClick={() => {
-                    if(isLastStage) {
-                        dispatch(createEvents())
-                    }else{
-                        dispatch(next())
-                    }
-                }} innerText={isLastStage ? 'Confirmar' : 'Siguiente'} variant={ButtonVariant.CONTAINED} color={Color.PRIMARY}/>
-
-                {isLastStage ?  <ActionButton onClick={() => dispatch(createNew())} color={Color.PRIMARY} innerText={'Nuevo'} variant={ButtonVariant.CONTAINED}/>: null}
-                {isLastStage ?  <ActionButton onClick={() => dispatch(exportJSON())} color={Color.PRIMARY} innerText={'Exportar'} variant={ButtonVariant.CONTAINED}/> : null}
+                    {isLastStage ?  <ActionButton onClick={() => dispatch(createNew())} color={Color.PRIMARY} innerText={'Nuevo'} variant={ButtonVariant.CONTAINED}/>: null}
+                    {isLastStage ?  <ActionButton onClick={() => dispatch(exportJSON())} color={Color.PRIMARY} innerText={'Exportar'} variant={ButtonVariant.CONTAINED}/> : null}
+                </div>
             </div>
         </>
     );

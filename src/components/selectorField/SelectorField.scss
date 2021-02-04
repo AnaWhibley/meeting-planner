@@ -1,0 +1,39 @@
+@import "../../styles/variables";
+.groupStyles {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.SelectorFieldWrapper {
+  display: flex;
+  flex-direction: column;
+
+  .SelectorFieldLabel {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.54);
+  }
+
+  &:focus-within {
+    .SelectorFieldLabel {
+      color: $primary;
+    }
+  }
+}
+
+.SelectorFieldErrorMessage {
+  margin: 3px 0 0 0;
+  font-size: 0.75rem;
+  text-align: left;
+  font-weight: 400;
+  line-height: 1.66;
+  color:#f44336;
+}
+
+.SelectorFieldInputError > div:first-child {
+  border: 2px solid red;
+  border-radius: 7px;
+}
+.SelectorFieldWrapper .SelectorFieldLabelError {
+  color:#f44336;
+}
