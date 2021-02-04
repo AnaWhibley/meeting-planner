@@ -69,6 +69,9 @@ export const slice = createSlice({
                 }
             };
         },
+        setGroupName: (state, action) => {
+            state.groupName = action.payload;
+        },
         addTutor: (state) => {
             state.events[state.currentIndex].participants.push({email: createFieldState(''), tag: 'Tutor'});
         },
@@ -91,6 +94,8 @@ export const slice = createSlice({
         },
     },
 });
+
+export const { next, previous, setFrom, setTo, setName, createNew, complete, setParticipants, addTutor, removeTutor, setImportedData, setGroupName } = slice.actions;
 
 export const createEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     dispatch(requesting());
@@ -133,8 +138,6 @@ export const importJSON = (files: any) => (dispatch: Dispatch<any>, getState: ()
     }
     fr.readAsText(files[0]);
 };
-
-export const { next, previous, setFrom, setTo, setName, createNew, complete, setParticipants, addTutor, removeTutor, setImportedData } = slice.actions;
 
 export const selectStage = (state: RootState) => state.eventCreator.stage;
 export const selectParticipants = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].participants;
