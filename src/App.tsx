@@ -14,8 +14,6 @@ import {ErrorPage} from './components/errorPage/errorPage';
 import { EventCreator } from './features/eventCreator/EventCreator';
 import './styles/common.scss';
 import {Form} from './features/eventCreator/form/Form';
-import LuxonUtils from '@date-io/luxon';
-import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 
 function App() {
 
@@ -38,25 +36,23 @@ function App() {
 
     return (
         <div className={'GeneralContainer'}>
-            <MuiPickersUtilsProvider utils={LuxonUtils}>
-                <ThemeProvider theme={theme}>
-                    <Router>
-                        <Switch>
-                            <Route path="/login">
-                                <Login />
-                            </Route>
-                            <Route path="/errorPage">
-                                <ErrorPage />
-                            </Route>
-                            <PrivateRoute path='/dashboard' component={<Dashboard/>} admin={true}/>
-                            <PrivateRoute path='/createEvents/form' component={<Form/>} admin={true}/>
-                            <PrivateRoute path='/createEvents' component={<EventCreator/>} admin={true}/>
-                            <PrivateRoute path='/profile' component={<Profile/>} />
-                            <PrivateRoute path='/' component={<Calendar/>}/>
-                        </Switch>
-                    </Router>
-                </ThemeProvider>
-            </MuiPickersUtilsProvider>
+            <ThemeProvider theme={theme}>
+                <Router>
+                    <Switch>
+                        <Route path="/login">
+                            <Login />
+                        </Route>
+                        <Route path="/errorPage">
+                            <ErrorPage />
+                        </Route>
+                        <PrivateRoute path='/dashboard' component={<Dashboard/>} admin={true}/>
+                        <PrivateRoute path='/createEvents/form' component={<Form/>} admin={true}/>
+                        <PrivateRoute path='/createEvents' component={<EventCreator/>} admin={true}/>
+                        <PrivateRoute path='/profile' component={<Profile/>} />
+                        <PrivateRoute path='/' component={<Calendar/>}/>
+                    </Switch>
+                </Router>
+            </ThemeProvider>
         </div>
     );
 
