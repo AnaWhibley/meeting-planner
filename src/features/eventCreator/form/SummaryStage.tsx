@@ -16,7 +16,7 @@ export function SummaryStage() {
     });
 
     return (
-        <div>
+        <div className={'Body'}>
             <span>Fechas: {from}</span>
             {elements}
         </div>
