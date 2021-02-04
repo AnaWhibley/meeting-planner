@@ -22,21 +22,44 @@ const createDefaultEvent = () => {
     };
 };
 
-const createFieldState = (initialValue: any) => ({
+const createFieldState = (initialValue: any): FieldState<any> => ({
     value: initialValue,
     errorMessage: '',
 });
+
+interface FieldState<T> {
+    value: T;
+    errorMessage: string;
+}
+
+interface EventCreatorState {
+    stage: number;
+    currentIndex: number;
+    groupName?: {
+        label: string;
+        value: string;
+    };
+    from: FieldState<string>;
+    to: FieldState<string>;
+    events: Array<{
+        id: number;
+        name: FieldState<string>;
+        participants: Array<{
+            email: FieldState<string>;
+            tag: string;
+        }>;
+    }>;
+}
 
 export const slice = createSlice({
     name: 'eventCreator',
     initialState: {
         stage: 0,
         currentIndex: 0,
-        groupName: '',
         from: createFieldState(DateTime.utc().toFormat(DATE_FORMAT)),
         to: createFieldState(DateTime.utc().toFormat(DATE_FORMAT)),
         events: [createDefaultEvent()]
-    },
+    } as EventCreatorState,
     reducers: {
         next: state => {
             state.stage += 1;
@@ -126,9 +149,7 @@ export const importJSON = (files: any) => (dispatch: Dispatch<any>, getState: ()
     console.log(files);
     if(files.length <= 0) return false;
     fr.onload = (e: any) => {
-        console.log("!!!! e", e);
         const data = JSON.parse(e.target.result);
-        console.log("!!!! data", data);
         dispatch(setImportedData(data.events.map((d: any) => {
             return {
                 ...d,
@@ -140,6 +161,7 @@ export const importJSON = (files: any) => (dispatch: Dispatch<any>, getState: ()
 };
 
 export const selectStage = (state: RootState) => state.eventCreator.stage;
+export const selectGroupName = (state: RootState) => state.eventCreator.groupName;
 export const selectParticipants = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].participants;
 export const selectName = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].name;
 export const selectFrom = (state: RootState) => state.eventCreator.from;

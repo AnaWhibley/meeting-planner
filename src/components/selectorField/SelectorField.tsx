@@ -13,6 +13,7 @@ interface SelectorFieldProps {
     isDisabled?: boolean;
     error?: boolean;
     helperText?: string;
+    className?: string;
 }
 const animatedComponents = makeAnimated();
 
@@ -34,7 +35,7 @@ export default class SelectorField extends Component<SelectorFieldProps>{
                     'SelectorFieldLabelError': showError
                 })}>{this.props.label}</label>
                 <Select
-                    className={cn('SelectorFieldInput', {
+                    className={cn('SelectorFieldInput', this.props.className, {
                         'SelectorFieldInputError': showError
                     })}
                     options={this.props.items}
