@@ -12,7 +12,7 @@ interface TextInputProps {
     type?: string;
     fullWidth?: boolean;
     onChange: (value: string) => void;
-    value: string;
+    value?: string;
 }
 
 export default class TextInput extends Component<TextInputProps>{
@@ -24,6 +24,7 @@ export default class TextInput extends Component<TextInputProps>{
                        type={type}
                        fullWidth={fullWidth}
                        value={value}
+                       InputProps={{ style: { fontSize: 16 } }}
                        onChange={(ev) => onChange(ev.target.value)}
                        className={className}
             />
