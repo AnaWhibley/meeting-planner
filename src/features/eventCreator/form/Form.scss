@@ -7,8 +7,8 @@
     margin-top: 3em;
 
     svg {
-      height: 3em;
-      width: 3em;
+      height: 2em;
+      width: 2em;
     }
   }
 
@@ -16,10 +16,18 @@
     margin-left: 2em;
   }
 
+  .RadioLabel {
+    font-size: 16px;
+  }
+
   .Body {
     .Question {
       margin-top: 2em;
       margin-bottom: 3em;
+
+      .Input {
+        margin-top: 1em;
+      }
     }
   }
 
@@ -27,7 +35,6 @@
     float: right;
   }
 }
-
 
 .MuiStepConnector-line {
   border-color: $primary;

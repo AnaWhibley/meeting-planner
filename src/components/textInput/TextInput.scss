@@ -5,8 +5,15 @@
   font-size: 16px !important;
 }
 
+.MuiInputBase-input {
+  font-size: 16px !important;
+}
+
 .TextInputIcon {
   fill: $primary;
+  svg {
+    vertical-align: super;
+  }
 }
 
 .MuiInputBase-input::placeholder, .MuiInput-input::placeholder {
