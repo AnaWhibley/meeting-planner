@@ -18,12 +18,12 @@ export function StageTwo() {
                             display={'block'}>¿Entre qué fechas se podrá desarrollar el evento o el grupo de eventos?
                 </Typography>
                 <DatePicker value={from}
-                            className={'Input'}
+                            className={'Input DatePicker'}
                             label={'Desde'}
                             onChange={(date: DateTime) => {dispatch(setFrom(date.toFormat(DATE_FORMAT)))}}
                 />
                 <DatePicker value={to}
-                            className={'Input'}
+                            className={'Input DatePicker'}
                             label={'Hasta'}
                             onChange={(date: DateTime) => {dispatch(setTo(date.toFormat(DATE_FORMAT)))}}
                 />
