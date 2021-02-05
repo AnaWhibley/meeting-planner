@@ -18,15 +18,26 @@ export function StageThree() {
     const participants = useSelector(selectParticipants).map((p, index) => {
         return (
             <div key={index} className={'Question'}>
-                <Typography color={'primary'} display={'block'} variant={'h3'}>{p.tag}</Typography>
-                <TextInput fullWidth={true} placeholder={p.tag} value={p.email.value} onChange={(value) => dispatch(setParticipants({value: value, tag: p.tag}))}/>
+                <TextInput fullWidth={true} placeholder={p.tag} value={p.email.value} onChange={(value) => dispatch(setParticipants({value: value, index}))}/>
             </div>
         );
     });
 
     return (
         <div className={'Body'}>
-            {participants}
+            <div className={'Question'}>
+                <Typography color={'primary'} display={'block'} variant={'h3'}>Tribunal Titular</Typography>
+                {participants.slice(0,3)}
+            </div>
+            <div className={'Question'}>
+                <Typography color={'primary'} display={'block'} variant={'h3'}>Tribunal Suplente</Typography>
+                {participants.slice(3,6)}
+            </div>
+            <div className={'Question'}>
+                <Typography color={'primary'} display={'block'} variant={'h3'}>Tutor/es</Typography>
+                {participants.slice(6)}
+            </div>
+            {/*1919 x 968*/}
             {tutorNumber === 2 ?
                 <ActionButton onClick={() => dispatch(removeTutor())}
                               innerText={'Eliminar tutor'}

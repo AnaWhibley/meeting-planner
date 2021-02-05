@@ -74,6 +74,7 @@ export function Form() {
                         <ActionButton onClick={() => dispatch(previous())}
                                       innerText={'Atrás'}
                                       color={Color.PRIMARY}
+                                      className={'Button'}
                                       variant={ButtonVariant.OUTLINED}/>
                         : null}
 
@@ -83,10 +84,26 @@ export function Form() {
                         }else{
                             dispatch(next())
                         }
-                    }} innerText={isLastStage ? 'Confirmar' : 'Siguiente'} variant={ButtonVariant.CONTAINED} color={Color.PRIMARY}/>
+                    }} innerText={isLastStage ? 'Confirmar' : 'Siguiente'}
+                                  className={'Button'}
+                                  variant={ButtonVariant.CONTAINED}
+                                  color={Color.PRIMARY}
+                    />
 
-                    {isLastStage ?  <ActionButton onClick={() => dispatch(createNew())} color={Color.PRIMARY} innerText={'Nuevo'} variant={ButtonVariant.CONTAINED}/>: null}
-                    {isLastStage ?  <ActionButton onClick={() => dispatch(exportJSON())} color={Color.PRIMARY} innerText={'Exportar'} variant={ButtonVariant.CONTAINED}/> : null}
+                    {isLastStage ?
+                        <ActionButton onClick={() => dispatch(createNew())}
+                                      className={'Button'}
+                                      color={Color.PRIMARY}
+                                      innerText={'Nuevo'}
+                                      variant={ButtonVariant.CONTAINED}/>
+                        : null}
+                    {isLastStage ?
+                        <ActionButton onClick={() => dispatch(exportJSON())}
+                                      className={'Button'}
+                                      color={Color.PRIMARY}
+                                      innerText={'Exportar'}
+                                      variant={ButtonVariant.CONTAINED}/>
+                        : null}
                 </div>
             </div>
         </>
