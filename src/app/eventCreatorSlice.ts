@@ -112,6 +112,7 @@ export const slice = createSlice({
         },
         complete: (state) => {
             state.events = [createDefaultEvent()];
+            state.groupName = undefined;
             state.stage = 0;
             state.currentIndex = 0;
         },
