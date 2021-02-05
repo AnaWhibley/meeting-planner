@@ -12,8 +12,12 @@
     }
   }
 
-  .Body, .Buttons {
+  .Body, .ButtonsContainer {
     margin-left: 2em;
+  }
+
+  .ButtonsContainer {
+    float: right;
   }
 
   .RadioLabel {
@@ -32,11 +36,13 @@
       .DatePicker {
         margin-right: 2.5em;
       }
-    }
-  }
 
-  .Buttons {
-    float: right;
+      .MinutesLabel {
+        display: inline-block;
+        margin-top: 20px;
+        margin-left: 10px;
+      }
+    }
   }
 }
 

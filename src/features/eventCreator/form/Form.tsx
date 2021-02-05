@@ -69,8 +69,13 @@ export function Form() {
                     </Stepper>
                 </div>
                 {body}
-                <div className={'Buttons'}>
-                    {!isFirstStage ? <ActionButton onClick={() => dispatch(previous())} innerText={'Atrás'} color={Color.PRIMARY} variant={ButtonVariant.OUTLINED}/> : null}
+                <div className={'ButtonsContainer'}>
+                    {!isFirstStage ?
+                        <ActionButton onClick={() => dispatch(previous())}
+                                      innerText={'Atrás'}
+                                      color={Color.PRIMARY}
+                                      variant={ButtonVariant.OUTLINED}/>
+                        : null}
 
                     <ActionButton onClick={() => {
                         if(isLastStage) {
