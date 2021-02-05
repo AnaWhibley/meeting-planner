@@ -1,13 +1,15 @@
 import {DateTime} from 'luxon';
 import {useDispatch, useSelector} from 'react-redux';
-import {DATE_FORMAT, selectFrom, selectTo, setFrom, setTo} from '../../../app/eventCreatorSlice';
+import {DATE_FORMAT, selectDuration, selectFrom, selectTo, setDuration, setFrom, setTo} from '../../../app/eventCreatorSlice';
 import React from 'react';
 import {Typography} from '@material-ui/core';
 import {DatePicker} from '../../../components/datePicker/DatePicker';
+import {DurationPicker} from '../../../components/durationPicker/DurationPicker';
 
 export function StageTwo() {
     const from = DateTime.fromFormat(useSelector(selectFrom).value, DATE_FORMAT);
     const to = DateTime.fromFormat(useSelector(selectTo).value, DATE_FORMAT);
+    const duration = useSelector(selectDuration).value;
     const dispatch = useDispatch();
 
     return (
@@ -15,7 +17,8 @@ export function StageTwo() {
             <div className={'Question'}>
                 <Typography color={'primary'}
                             variant={'h3'}
-                            display={'block'}>¿Entre qué fechas se podrá desarrollar el evento o el grupo de eventos?
+                            display={'block'}>
+                    ¿Entre qué fechas se podrá desarrollar el evento o el grupo de eventos?
                 </Typography>
                 <DatePicker value={from}
                             className={'Input DatePicker'}
@@ -27,7 +30,20 @@ export function StageTwo() {
                             label={'Hasta'}
                             onChange={(date: DateTime) => {dispatch(setTo(date.toFormat(DATE_FORMAT)))}}
                 />
-
+            </div>
+            <div className={'Question'}>
+                <Typography color={'primary'}
+                            variant={'h3'}
+                            display={'block'}>
+                    ¿Cuánto durará este evento?
+                </Typography>
+                <DurationPicker value={duration} className={'Input'} onChange={duration => dispatch(setDuration(duration))}/>
+                <Typography color={'textSecondary'}
+                            variant={'h3'}
+                            className={'MinutesLabel'}
+                >
+                    minutos
+                </Typography>
             </div>
         </div>
     );

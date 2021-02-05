@@ -18,7 +18,8 @@ const createDefaultEvent = () => {
     return {
         id: Math.random(),
         name: createFieldState(''),
-        participants: Object.keys(ParticipantType).map((k: string) => ( { email: createFieldState(''), tag: (ParticipantType as any)[k] }))
+        participants: Object.keys(ParticipantType).map((k: string) => ( { email: createFieldState(''), tag: (ParticipantType as any)[k] })),
+        duration: createFieldState(60)
     };
 };
 
@@ -48,6 +49,7 @@ interface EventCreatorState {
             email: FieldState<string>;
             tag: string;
         }>;
+        duration: FieldState<number>;
     }>;
 }
 
@@ -74,6 +76,9 @@ export const slice = createSlice({
             } else {
                 state.events[state.currentIndex].name.errorMessage = ''
             }
+        },
+        setDuration: (state, action) => {
+            state.events[state.currentIndex].duration.value = action.payload;
         },
         setFrom: (state, action) => {
             state.from.value = action.payload;
@@ -118,7 +123,7 @@ export const slice = createSlice({
     },
 });
 
-export const { next, previous, setFrom, setTo, setName, createNew, complete, setParticipants, addTutor, removeTutor, setImportedData, setGroupName } = slice.actions;
+export const { next, previous, setFrom, setTo, setName, createNew, complete, setParticipants, addTutor, removeTutor, setImportedData, setGroupName, setDuration } = slice.actions;
 
 export const createEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     dispatch(requesting());
@@ -164,6 +169,7 @@ export const selectStage = (state: RootState) => state.eventCreator.stage;
 export const selectGroupName = (state: RootState) => state.eventCreator.groupName;
 export const selectParticipants = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].participants;
 export const selectName = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].name;
+export const selectDuration = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].duration;
 export const selectFrom = (state: RootState) => state.eventCreator.from;
 export const selectTo = (state: RootState) => state.eventCreator.to;
 export const selectIsLastStage = (state: RootState) => state.eventCreator.stage === 3;
