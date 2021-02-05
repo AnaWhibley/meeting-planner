@@ -11,14 +11,17 @@ interface DatePickerProps {
     value: DateTime;
     onChange: (date: DateTime) => void
     className?: string;
+    label?: string;
 }
 
 export function DatePicker(props: DatePickerProps){
 
-    const {value, onChange, className} = props;
+    const {value, onChange, className, label} = props;
     return (
         <MuiPickersUtilsProvider utils={LuxonUtils}>
             <MuiDatePicker value={value}
+                           autoOk={true}
+                           label={label}
                            format={DATE_FORMAT}
                            onChange={onChange as any}
                            className={className}

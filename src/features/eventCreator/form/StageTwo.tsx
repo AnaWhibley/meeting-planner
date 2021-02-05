@@ -15,15 +15,16 @@ export function StageTwo() {
             <div className={'Question'}>
                 <Typography color={'primary'}
                             variant={'h3'}
-                            display={'block'}>¿Cómo se llamará el evento?
+                            display={'block'}>¿Entre qué fechas se podrá desarrollar el evento o el grupo de eventos?
                 </Typography>
                 <DatePicker value={from}
                             className={'Input'}
+                            label={'Desde'}
                             onChange={(date: DateTime) => {dispatch(setFrom(date.toFormat(DATE_FORMAT)))}}
                 />
-                <br/>
                 <DatePicker value={to}
                             className={'Input'}
+                            label={'Hasta'}
                             onChange={(date: DateTime) => {dispatch(setTo(date.toFormat(DATE_FORMAT)))}}
                 />
 
