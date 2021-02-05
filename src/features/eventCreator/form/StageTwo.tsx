@@ -38,7 +38,7 @@ export function StageTwo() {
                     ¿Cuánto durará este evento?
                 </Typography>
                 <DurationPicker value={duration} className={'Input'} onChange={duration => dispatch(setDuration(duration))}/>
-                <Typography color={'textSecondary'}
+                <Typography color={'textPrimary'}
                             variant={'h3'}
                             className={'MinutesLabel'}
                 >

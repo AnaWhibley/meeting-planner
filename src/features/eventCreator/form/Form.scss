@@ -12,12 +12,18 @@
     }
   }
 
-  .Body, .ButtonsContainer {
+  .Body {
     margin-left: 2em;
   }
 
   .ButtonsContainer {
     float: right;
+
+    .Button {
+      margin-top: 1em;
+      margin-left: 1em;
+      margin-bottom: 2em;
+    }
   }
 
   .RadioLabel {

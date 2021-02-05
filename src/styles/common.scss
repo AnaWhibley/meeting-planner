@@ -1,17 +1,17 @@
 @import './variables.scss';
 
+html{
+  background-image: url("../assets/images/background.png");
+  height: 100vh;
+  background-position: center;
+  background-repeat: repeat-y;
+  background-size: cover;
+}
+
 .FillPrimary {
   fill: $primary;
 }
 
 .FillWhite{
   fill: white;
-}
-
-.GeneralContainer {
-  background-image: url("../assets/images/background.png");
-  height: 100vh;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
 }
