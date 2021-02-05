@@ -87,8 +87,7 @@ export const slice = createSlice({
             state.to.value = action.payload;
         },
         setParticipants: (state, action) => {
-            const tag = action.payload.tag;
-            const index = state.events[state.currentIndex].participants.findIndex((p) => p.tag === tag);
+            const index = action.payload.index;
             state.events[state.currentIndex].participants[index] = {
                 ...state.events[state.currentIndex].participants[index],
                 email: {
