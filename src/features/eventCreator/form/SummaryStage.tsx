@@ -1,12 +1,11 @@
 import {useSelector} from 'react-redux';
-import {RootState} from '../../../app/store';
-import {selectFrom, selectGroupName, selectTo} from '../../../app/eventCreatorSlice';
+import {selectEvents, selectFrom, selectGroupName, selectTo} from '../../../app/eventCreatorSlice';
 import React from 'react';
-import {Collapse, Divider, List, ListItem, ListItemIcon, ListItemText, Typography} from '@material-ui/core';
-import {ExpandLess, ExpandMore, StarBorder} from '@material-ui/icons';
+import {Collapse, Divider, List, ListItem, ListItemText, Typography} from '@material-ui/core';
+import {ExpandLess, ExpandMore} from '@material-ui/icons';
 
 export function SummaryStage() {
-    const events = useSelector((state:RootState) => state.eventCreator.events);
+    const events = useSelector(selectEvents);
     const from = useSelector(selectFrom).value;
     const to = useSelector(selectTo).value;
     const groupName = useSelector(selectGroupName)?.value;
