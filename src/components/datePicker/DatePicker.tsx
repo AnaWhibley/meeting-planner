@@ -12,11 +12,12 @@ interface DatePickerProps {
     onChange: (date: DateTime) => void
     className?: string;
     label?: string;
+    disabled?: boolean;
 }
 
 export function DatePicker(props: DatePickerProps){
 
-    const {value, onChange, className, label} = props;
+    const {value, onChange, className, label, disabled} = props;
     return (
         <MuiPickersUtilsProvider utils={LuxonUtils}>
             <MuiDatePicker value={value}
@@ -25,6 +26,7 @@ export function DatePicker(props: DatePickerProps){
                            format={DATE_FORMAT}
                            onChange={onChange as any}
                            className={className}
+                           disabled={disabled}
             />
         </MuiPickersUtilsProvider>
     )

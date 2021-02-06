@@ -64,7 +64,11 @@ export const slice = createSlice({
     } as EventCreatorState,
     reducers: {
         next: state => {
-            state.stage += 1;
+            if(state.events.length > 1 && state.stage === 0){
+                state.stage = 2;
+            }else{
+                state.stage += 1;
+            }
         },
         previous: state => {
             state.stage -= 1;
@@ -167,6 +171,7 @@ export const importJSON = (files: any) => (dispatch: Dispatch<any>, getState: ()
 
 export const selectStage = (state: RootState) => state.eventCreator.stage;
 export const selectGroupName = (state: RootState) => state.eventCreator.groupName;
+export const selectEvents = (state: RootState) => state.eventCreator.events;
 export const selectParticipants = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].participants;
 export const selectName = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].name;
 export const selectDuration = (state: RootState) => state.eventCreator.events[state.eventCreator.currentIndex].duration;
