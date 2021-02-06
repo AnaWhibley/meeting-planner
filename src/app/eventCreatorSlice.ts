@@ -1,4 +1,4 @@
-import {createSlice, Dispatch} from '@reduxjs/toolkit';
+import {createSlice, Dispatch, PayloadAction} from '@reduxjs/toolkit';
 import {DateTime} from 'luxon';
 import {RootState} from './store';
 import {requesting} from './uiStateSlice';
@@ -64,7 +64,7 @@ export const slice = createSlice({
     } as EventCreatorState,
     reducers: {
         next: state => {
-            if(state.events.length > 1 && state.stage === 0){
+            if(state.events.length > 1 && state.stage === 0 && state.currentIndex !== 0){
                 state.stage = 2;
             }else{
                 state.stage += 1;
@@ -124,10 +124,14 @@ export const slice = createSlice({
             state.events = action.payload;
             state.stage = 3;
         },
+        editEvent: (state,action: PayloadAction<{stage?: number, currentIndex: number}>) => {
+            state.stage = action.payload.stage !== undefined ? action.payload.stage : 0;
+            state.currentIndex = action.payload.currentIndex;
+        },
     },
 });
 
-export const { next, previous, setFrom, setTo, setName, createNew, complete, setParticipants, addTutor, removeTutor, setImportedData, setGroupName, setDuration } = slice.actions;
+export const { next, previous, setFrom, setTo, setName, createNew, complete, setParticipants, addTutor, removeTutor, setImportedData, setGroupName, setDuration, editEvent } = slice.actions;
 
 export const createEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     dispatch(requesting());

@@ -63,6 +63,42 @@
       background-color: #F5F5F5;
     }
   }
+
+  .ExpandLessIcon {
+    fill: $textSecondaryDark;
+  }
+
+  .ExpandMoreIcon {
+    fill: $textSecondary;
+    &:hover {
+      fill: $textSecondaryDark;
+    }
+  }
+
+  .EditIcon {
+    margin-left: 1em;
+    svg {
+      fill: $textSecondary;
+    }
+    svg:hover {
+      fill: $textSecondaryDark;
+    }
+    min-width: unset;
+  }
+
+  .EditGroupDetails {
+    margin-right: 12px;
+    display: inline-block;
+    svg {
+      position: absolute;
+      bottom: 35px;
+      right: 15px;
+    }
+  }
+
+  .EditGroupDetailsMargin {
+    margin-right: 40px;
+  }
 }
 
 .MuiStepConnector-line {

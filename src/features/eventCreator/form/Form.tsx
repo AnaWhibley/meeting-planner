@@ -5,7 +5,7 @@ import {
     createNew,
     exportJSON,
     next,
-    previous, selectEvents,
+    previous,
     selectIsFirstStage,
     selectIsLastStage,
     selectStage,
