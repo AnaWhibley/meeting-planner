@@ -1,14 +1,17 @@
-import {useSelector} from 'react-redux';
-import {selectEvents, selectFrom, selectGroupName, selectTo} from '../../../app/eventCreatorSlice';
+import {useDispatch, useSelector} from 'react-redux';
+import {editEvent, selectEvents, selectFrom, selectGroupName, selectTo} from '../../../app/eventCreatorSlice';
 import React from 'react';
 import {Collapse, Divider, List, ListItem, ListItemText, Typography} from '@material-ui/core';
 import {ExpandLess, ExpandMore} from '@material-ui/icons';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import {ReactComponent as EditIcon} from '../../../assets/icons/evericons/pencil-edit.svg';
 
 export function SummaryStage() {
     const events = useSelector(selectEvents);
     const from = useSelector(selectFrom).value;
     const to = useSelector(selectTo).value;
     const groupName = useSelector(selectGroupName)?.value;
+    const dispatch = useDispatch();
 
     const [collapsedEvents, setCollapsedEvents] = React.useState<Array<boolean>>([]);
     const [collapsedParticipants, setCollapsedParticipants] = React.useState<Array<boolean>>([]);
@@ -33,7 +36,7 @@ export function SummaryStage() {
                 <>
                     <ListItem className={'ListItem'}>
                         <ListItemText primaryTypographyProps={{variant: 'h3', color: 'textSecondary'}} primary={p.tag}/>
-                        <Typography color={'textPrimary'} variant="h3">{p.email.value}</Typography>
+                        <Typography color={'textPrimary'} variant='h3'>{p.email.value}</Typography>
                     </ListItem>
                 </>
             );
@@ -44,25 +47,31 @@ export function SummaryStage() {
                 <Divider />
                 <List>
                     <ListItem button onClick={() => handleToggleEvent(index)}>
-                        <ListItemText primary={"Evento " + (index + 1)} primaryTypographyProps={{variant: 'h3', color: 'primary'}} />
-                        {!collapsedEvents[index] ? <ExpandLess /> : <ExpandMore />}
+                        <ListItemText primary={'Evento ' + (index + 1)} primaryTypographyProps={{variant: 'h3', color: 'primary'}} />
+                        {!collapsedEvents[index] ? <ExpandLess className={'ExpandLessIcon'}/> : <ExpandMore className={'ExpandMoreIcon'}/>}
+                        <ListItemIcon className={'EditIcon'}>
+                            <EditIcon onClick={ev => {
+                                ev.stopPropagation();
+                                dispatch(editEvent({currentIndex: index}));
+                            }}/>
+                        </ListItemIcon>
                     </ListItem>
-                    <Collapse in={!collapsedEvents[index]} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding className={'ParticipantsList'}>
+                    <Collapse in={!collapsedEvents[index]} timeout='auto' unmountOnExit>
+                        <List component='div' disablePadding className={'ParticipantsList'}>
                             <ListItem className={'ListItem'}>
                                 <ListItemText primaryTypographyProps={{variant: 'h3', color: 'primary'}} primary={'Nombre del evento'}/>
-                                <Typography color={'textPrimary'} variant="h3">{e.name.value}</Typography>
+                                <Typography color={'textPrimary'} variant='h3'>{e.name.value}</Typography>
                             </ListItem>
                             <ListItem className={'ListItem'}>
                                 <ListItemText primaryTypographyProps={{variant: 'h3', color: 'primary'}} primary={'Duración del evento'}/>
-                                <Typography color={'textPrimary'} variant="h3">{e.duration.value} minutos</Typography>
+                                <Typography color={'textPrimary'} variant='h3'>{e.duration.value} minutos</Typography>
                             </ListItem>
                             <ListItem button  onClick={() => handleToggleParticipants(index)}>
-                                <ListItemText primary="Participantes" primaryTypographyProps={{variant: 'h3', color: 'primary'}} />
-                                {!collapsedParticipants[index] ? <ExpandLess /> : <ExpandMore />}
+                                <ListItemText primary='Participantes' primaryTypographyProps={{variant: 'h3', color: 'primary'}} />
+                                {!collapsedParticipants[index] ? <ExpandLess className={'ExpandLessIcon'}/> : <ExpandMore className={'ExpandMoreIcon'}/>}
                             </ListItem>
-                            <Collapse in={!collapsedParticipants[index]} timeout="auto" unmountOnExit>
-                                <List component="div" disablePadding className={'ParticipantsList'}>
+                            <Collapse in={!collapsedParticipants[index]} timeout='auto' unmountOnExit>
+                                <List component='div' disablePadding className={'ParticipantsList'}>
                                     {participants}
                                 </List>
                             </Collapse>
@@ -78,14 +87,19 @@ export function SummaryStage() {
             <List>
                 <ListItem>
                     <ListItemText primaryTypographyProps={{variant: 'h3', color: 'primary'}} primary={'Nombre de grupo de los eventos'}/>
-                    <Typography color={'textPrimary'} variant="h3">{groupName}</Typography>
+                    <Typography color={'textPrimary'} variant='h3' className={'EditGroupDetails EditGroupDetailsMargin'}>{groupName}</Typography>
                 </ListItem>
                 <ListItem>
                     <ListItemText primaryTypographyProps={{variant: 'h3', color: 'primary'}} primary={'Fecha de desarrollo de los eventos'}/>
-                    <Typography color={'textSecondary'} variant="h3">desde{'\u00A0'}</Typography>
-                    <Typography color={'textPrimary'} variant="h3">{'\u00A0'}{from}{'\u00A0'}</Typography>
-                    <Typography color={'textSecondary'} variant="h3">{'\u00A0'}hasta{'\u00A0'}</Typography>
-                    <Typography color={'textPrimary'} variant="h3">{'\u00A0'}{to}</Typography>
+                    <div className={'EditGroupDetails'}>
+                        <Typography color={'textSecondary'} variant='h3' display={'inline'}>desde{'\u00A0'}</Typography>
+                        <Typography color={'textPrimary'} variant='h3' display={'inline'}>{'\u00A0'}{from}{'\u00A0'}</Typography>
+                        <Typography color={'textSecondary'} variant='h3' display={'inline'}>{'\u00A0'}hasta{'\u00A0'}</Typography>
+                        <Typography color={'textPrimary'} variant='h3' display={'inline'}>{'\u00A0'}{to}</Typography>
+                    </div>
+                    <ListItemIcon className={'EditIcon EditGroupDetails'} onClick={() => dispatch(editEvent({stage:1, currentIndex: 0}))}>
+                        <EditIcon/>
+                    </ListItemIcon>
                 </ListItem>
                 {elements}
             </List>
