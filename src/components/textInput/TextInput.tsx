@@ -13,11 +13,12 @@ interface TextInputProps {
     fullWidth?: boolean;
     onChange: (value: string) => void;
     value?: string;
+    disabled?: boolean;
 }
 
 export default class TextInput extends Component<TextInputProps>{
     render() {
-        const {icon, placeholder, fullWidth, value, type, onChange, label, containerClassName, className} = this.props;
+        const {icon, placeholder, fullWidth, value, type, onChange, label, containerClassName, className, disabled} = this.props;
         const textField = (
             <TextField placeholder={placeholder}
                        label={label}
@@ -27,6 +28,7 @@ export default class TextInput extends Component<TextInputProps>{
                        InputProps={{ style: { fontSize: 16 } }}
                        onChange={(ev) => onChange(ev.target.value)}
                        className={className}
+                       disabled={disabled}
             />
         );
 

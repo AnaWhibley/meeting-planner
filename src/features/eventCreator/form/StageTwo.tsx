@@ -1,6 +1,6 @@
 import {useDispatch, useSelector} from 'react-redux';
 import {
-    DATE_FORMAT,
+    DATE_FORMAT, selectEvents,
     selectFrom,
     selectGroupName,
     selectTo,
@@ -29,6 +29,7 @@ export function StageTwo() {
     const to = DateTime.fromFormat(useSelector(selectTo).value, DATE_FORMAT);
     const groupName = useSelector(selectGroupName);
     const dispatch = useDispatch();
+    const disableFields = useSelector(selectEvents).length > 1;
 
     const [value, setValue] = React.useState('no');
 
@@ -51,11 +52,13 @@ export function StageTwo() {
                 <DatePicker value={from}
                             className={'Input DatePicker'}
                             label={'Desde'}
+                            disabled={disableFields}
                             onChange={(date: DateTime) => {dispatch(setFrom(date.toFormat(DATE_FORMAT)))}}
                 />
                 <DatePicker value={to}
                             className={'Input DatePicker'}
                             label={'Hasta'}
+                            disabled={disableFields}
                             onChange={(date: DateTime) => {dispatch(setTo(date.toFormat(DATE_FORMAT)))}}
                 />
             </div>
@@ -79,6 +82,7 @@ export function StageTwo() {
                         onChange={(data) => dispatch(setGroupName(data))}
                         value={groupName}
                         className={'Input'}
+                        isDisabled={disableFields}
                     />
                     :
                     <TextInput type='text'
@@ -86,6 +90,7 @@ export function StageTwo() {
                                placeholder={'Nombre del grupo'}
                                fullWidth={true}
                                className={'Input'}
+                               disabled={disableFields}
                                onChange={(value) => dispatch(setGroupName({label: value, value: value}))}
                     />
                 }
