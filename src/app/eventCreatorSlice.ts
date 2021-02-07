@@ -195,6 +195,7 @@ const mapEvents = (events: Array<any>) => {
             id: event.id,
             groupName: event.groupName,
             name: event.name.value,
+            participants: event.participants
         };
     });
 };
