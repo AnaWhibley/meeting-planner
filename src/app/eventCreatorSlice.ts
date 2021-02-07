@@ -3,6 +3,7 @@ import {DateTime} from 'luxon';
 import {RootState} from './store';
 import {requesting} from './uiStateSlice';
 import EventService, {CreateResponse} from '../services/eventService';
+import {duration} from '@material-ui/core';
 
 enum ParticipantType {
     PRESIDENTE_TT = 'Presidente Tribunal Titular',
@@ -195,7 +196,8 @@ const mapEvents = (events: Array<any>) => {
             id: event.id,
             groupName: event.groupName,
             name: event.name.value,
-            participants: event.participants
+            participants: event.participants,
+            duration: event.duration.value
         };
     });
 };
