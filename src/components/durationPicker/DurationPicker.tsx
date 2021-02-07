@@ -13,8 +13,7 @@ export function DurationPicker(props: DurationPickerProps){
 
     const {value, onChange, className, label, fullWidth} = props;
     return (
-        <TextField defaultValue={60}
-                   label={label}
+        <TextField label={label}
                    type={'number'}
                    fullWidth={fullWidth}
                    value={value}
