@@ -42,7 +42,10 @@ export function NavBar() {
 
     return (
         <div className={'NavBarContainer'}>
-            <img src={logo} alt="Logo MeetingPlanner" className={'Logo'}/>
+            <img src={logo}
+                 alt="Logo MeetingPlanner"
+                 className={'Logo'}
+                 onClick={() => loggedInUser && loggedInUser.role === Role.ADMIN ? history.push('/dashboard') : history.push('/')}/>
             <Menu menuItems={menuItems} className={'Menu'}/>
         </div>
     );
