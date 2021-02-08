@@ -43,7 +43,7 @@ export function SummaryStage() {
         });
 
         return (
-            <div key={e.id}>
+            <React.Fragment key={index}>
                 <Divider />
                 <List>
                     <ListItem button onClick={() => handleToggleEvent(index)}>
@@ -78,7 +78,7 @@ export function SummaryStage() {
                         </List>
                     </Collapse>
                 </List>
-            </div>
+            </React.Fragment>
         );
     });
 
