@@ -80,13 +80,13 @@ export function StageTwo() {
                         items={options}
                         isMulti={false}
                         onChange={(data) => dispatch(setGroupName(data))}
-                        value={groupName}
+                        value={groupName.value.label === '' ? undefined : groupName.value}
                         className={'Input'}
                         isDisabled={disableFields}
                     />
                     :
                     <TextInput type='text'
-                               value={groupName?.value}
+                               value={groupName.value.label}
                                placeholder={'Nombre del grupo'}
                                fullWidth={true}
                                className={'Input'}
