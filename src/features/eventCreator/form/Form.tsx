@@ -49,7 +49,7 @@ export function Form() {
         <>
             <NavBar/>
             <div className={'FormContainer'}>
-                <div className={'TitleContainer'}>
+                <div>
                     <Typography variant='h1'
                                 color={Color.PRIMARY}
                                 display={'block'}
