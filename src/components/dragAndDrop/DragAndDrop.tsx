@@ -9,6 +9,7 @@ import ActionButton, {ButtonVariant} from '../actionButton/ActionButton';
 import {connect} from 'react-redux';
 import {importJSON} from '../../app/eventCreatorSlice';
 import {RootState} from '../../app/store';
+import {History} from 'history';
 
 interface DragAndDropState {
     validFiles: Array<File>;
@@ -20,9 +21,9 @@ interface DragAndDropState {
 interface DragAndDropProps {
     maxFiles?: number;
     validFileTypes?: Array<string>;
-    handleUpload: (files: any) => void;
+    handleUpload: (files: Array<File>, history: History) => void;
     labelValidFileTypes?: string;
-    history?: any;
+    history: History;
 }
 
 class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
@@ -100,8 +101,7 @@ class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
     };
 
     private uploadFiles = () => {
-        this.props.handleUpload(this.state.validFiles);
-        if(this.props.history) this.props.history.push('/createEvents/form');
+        this.props.handleUpload(this.state.validFiles, this.props.history);
     };
 
     render() {
@@ -204,11 +204,11 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        handleUpload: (files: any) => {
+        handleUpload: (files: Array<File>, history: History) => {
             dispatch(importJSON(files));
+            history.push('/createEvents/form');
         }
     }
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DragAndDrop);
-
