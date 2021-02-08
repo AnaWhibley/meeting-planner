@@ -43,7 +43,9 @@ export function EventCreator() {
                     <div className={'Separator'}/>
                     <div className={'Button'}>
                         <DragAndDrop validFileTypes={['application/json']}
-                                     labelValidFileTypes={'El formato soportado es'}/>
+                                     labelValidFileTypes={'El formato soportado es'}
+                                     history={history}
+                        />
                     </div>
                 </div>
             </div>

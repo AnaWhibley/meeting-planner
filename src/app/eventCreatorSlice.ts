@@ -3,7 +3,6 @@ import {DateTime} from 'luxon';
 import {RootState} from './store';
 import {requesting} from './uiStateSlice';
 import EventService, {CreateResponse} from '../services/eventService';
-import {duration} from '@material-ui/core';
 
 enum ParticipantType {
     PRESIDENTE_TT = 'Presidente Tribunal Titular',
@@ -15,7 +14,8 @@ enum ParticipantType {
     TUTOR = 'Tutor'
 }
 export const DATE_FORMAT = 'dd-MM-yyyy';
-const createDefaultEvent = () => {
+
+const createDefaultEvent = (): EventState => {
     return {
         id: Math.random(),
         name: createFieldState(''),
@@ -34,6 +34,16 @@ interface FieldState<T> {
     errorMessage: string;
 }
 
+interface EventState {
+    id: number;
+    name: FieldState<string>;
+    participants: Array<{
+        email: FieldState<string>;
+        tag: string;
+    }>;
+    duration: FieldState<number>;
+}
+
 interface EventCreatorState {
     stage: number;
     currentIndex: number;
@@ -43,15 +53,7 @@ interface EventCreatorState {
     };
     from: FieldState<string>;
     to: FieldState<string>;
-    events: Array<{
-        id: number;
-        name: FieldState<string>;
-        participants: Array<{
-            email: FieldState<string>;
-            tag: string;
-        }>;
-        duration: FieldState<number>;
-    }>;
+    events: Array<EventState>;
 }
 
 export const slice = createSlice({
@@ -122,7 +124,10 @@ export const slice = createSlice({
             state.currentIndex = 0;
         },
         setImportedData: (state,action) => {
-            state.events = action.payload;
+            state.events = action.payload.events;
+            state.groupName = action.payload.groupName;
+            state.from = action.payload.from;
+            state.to = action.payload.to;
             state.stage = 3;
         },
         editEvent: (state,action: PayloadAction<{stage?: number, currentIndex: number}>) => {
@@ -139,7 +144,7 @@ export const createEvents = () => (dispatch: Dispatch<any>, getState: () => Root
     const { eventCreator } = getState();
     EventService.create(mapEvents(eventCreator.events)).subscribe((response: CreateResponse) => {
         if(response.success){
-            dispatch(complete())
+            dispatch(complete());
         }
     });
 };
@@ -164,12 +169,8 @@ export const importJSON = (files: any) => (dispatch: Dispatch<any>, getState: ()
     if(files.length <= 0) return false;
     fr.onload = (e: any) => {
         const data = JSON.parse(e.target.result);
-        dispatch(setImportedData(data.events.map((d: any) => {
-            return {
-                ...d,
-                name: {value: d.name},
-            }
-        })));
+        console.log('lalala data', data);
+        dispatch(setImportedData(mapJSONToState(data)));
     }
     fr.readAsText(files[0]);
 };
@@ -202,13 +203,43 @@ const mapEvents = (events: Array<any>) => {
     });
 };
 
+const mapJSONToState = (data: any) => {
+    return {
+        from: {value: data.desde},
+        to: {value: data.hasta},
+        events: mapEventsToState(data.eventos),
+        groupName: {label: data.nombreGrupoEventos, value: data.nombreGrupoEventos},
+    }
+};
+
+const mapEventsToState = (events: Array<any>) => {
+    return events.map((event) => {
+        return {
+            name: {value: event.nombre},
+            duration: {value: event.duracion},
+            participants: event.participantes.map((p: any) => ({email: {value: p.email}, tag: p.tag}))
+        };
+    });
+};
+
 const mapStateToJSON = (state: RootState) => {
     return {
-        user: state.login.username,
-        events: mapEvents(state.eventCreator.events),
-        from: state.eventCreator.from.value,
-        to: state.eventCreator.to.value
+        usuario: state.login.username,
+        eventos: mapEventsToJSON(state.eventCreator.events),
+        nombreGrupoEventos: state.eventCreator.groupName?.label,
+        desde: state.eventCreator.from.value,
+        hasta: state.eventCreator.to.value,
     };
+};
+
+const mapEventsToJSON = (events: Array<EventState>) => {
+    return events.map((event) => {
+        return {
+            nombre: event.name.value,
+            duracion: event.duration.value,
+            participantes: event.participants.map((p: any) => ({email: p.email.value, tag: p.tag}))
+        };
+    });
 };
 
 export default slice.reducer;
