@@ -47,26 +47,115 @@ interface EventState {
 interface EventCreatorState {
     stage: number;
     currentIndex: number;
-    groupName?: {
+    groupName: FieldState<{
         label: string;
         value: string;
-    };
+    }>;
     from: FieldState<string>;
     to: FieldState<string>;
     events: Array<EventState>;
 }
+enum errorMessages {
+    EMPTY = 'El campo no puede estar vacío.',
+    SHORT = 'El valor del campo es demasiado corto.',
+    FORMAT = 'El valor del campo no tiene un formato válido.',
+    DURATION = 'La duración del evento debe ser de entre 10 y 300 minutos.',
+    DATES = 'La fecha de finalización del periodo no puede ser mayor que la de comienzo'
+}
+
+const validationRules = {
+    name: (value: string): string => {
+        if (value.length === 0) {
+            return errorMessages.EMPTY
+        }
+        if (value.length < 5) {
+            return errorMessages.SHORT
+        }
+        return '';
+    },
+    duration: (value: number): string => {
+        if (value < 10 || value > 300) {
+            return errorMessages.DURATION
+        }
+        return '';
+    },
+    from: (from: string, to: string): string => {
+        return '';
+    },
+    to: (to: string, from: string): string => {
+        const toLuxon = DateTime.fromFormat(to, DATE_FORMAT);
+        const fromLuxon = DateTime.fromFormat(from, DATE_FORMAT);
+        return toLuxon.diff(fromLuxon, ['days']).days > 0 ? '' : errorMessages.DATES;
+    },
+    groupName: (value: string): string => {
+        if (value.length === 0) {
+            return errorMessages.EMPTY
+        }
+        if (value.length < 5) {
+            return errorMessages.SHORT
+        }
+        return '';
+    },
+    participant: (value: string): string => {
+        if (value.length === 0) {
+            return errorMessages.EMPTY
+        }
+        if(!new RegExp(/.+\@.+\..+/).test(value)) {
+            return errorMessages.FORMAT
+        }
+        return '';
+    }
+};
 
 export const slice = createSlice({
     name: 'eventCreator',
     initialState: {
         stage: 0,
         currentIndex: 0,
+        groupName: createFieldState({label: '', value: ''}),
         from: createFieldState(DateTime.utc().toFormat(DATE_FORMAT)),
         to: createFieldState(DateTime.utc().toFormat(DATE_FORMAT)),
         events: [createDefaultEvent()]
     } as EventCreatorState,
     reducers: {
         next: state => {
+            let hasErrors = false;
+            switch(state.stage) {
+                case 0:
+                    const nameError = validationRules.name(state.events[state.currentIndex].name.value);
+                    const durationError = validationRules.duration(state.events[state.currentIndex].duration.value);
+
+                    state.events[state.currentIndex].name.errorMessage = nameError;
+                    state.events[state.currentIndex].duration.errorMessage = durationError;
+
+                    hasErrors = !!nameError || !!durationError;
+                    break;
+                case 1:
+                    const fromError = validationRules.from(state.from.value, state.to.value);
+                    const toError = validationRules.to(state.to.value, state.from.value);
+                    const groupNameError = validationRules.groupName(state.groupName.value.label);
+
+                    state.from.errorMessage = fromError;
+                    state.to.errorMessage = toError;
+                    state.groupName.errorMessage = groupNameError;
+
+                    hasErrors = !!fromError || !!toError || !!groupNameError;
+                    break;
+                case 2:
+                    state.events[state.currentIndex].participants.forEach((p, i) => {
+                        state.events[state.currentIndex].participants[i].email.errorMessage = validationRules.participant(p.email.value);
+                    });
+
+                    hasErrors = state.events[state.currentIndex].participants.reduce((acc: boolean, current) => {
+                        if(acc) return true;
+                        return !!current.email.errorMessage;
+                    }, false);
+
+                    break;
+            }
+
+            if (hasErrors) return;
+
             if(state.events.length > 1 && state.stage === 0 && state.currentIndex !== 0){
                 state.stage = 2;
             }else{
@@ -78,11 +167,6 @@ export const slice = createSlice({
         },
         setName: (state, action) => {
             state.events[state.currentIndex].name.value = action.payload;
-            if (action.payload.length < 3) {
-                state.events[state.currentIndex].name.errorMessage = 'Too short'
-            } else {
-                state.events[state.currentIndex].name.errorMessage = ''
-            }
         },
         setDuration: (state, action) => {
             state.events[state.currentIndex].duration.value = action.payload;
@@ -104,7 +188,7 @@ export const slice = createSlice({
             };
         },
         setGroupName: (state, action) => {
-            state.groupName = action.payload;
+            state.groupName.value = action.payload;
         },
         addTutor: (state) => {
             state.events[state.currentIndex].participants.push({email: createFieldState(''), tag: 'Tutor'});
@@ -119,7 +203,6 @@ export const slice = createSlice({
         },
         complete: (state) => {
             state.events = [createDefaultEvent()];
-            state.groupName = undefined;
             state.stage = 0;
             state.currentIndex = 0;
         },
@@ -226,7 +309,7 @@ const mapStateToJSON = (state: RootState) => {
     return {
         usuario: state.login.username,
         eventos: mapEventsToJSON(state.eventCreator.events),
-        nombreGrupoEventos: state.eventCreator.groupName?.label,
+        nombreGrupoEventos: state.eventCreator.groupName?.value.label,
         desde: state.eventCreator.from.value,
         hasta: state.eventCreator.to.value,
     };
