@@ -12,10 +12,6 @@
     }
   }
 
-  .Body {
-    margin-left: 2em;
-  }
-
   .ButtonsContainer {
     float: right;
 
@@ -26,14 +22,15 @@
     }
   }
 
-  .RadioLabel {
-    font-size: 16px;
-  }
-
   .Body {
+    margin-left: 2em;
     .Question {
       margin-top: 2em;
       margin-bottom: 3em;
+
+      .RadioLabel {
+        font-size: 16px;
+      }
 
       .InfoIcon {
         fill: $primary;
@@ -55,52 +52,52 @@
       }
     }
 
-    .ParticipantsList {
-      margin-left: 20px;
-    }
+    .SummaryContainer {
+      margin-right: 3em;
 
-    .ListItem:hover {
-      background-color: #F5F5F5;
+      .ParticipantsList {
+        margin-left: 20px;
+      }
+
+      .ListItem:hover {
+        background-color: #F5F5F5;
+      }
+
+      .ExpandLessIcon {
+        fill: $textSecondaryDark;
+      }
+
+      .ExpandMoreIcon {
+        fill: $textSecondary;
+        &:hover {
+          fill: $textSecondaryDark;
+        }
+      }
+
+      .EditIcon {
+        margin-left: 1em;
+        svg {
+          fill: $textSecondary;
+        }
+        svg:hover {
+          fill: $textSecondaryDark;
+        }
+        min-width: unset;
+      }
+
+      .EditGroupDetails {
+        margin-right: 12px;
+        display: inline-block;
+        svg {
+          position: absolute;
+          bottom: 35px;
+          right: 15px;
+        }
+      }
+
+      .EditGroupDetailsMargin {
+        margin-right: 40px;
+      }
     }
   }
-
-  .ExpandLessIcon {
-    fill: $textSecondaryDark;
-  }
-
-  .ExpandMoreIcon {
-    fill: $textSecondary;
-    &:hover {
-      fill: $textSecondaryDark;
-    }
-  }
-
-  .EditIcon {
-    margin-left: 1em;
-    svg {
-      fill: $textSecondary;
-    }
-    svg:hover {
-      fill: $textSecondaryDark;
-    }
-    min-width: unset;
-  }
-
-  .EditGroupDetails {
-    margin-right: 12px;
-    display: inline-block;
-    svg {
-      position: absolute;
-      bottom: 35px;
-      right: 15px;
-    }
-  }
-
-  .EditGroupDetailsMargin {
-    margin-right: 40px;
-  }
-}
-
-.MuiStepConnector-line {
-  border-color: $primary;
 }
