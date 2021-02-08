@@ -31,14 +31,14 @@ export function SummaryStage() {
 
     const elements = events.map((e, index) => {
 
-        const participants = e.participants.map(p => {
+        const participants = e.participants.map((p, i) => {
             return (
-                <>
+                <React.Fragment key={i}>
                     <ListItem className={'ListItem'}>
                         <ListItemText primaryTypographyProps={{variant: 'h3', color: 'textSecondary'}} primary={p.tag}/>
                         <Typography color={'textPrimary'} variant='h3'>{p.email.value}</Typography>
                     </ListItem>
-                </>
+                </React.Fragment>
             );
         });
 

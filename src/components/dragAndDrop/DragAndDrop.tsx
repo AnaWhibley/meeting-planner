@@ -22,6 +22,7 @@ interface DragAndDropProps {
     validFileTypes?: Array<string>;
     handleUpload: (files: any) => void;
     labelValidFileTypes?: string;
+    history?: any;
 }
 
 class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
@@ -100,6 +101,7 @@ class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
 
     private uploadFiles = () => {
         this.props.handleUpload(this.state.validFiles);
+        if(this.props.history) this.props.history.push('/createEvents/form');
     };
 
     render() {
@@ -202,7 +204,9 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        handleUpload: (files: any) => dispatch(importJSON(files))
+        handleUpload: (files: any) => {
+            dispatch(importJSON(files));
+        }
     }
 };
 
