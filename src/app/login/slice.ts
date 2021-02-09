@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { requesting } from './uiStateSlice';
-import UserService, {LoginResponse, User} from '../services/userService';
+import { requesting } from '../uiStateSlice';
+import UserService, {LoginResponse, User} from '../../services/userService';
 import { Dispatch } from '@reduxjs/toolkit';
-import {RootState} from './store';
+import {RootState} from '../store';
 
 export interface LoginState {
     username: string;
@@ -48,10 +48,5 @@ export const login = () => (dispatch: Dispatch<any>, getState: () => RootState) 
         }
     });
 };
-
-export const selectUsername = (state: RootState) => state.login.username;
-export const selectPassword = (state: RootState) => state.login.password;
-export const selectLoggedInUser = (state: RootState) => state.login.loggedInUser;
-export const selectShowErrorMessage = (state: RootState) => state.login.showErrorMessage;
 
 export default slice.reducer;

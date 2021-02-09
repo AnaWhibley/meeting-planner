@@ -2,7 +2,6 @@ import React from 'react';
 import './App.css';
 import {Login} from './features/login/Login';
 import {useSelector} from 'react-redux';
-import {selectLoggedInUser} from './app/loginSlice';
 import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
 import {Role, User} from './services/userService';
 import {Dashboard} from './features/dashboard/Dashboard';
@@ -14,6 +13,7 @@ import {ErrorPage} from './components/errorPage/errorPage';
 import { EventCreator } from './features/eventCreator/EventCreator';
 import './styles/common.scss';
 import {Form} from './features/eventCreator/form/Form';
+import {selectLoggedInUser} from './app/login/selectors';
 
 function App() {
 

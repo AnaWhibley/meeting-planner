@@ -3,7 +3,7 @@ import {
     addTutor,
     removeTutor,
     setParticipants
-} from '../../../app/eventCreator/eventCreatorSlice';
+} from '../../../app/eventCreator/slice';
 import React from 'react';
 import {Typography} from '@material-ui/core';
 import TextInput from '../../../components/textInput/TextInput';

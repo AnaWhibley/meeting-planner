@@ -5,7 +5,7 @@ import {
     DatePicker as MuiDatePicker,
     MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
-import {DATE_FORMAT} from '../../app/eventCreator/eventCreatorSlice';
+import {DATE_FORMAT} from '../../app/eventCreator/slice';
 
 interface DatePickerProps {
     value: DateTime;

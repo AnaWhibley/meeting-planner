@@ -2,7 +2,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
     setDuration,
     setName,
-} from '../../../app/eventCreator/eventCreatorSlice';
+} from '../../../app/eventCreator/slice';
 import React from 'react';
 import {Typography} from '@material-ui/core';
 import {DurationPicker} from '../../../components/durationPicker/DurationPicker';

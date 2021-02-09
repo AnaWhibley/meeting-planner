@@ -1,5 +1,5 @@
 import {useDispatch, useSelector} from 'react-redux';
-import {editEvent} from '../../../app/eventCreator/eventCreatorSlice';
+import {editEvent} from '../../../app/eventCreator/slice';
 import React from 'react';
 import {Collapse, Divider, List, ListItem, ListItemText, Typography} from '@material-ui/core';
 import {ExpandLess, ExpandMore} from '@material-ui/icons';

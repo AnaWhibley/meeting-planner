@@ -3,7 +3,6 @@ import {NavBar} from '../../components/navigationBar/NavBar';
 import {Typography} from '@material-ui/core';
 import {User} from '../../services/userService';
 import {useSelector} from 'react-redux';
-import {selectLoggedInUser} from '../../app/loginSlice';
 import ActionButton, {ButtonVariant} from '../../components/actionButton/ActionButton';
 import {Color} from '../../styles/theme';
 import {useHistory} from 'react-router-dom';
@@ -12,6 +11,7 @@ import {ReactComponent as CalendarDatesIcon} from '../../assets/icons/evericons/
 import choice from '../../assets/icons/undraw/undraw_choice.svg';
 import './Dashboard.scss';
 import '../../styles/common.scss';
+import {selectLoggedInUser} from '../../app/login/selectors';
 
 
 export function Dashboard() {
