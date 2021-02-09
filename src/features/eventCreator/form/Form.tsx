@@ -6,10 +6,7 @@ import {
     exportJSON,
     next,
     previous,
-    selectIsFirstStage,
-    selectIsLastStage,
-    selectStage,
-} from '../../../app/eventCreatorSlice';
+} from '../../../app/eventCreator/eventCreatorSlice';
 import {NavBar} from '../../../components/navigationBar/NavBar';
 import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
 import {Color} from '../../../styles/theme';
@@ -19,6 +16,7 @@ import {StageThree} from './StageThree';
 import { SummaryStage } from './SummaryStage';
 import {Step, StepLabel, Stepper, Typography} from '@material-ui/core';
 import './Form.scss'
+import {selectIsFirstStage, selectIsLastStage, selectStage} from '../../../app/eventCreator/selectors';
 
 export function Form() {
     const stage = useSelector(selectStage);
@@ -94,7 +92,7 @@ export function Form() {
                         <ActionButton onClick={() => dispatch(createNew())}
                                       className={'Button'}
                                       color={Color.PRIMARY}
-                                      innerText={'Nuevo'}
+                                      innerText={'Añadir otro'}
                                       variant={ButtonVariant.CONTAINED}/>
                         : null}
                     {isLastStage ?

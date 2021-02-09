@@ -76,13 +76,14 @@
 
       .EditIcon {
         margin-left: 1em;
+        min-width: unset;
+        cursor: pointer;
         svg {
           fill: $textSecondary;
         }
         svg:hover {
           fill: $textSecondaryDark;
         }
-        min-width: unset;
       }
 
       .EditGroupDetails {
