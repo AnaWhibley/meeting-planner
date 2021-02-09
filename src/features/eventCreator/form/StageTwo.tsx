@@ -4,7 +4,7 @@ import {
     setFrom,
     setGroupName,
     setTo
-} from '../../../app/eventCreator/eventCreatorSlice';
+} from '../../../app/eventCreator/slice';
 import React from 'react';
 import {FormControlLabel, Radio, RadioGroup, Typography} from '@material-ui/core';
 import TextInput from '../../../components/textInput/TextInput';

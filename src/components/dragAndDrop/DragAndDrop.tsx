@@ -7,7 +7,7 @@ import {ReactComponent as TimesIcon} from '../../assets/icons/evericons/x.svg';
 import { Color } from '../../styles/theme';
 import ActionButton, {ButtonVariant} from '../actionButton/ActionButton';
 import {connect} from 'react-redux';
-import {importJSON} from '../../app/eventCreator/eventCreatorSlice';
+import {importJSON} from '../../app/eventCreator/slice';
 import {RootState} from '../../app/store';
 import {History} from 'history';
 

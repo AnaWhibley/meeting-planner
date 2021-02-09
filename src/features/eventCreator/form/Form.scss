@@ -100,5 +100,41 @@
         margin-right: 40px;
       }
     }
+
+    .ConfirmationContainer {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      margin-top: 3em;
+
+      .ConfirmationMessage {
+        margin: 0 5em;
+        text-align: center;
+      }
+
+      .ExportJSONContainer {
+        text-align: center;
+        margin-top: 2em;
+
+        button {
+          margin-top: 1em;
+        }
+        .ExportButtonLabel{
+          margin: 0 1em;
+        }
+      }
+
+      .ExportIcon, .CalendarIcon {
+        vertical-align: sub;
+      }
+
+      .CalendarButtonLabel {
+        margin: 1em 2em;
+      }
+
+      .CalendarButton {
+        margin-top: 3em;
+      }
+    }
   }
 }

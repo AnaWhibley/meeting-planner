@@ -1,13 +1,9 @@
 import React from 'react';
 import {
     login,
-    selectLoggedInUser,
-    selectPassword,
-    selectShowErrorMessage,
-    selectUsername,
     setPassword,
     setUsername
-} from '../../app/loginSlice';
+} from '../../app/login/slice';
 import {useDispatch, useSelector} from 'react-redux';
 import {Dispatch} from '@reduxjs/toolkit';
 import {Redirect} from 'react-router-dom';
@@ -21,6 +17,7 @@ import {Typography} from '@material-ui/core';
 import {ReactComponent as AtSignIcon} from '../../assets/icons/evericons/at-sign.svg';
 import {ReactComponent as KeyIcon} from '../../assets/icons/evericons/key.svg';
 import '../../styles/common.scss';
+import {selectLoggedInUser, selectPassword, selectShowErrorMessage, selectUsername} from '../../app/login/selectors';
 
 export function Login() {
 

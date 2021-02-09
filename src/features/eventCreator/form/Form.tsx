@@ -6,7 +6,7 @@ import {
     exportJSON,
     next,
     previous,
-} from '../../../app/eventCreator/eventCreatorSlice';
+} from '../../../app/eventCreator/slice';
 import {NavBar} from '../../../components/navigationBar/NavBar';
 import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
 import {Color} from '../../../styles/theme';
@@ -16,13 +16,22 @@ import {StageThree} from './StageThree';
 import { SummaryStage } from './SummaryStage';
 import {Step, StepLabel, Stepper, Typography} from '@material-ui/core';
 import './Form.scss'
-import {selectIsFirstStage, selectIsLastStage, selectStage} from '../../../app/eventCreator/selectors';
+import {
+    selectIsConfirmationStage,
+    selectIsStageOne,
+    selectIsSummaryStage,
+    selectStage
+} from '../../../app/eventCreator/selectors';
+import {ConfirmationStage} from './ConfirmationStage';
 
 export function Form() {
     const stage = useSelector(selectStage);
-    const isLastStage = useSelector(selectIsLastStage);
-    const isFirstStage = useSelector(selectIsFirstStage);
+    const isSummaryStage = useSelector(selectIsSummaryStage);
+    const isConfirmationStage = useSelector(selectIsConfirmationStage);
+    const isFirstStage = useSelector(selectIsStageOne);
     const dispatch = useDispatch();
+
+    const steps = [1,2,3,4];
 
     let body;
 
@@ -38,6 +47,9 @@ export function Form() {
             break;
         case 3:
             body = <SummaryStage/>;
+            break;
+        case 4:
+            body = <ConfirmationStage/>;
             break;
         default:
             throw new Error('Unknown step');
@@ -55,7 +67,7 @@ export function Form() {
                         Simplemente sigue los pasos
                     </Typography>
                     <Stepper activeStep={stage} className={'Stepper'}>
-                        {[1,2,3,4].map((label, index) => {
+                        {steps.map((label, index) => {
                             const stepProps = {};
                             const labelProps = {};
                             return (
@@ -68,7 +80,7 @@ export function Form() {
                 </div>
                 {body}
                 <div className={'ButtonsContainer'}>
-                    {!isFirstStage ?
+                    {!isFirstStage && !isConfirmationStage ?
                         <ActionButton onClick={() => dispatch(previous())}
                                       innerText={'Atrás'}
                                       color={Color.PRIMARY}
@@ -76,30 +88,28 @@ export function Form() {
                                       variant={ButtonVariant.OUTLINED}/>
                         : null}
 
-                    <ActionButton onClick={() => {
-                        if(isLastStage) {
-                            dispatch(createEvents())
-                        }else{
-                            dispatch(next())
-                        }
-                    }} innerText={isLastStage ? 'Confirmar' : 'Siguiente'}
-                                  className={'Button'}
-                                  variant={ButtonVariant.CONTAINED}
-                                  color={Color.PRIMARY}
-                    />
+                    {!isConfirmationStage && !isFirstStage && !isSummaryStage ?
+                        <ActionButton onClick={() => dispatch(next())}
+                                      innerText={'Siguiente'}
+                                      className={'Button'}
+                                      variant={ButtonVariant.CONTAINED}
+                                      color={Color.PRIMARY}/>
+                        : null
+                    }
 
-                    {isLastStage ?
+                    {isSummaryStage ?
+                        <ActionButton onClick={() => dispatch(createEvents())}
+                                      className={'Button'}
+                                      color={Color.PRIMARY}
+                                      innerText={'Finalizar'}
+                                      variant={ButtonVariant.CONTAINED}/>
+                        : null}
+
+                    {isSummaryStage ?
                         <ActionButton onClick={() => dispatch(createNew())}
                                       className={'Button'}
                                       color={Color.PRIMARY}
-                                      innerText={'Añadir otro'}
-                                      variant={ButtonVariant.CONTAINED}/>
-                        : null}
-                    {isLastStage ?
-                        <ActionButton onClick={() => dispatch(exportJSON())}
-                                      className={'Button'}
-                                      color={Color.PRIMARY}
-                                      innerText={'Exportar'}
+                                      innerText={'Añadir otro evento'}
                                       variant={ButtonVariant.CONTAINED}/>
                         : null}
                 </div>

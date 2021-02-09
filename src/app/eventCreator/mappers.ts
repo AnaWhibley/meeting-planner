@@ -1,5 +1,5 @@
 import {RootState} from '../store';
-import {EventState} from './eventCreatorSlice';
+import {EventState} from './slice';
 
 export const mapEvents = (events: Array<any>) => {
     return events.map((event) => {
