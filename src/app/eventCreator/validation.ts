@@ -1,5 +1,5 @@
 import {DateTime} from 'luxon';
-import {DATE_FORMAT, EventCreatorState} from './eventCreatorSlice';
+import {DATE_FORMAT, EventCreatorState} from './slice';
 
 enum errorMessages {
     EMPTY = 'Campo requerido',

@@ -73,7 +73,7 @@ export const slice = createSlice({
         next: state => {
 
             const validationHasErrors = validateFields(state);
-            if(validationHasErrors) return;
+            //if(validationHasErrors) return;
 
             if(state.events.length > 1 && state.stage === 0 && state.currentIndex !== 0){
                 state.stage = 2;
@@ -121,8 +121,10 @@ export const slice = createSlice({
             state.stage = 0;
         },
         complete: (state) => {
+            state.stage = 4;
             state.events = [createDefaultEvent()];
-            state.stage = 0;
+            state.from = createFieldState(DateTime.utc().toFormat(DATE_FORMAT));
+            state.to = createFieldState(DateTime.utc().toFormat(DATE_FORMAT));
             state.currentIndex = 0;
             state.groupName = createFieldState({label: '', value: ''});
         },

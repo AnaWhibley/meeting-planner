@@ -6,10 +6,10 @@ import {ReactComponent as CalendarCreateIcon} from '../../assets/icons/evericons
 import {ReactComponent as CalendarDatesIcon} from '../../assets/icons/evericons/calendar-dates.svg';
 import {ReactComponent as SignOutIcon} from '../../assets/icons/evericons/share-arrow.svg';
 import {useSelector} from 'react-redux';
-import {selectLoggedInUser} from '../../app/loginSlice';
 import {Role} from '../../services/userService';
 import logo from '../../assets/images/logo.svg';
 import './NavBar.scss';
+import {selectLoggedInUser} from '../../app/login/selectors';
 
 export function NavBar() {
 
