@@ -1,16 +1,17 @@
 import {useDispatch, useSelector} from 'react-redux';
-import {editEvent, selectEvents, selectFrom, selectGroupName, selectTo} from '../../../app/eventCreatorSlice';
+import {editEvent} from '../../../app/eventCreator/eventCreatorSlice';
 import React from 'react';
 import {Collapse, Divider, List, ListItem, ListItemText, Typography} from '@material-ui/core';
 import {ExpandLess, ExpandMore} from '@material-ui/icons';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import {ReactComponent as EditIcon} from '../../../assets/icons/evericons/pencil-edit.svg';
+import {selectEvents, selectFrom, selectGroupName, selectTo} from '../../../app/eventCreator/selectors';
 
 export function SummaryStage() {
     const events = useSelector(selectEvents);
     const from = useSelector(selectFrom).value;
     const to = useSelector(selectTo).value;
-    const groupName = useSelector(selectGroupName)?.value;
+    const groupName = useSelector(selectGroupName).value;
     const dispatch = useDispatch();
 
     const [collapsedEvents, setCollapsedEvents] = React.useState<Array<boolean>>([]);

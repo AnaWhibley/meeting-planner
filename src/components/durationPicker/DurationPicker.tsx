@@ -7,13 +7,17 @@ interface DurationPickerProps {
     className?: string;
     label?: string;
     fullWidth?: boolean;
+    errorMessage?: string;
+    error?: boolean;
 }
 
 export function DurationPicker(props: DurationPickerProps){
 
-    const {value, onChange, className, label, fullWidth} = props;
+    const {value, onChange, className, label, fullWidth, error, errorMessage} = props;
     return (
         <TextField label={label}
+                   error={error}
+                   helperText={errorMessage}
                    type={'number'}
                    fullWidth={fullWidth}
                    value={value}
@@ -21,8 +25,8 @@ export function DurationPicker(props: DurationPickerProps){
                    className={className}
                    InputProps={{
                        inputProps: {
-                           max: 120,
-                           min: 30,
+                           max: 300,
+                           min: 10,
                            step: 15,
                        },
                        style: { fontSize: 16 }

@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import uiStateReducer from './uiStateSlice';
 import loginReducer from './loginSlice';
 import calendarReducer from './calendarSlice';
-import eventCreatorReducer from './eventCreatorSlice';
+import eventCreatorReducer from './eventCreator/eventCreatorSlice';
 
 export const store = configureStore({
     reducer: {
