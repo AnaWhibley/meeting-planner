@@ -1,18 +1,17 @@
 import {useDispatch, useSelector} from 'react-redux';
 import {
-    selectDuration,
-    selectName,
     setDuration,
     setName,
-} from '../../../app/eventCreatorSlice';
+} from '../../../app/eventCreator/eventCreatorSlice';
 import React from 'react';
 import {Typography} from '@material-ui/core';
 import {DurationPicker} from '../../../components/durationPicker/DurationPicker';
 import TextInput from '../../../components/textInput/TextInput';
+import {selectDuration, selectName } from '../../../app/eventCreator/selectors';
 
 export function StageOne() {
-    const name = useSelector(selectName).value;
-    const duration = useSelector(selectDuration).value;
+    const name = useSelector(selectName);
+    const duration = useSelector(selectDuration);
     const dispatch = useDispatch();
 
     return (
@@ -24,7 +23,9 @@ export function StageOne() {
                     ¿Cómo se llamará el evento?
                 </Typography>
                 <TextInput type='text'
-                           value={name}
+                           error={!!name.errorMessage}
+                           errorMessage={name.errorMessage}
+                           value={name.value}
                            placeholder={'Nombre del evento'}
                            fullWidth={true}
                            className={'Input'}
@@ -37,7 +38,11 @@ export function StageOne() {
                             display={'block'}>
                     ¿Cuánto durará este evento?
                 </Typography>
-                <DurationPicker value={duration} className={'Input'} onChange={duration => dispatch(setDuration(duration))}/>
+                <DurationPicker value={duration.value}
+                                className={'Input'}
+                                error={!!duration.errorMessage}
+                                errorMessage={duration.errorMessage}
+                                onChange={duration => dispatch(setDuration(duration))}/>
                 <Typography color={'textPrimary'}
                             variant={'h3'}
                             className={'MinutesLabel'}

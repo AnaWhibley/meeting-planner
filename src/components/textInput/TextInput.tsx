@@ -4,6 +4,8 @@ import './TextInput.scss';
 import cn from 'classnames';
 
 interface TextInputProps {
+    errorMessage?: string;
+    error?: boolean;
     placeholder?: string;
     label?: string;
     containerClassName?: string;
@@ -18,9 +20,11 @@ interface TextInputProps {
 
 export default class TextInput extends Component<TextInputProps>{
     render() {
-        const {icon, placeholder, fullWidth, value, type, onChange, label, containerClassName, className, disabled} = this.props;
+        const {icon, placeholder, fullWidth, value, type, onChange, label, containerClassName, className, disabled, error, errorMessage} = this.props;
         const textField = (
             <TextField placeholder={placeholder}
+                       error={error}
+                       helperText={errorMessage}
                        label={label}
                        type={type}
                        fullWidth={fullWidth}

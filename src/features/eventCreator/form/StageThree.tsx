@@ -2,15 +2,14 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
     addTutor,
     removeTutor,
-    selectParticipants,
-    selectTutorNumber,
     setParticipants
-} from '../../../app/eventCreatorSlice';
+} from '../../../app/eventCreator/eventCreatorSlice';
 import React from 'react';
 import {Typography} from '@material-ui/core';
 import TextInput from '../../../components/textInput/TextInput';
 import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
 import {Color} from '../../../styles/theme';
+import {selectParticipants, selectTutorNumber} from '../../../app/eventCreator/selectors';
 
 export function StageThree() {
     const dispatch = useDispatch();
@@ -18,7 +17,12 @@ export function StageThree() {
     const participants = useSelector(selectParticipants).map((p, index) => {
         return (
             <div key={index} className={'Question'}>
-                <TextInput fullWidth={true} placeholder={p.tag} value={p.email.value} onChange={(value) => dispatch(setParticipants({value: value, index}))}/>
+                <TextInput fullWidth={true}
+                           placeholder={p.tag}
+                           value={p.email.value}
+                           error={!!p.email.errorMessage}
+                           errorMessage={p.email.errorMessage}
+                           onChange={(value) => dispatch(setParticipants({value: value, index}))}/>
             </div>
         );
     });
@@ -37,7 +41,6 @@ export function StageThree() {
                 <Typography color={'primary'} display={'block'} variant={'h3'}>Tutor/es</Typography>
                 {participants.slice(6)}
             </div>
-            {/*1919 x 968*/}
             {tutorNumber === 2 ?
                 <ActionButton onClick={() => dispatch(removeTutor())}
                               innerText={'Eliminar tutor'}
