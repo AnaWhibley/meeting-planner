@@ -1,0 +1,13 @@
+.PlannerContainer {
+  margin: 2em;
+  display: flex;
+
+  .ViewSelectorContainer {
+    flex: 0 0 300px;
+  }
+
+  .CalendarContainer {
+    flex: 1 1 auto;
+  }
+}
+
