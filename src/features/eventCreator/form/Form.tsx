@@ -88,7 +88,7 @@ export function Form() {
                                       variant={ButtonVariant.OUTLINED}/>
                         : null}
 
-                    {!isConfirmationStage && !isFirstStage && !isSummaryStage ?
+                    {!isConfirmationStage && !isSummaryStage ?
                         <ActionButton onClick={() => dispatch(next())}
                                       innerText={'Siguiente'}
                                       className={'Button'}

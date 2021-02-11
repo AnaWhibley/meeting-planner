@@ -73,7 +73,7 @@ export const slice = createSlice({
         next: state => {
 
             const validationHasErrors = validateFields(state);
-            //if(validationHasErrors) return;
+            if(validationHasErrors) return;
 
             if(state.events.length > 1 && state.stage === 0 && state.currentIndex !== 0){
                 state.stage = 2;
