@@ -6,7 +6,6 @@ import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom
 import {Role, User} from './services/userService';
 import {Dashboard} from './features/dashboard/Dashboard';
 import {Profile} from './features/profile/Profile';
-import {Calendar} from './features/calendar/Calendar';
 import {theme} from './styles/theme';
 import {ThemeProvider} from '@material-ui/core';
 import {ErrorPage} from './components/errorPage/errorPage';
@@ -14,6 +13,7 @@ import { EventCreator } from './features/eventCreator/EventCreator';
 import './styles/common.scss';
 import {Form} from './features/eventCreator/form/Form';
 import {selectLoggedInUser} from './app/login/selectors';
+import {Planner} from './features/planner/Planner';
 
 function App() {
 
@@ -35,7 +35,7 @@ function App() {
     };
 
     return (
-        <div className={'GeneralContainer'}>
+        <div>
             <ThemeProvider theme={theme}>
                 <Router>
                     <Switch>
@@ -49,7 +49,7 @@ function App() {
                         <PrivateRoute path='/createEvents/form' component={<Form/>} admin={true}/>
                         <PrivateRoute path='/createEvents' component={<EventCreator/>} admin={true}/>
                         <PrivateRoute path='/profile' component={<Profile/>} />
-                        <PrivateRoute path='/' component={<Calendar/>}/>
+                        <PrivateRoute path='/' component={<Planner/>}/>
                     </Switch>
                 </Router>
             </ThemeProvider>

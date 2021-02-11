@@ -3,7 +3,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
     createEvents,
     createNew,
-    exportJSON,
     next,
     previous,
 } from '../../../app/eventCreator/slice';
