@@ -6,6 +6,9 @@ import luxonPlugin from '@fullcalendar/luxon';
 import esLocale from '@fullcalendar/core/locales/es';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import './Calendar.scss';
+import {useDispatch, useSelector} from 'react-redux';
+import {selectBusyDates} from '../../../app/planner/selectors';
+import { addBusy } from '../../../app/planner/slice';
 
 const Test = (eventInfo: EventContentArg) => {
     return (
@@ -16,8 +19,11 @@ const Test = (eventInfo: EventContentArg) => {
 
 export function Calendar() {
 
+    const busyDates: any = useSelector(selectBusyDates);
+    const dispatch = useDispatch();
+
     const handleDateClick = (arg: any) => {
-        console.log(arg.dateStr)
+        console.log(arg)
     };
 
     const events = [{
@@ -39,6 +45,8 @@ export function Calendar() {
         duration: 60,
     }];
 
+    console.log(busyDates)
+
     return (
         <>
             <FullCalendar
@@ -52,18 +60,18 @@ export function Calendar() {
                 timeZone={'UTC'}
                 initialView='timeGridWeek'
                 weekends={false}
-                events={[
-                    { title: 'event 1', date: '2021-02-08' }
-                ]}
                 selectable={true}
-                editable={true}
                 selectMirror={true}
                 locale={esLocale}
                 height={'auto'}
                 dateClick={handleDateClick}
-                slotMinTime={'07:00:00'}
+                slotMinTime={'08:00:00'}
                 slotMaxTime={'20:00:00'}
-                eventContent={Test}
+                events={busyDates}
+                eventDragStart={(info) => console.log("!!!! 1 ", info.event, info.view, info.el)}
+                eventDragStop={(info) => console.log("!!!! 2 ", info.event, info.view, info.el)}
+                select={(event) => dispatch(addBusy({start: event.start.toISOString(), end: event.end.toISOString(), allDay: event.allDay}))}
+                /*eventContent={Test}*/
             />
         </>
     );
