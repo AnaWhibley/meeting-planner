@@ -1,14 +1,15 @@
-import React from 'react';
-import FullCalendar, { EventContentArg } from '@fullcalendar/react';
+import React, {useEffect, useRef, useState} from 'react';
+import FullCalendar, {EventContentArg} from '@fullcalendar/react';
 import dayGridPlugin  from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import luxonPlugin from '@fullcalendar/luxon';
+import luxonPlugin, {toLuxonDateTime} from '@fullcalendar/luxon';
 import esLocale from '@fullcalendar/core/locales/es';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import './Calendar.scss';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectBusyDates} from '../../../app/planner/selectors';
-import { addBusy } from '../../../app/planner/slice';
+import {addBusy, BusyState} from '../../../app/planner/slice';
+import {DateTime} from 'luxon';
 
 const Test = (eventInfo: EventContentArg) => {
     return (
@@ -20,36 +21,34 @@ const Test = (eventInfo: EventContentArg) => {
 export function Calendar() {
 
     const busyDates: any = useSelector(selectBusyDates);
+    const dates = busyDates.map((date: BusyState) => {
+        const a = DateTime.fromFormat(date.start, "yyyy L dd HH mm ss");
+        console.log("!!! afdhsf", date.start, a, a.toJSDate())
+        return {
+            ...date,
+            start: DateTime.fromFormat(date.start, 'yyyy L dd HH mm ss').toJSDate(),
+            end: DateTime.fromFormat(date.end, 'yyyy L dd HH mm ss').toJSDate()
+        }
+
+    });
+
     const dispatch = useDispatch();
 
     const handleDateClick = (arg: any) => {
         console.log(arg)
     };
 
-    const events = [{
-        name: 'Event 1',
-        participants: ['1', '2', '3', '4'],
-        duration: 60,
-    }, {
-        name: 'Event 2',
-        participants: ['5', '6', '7', '8'],
-        optional: [ '9', '10' ],
-        duration: 60,
-    }, {
-        name: 'Event 3',
-        participants: ['3', '4', '5', '6'],
-        duration: 60,
-    }, {
-        name: 'Event 4',
-        participants: ['5', '6'],
-        duration: 60,
-    }];
+    const calendarRef: any = useRef();
+    console.log(dates)
 
-    console.log(busyDates)
+    useEffect(() =>{
+        console.log(calendarRef.current);
+    }, [calendarRef]);
 
     return (
         <>
             <FullCalendar
+                ref={calendarRef}
                 plugins={[ dayGridPlugin, interactionPlugin, luxonPlugin, timeGridPlugin ]}
                 headerToolbar={{
                     start: 'prev,next today',
@@ -67,10 +66,17 @@ export function Calendar() {
                 dateClick={handleDateClick}
                 slotMinTime={'08:00:00'}
                 slotMaxTime={'20:00:00'}
-                events={busyDates}
-                eventDragStart={(info) => console.log("!!!! 1 ", info.event, info.view, info.el)}
-                eventDragStop={(info) => console.log("!!!! 2 ", info.event, info.view, info.el)}
-                select={(event) => dispatch(addBusy({start: event.start.toISOString(), end: event.end.toISOString(), allDay: event.allDay}))}
+                events={dates}
+                select={(event) => {
+                    dispatch(addBusy(
+                        {
+                            start: toLuxonDateTime(event.start, calendarRef.current.getApi()).toFormat("yyyy L dd HH mm ss"),
+                            end: toLuxonDateTime(event.end, calendarRef.current.getApi()).toFormat("yyyy L dd HH mm ss"),
+                            allDay: event.allDay
+                        })
+                    );
+                }}
+
                 /*eventContent={Test}*/
             />
         </>

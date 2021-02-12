@@ -5,7 +5,7 @@ export interface PlannerSlice {
     busyDates: Array<BusyState>;
 }
 
-interface BusyState {
+export interface BusyState {
     id: number;
     start: string;
     end: string;
