@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import {DateTime} from 'luxon';
 
 export interface PlannerSlice {
-    busyDates: Array<BusyState>;
+    busyDatesCurrentUser: Array<BusyState>;
+    busyDatesOtherUsers: Array<{userId: string, busyDates: Array<BusyState>}>;
 }
 
 export interface BusyState {
@@ -12,21 +12,54 @@ export interface BusyState {
     allDay: boolean;
 }
 
-const createBusyState = (): BusyState => ({
-    id: Math.random(),
-    start: DateTime.utc().toFormat('ff'),
-    end: DateTime.utc().toFormat('ff'),
-    allDay: false
-});
+const busyDatesOtherUsers = [
+    {
+        userId: '1',
+        busyDates: [{
+            start: "2021 2 17 08 00 00",
+            end: "2021 2 17 15 30 00",
+            id: 0.2075701986879172,
+            allDay: false,
+        }, {
+            start: "2021 2 17 17 00 00",
+            end: "2021 2 17 18 30 00",
+            id: 0.2075701986879176,
+            allDay: false
+        }]
+    }, {
+        userId: '2',
+        busyDates: [{
+            start: "2021 2 15 08 00 00",
+            end: "2021 2 15 15 30 00",
+            id: 0.2075701986879155,
+            allDay: false
+        }, {
+            start: "2021 2 15 08 00 00",
+            end: "2021 2 15 15 30 00",
+            id: 0.2075701986879132,
+            allDay: false
+        }]
+    },
+    {
+        userId: '3',
+        busyDates: [{
+            start: "2021 2 15 08 00 00",
+            end: "2021 2 15 15 30 00",
+            id: 0.2075701986875172,
+            allDay: false
+        }]
+    },
+];
 
 export const slice = createSlice({
     name: 'planner',
     initialState: {
-        busyDates: []
+        busyDatesCurrentUser: [],
+        busyDatesOtherUsers: busyDatesOtherUsers
     } as PlannerSlice,
     reducers: {
         addBusy: ((state, action) => {
-            state.busyDates.push({
+            state.busyDatesCurrentUser.push({
                 start: action.payload.start,
                 end: action.payload.end,
                 id: Math.random(),

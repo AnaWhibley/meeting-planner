@@ -1,36 +1,83 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef} from 'react';
 import FullCalendar, {EventContentArg} from '@fullcalendar/react';
-import dayGridPlugin  from '@fullcalendar/daygrid';
+import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import luxonPlugin, {toLuxonDateTime} from '@fullcalendar/luxon';
 import esLocale from '@fullcalendar/core/locales/es';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import './Calendar.scss';
 import {useDispatch, useSelector} from 'react-redux';
-import {selectBusyDates} from '../../../app/planner/selectors';
-import {addBusy, BusyState} from '../../../app/planner/slice';
-import {DateTime} from 'luxon';
+import {selectBusyDatesCurrentUser, selectBusyDatesOtherUsers} from '../../../app/planner/selectors';
+import {addBusy} from '../../../app/planner/slice';
+import {DATE_TIME_FORMAT} from '../../../app/eventCreator/slice';
+import {Button, Popover} from '@material-ui/core';
+
 
 const Test = (eventInfo: EventContentArg) => {
+
+    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+    const open = Boolean(anchorEl);
+
+    const style = eventInfo.view.type === 'dayGridMonth' ? {
+        background: eventInfo.backgroundColor,
+        borderColor: eventInfo.borderColor,
+        borderRadius: '3px',
+        height: '100%',
+        width: '100%',
+    } : {
+        height: '100%',
+    };
+
+    console.log('Event info ', eventInfo)
     return (
-        <div onClick={() => console.log('asdsad eventInfo.timeText', eventInfo.timeText)}>{eventInfo.timeText}, {eventInfo.event.title}</div>
+        <div style={style}>
+            {eventInfo.view.type === 'dayGridMonth' ?
+                <span style={{height: '100%', display: 'inline-block'}}>
+                {eventInfo.timeText} {eventInfo.event.title}
+            </span>
+                :
+                <>
+               <span onClick={handleClick} style={{height: '100%', display: 'inline-block'}}>
+                {eventInfo.timeText} {eventInfo.event.title}</span>
+                    <Popover
+                        open={open}
+                        anchorEl={anchorEl}
+                        onClose={handleClose}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'center',
+                        }}
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'center',
+                        }}
+                    >
+                        <div>
+                            {eventInfo.timeText} {eventInfo.event.title}
+                            <br/>
+                            {eventInfo.event.extendedProps.canDelete ? <Button>Eliminar</Button> : null}
+                        </div>
+                    </Popover>
+                </>
+            }
+        </div>
 
     )
 }
 
 export function Calendar() {
 
-    const busyDates: any = useSelector(selectBusyDates);
-    const dates = busyDates.map((date: BusyState) => {
-        const a = DateTime.fromFormat(date.start, "yyyy L dd HH mm ss");
-        console.log("!!! afdhsf", date.start, a, a.toJSDate())
-        return {
-            ...date,
-            start: DateTime.fromFormat(date.start, 'yyyy L dd HH mm ss').toJSDate(),
-            end: DateTime.fromFormat(date.end, 'yyyy L dd HH mm ss').toJSDate()
-        }
+    const busyDatesCU: any = useSelector(selectBusyDatesCurrentUser);
+    const busyDatesOU: any = useSelector(selectBusyDatesOtherUsers);
 
-    });
+    const dates = [...busyDatesCU, ...busyDatesOU]
+
 
     const dispatch = useDispatch();
 
@@ -38,12 +85,7 @@ export function Calendar() {
         console.log(arg)
     };
 
-    const calendarRef: any = useRef();
-    console.log(dates)
-
-    useEffect(() =>{
-        console.log(calendarRef.current);
-    }, [calendarRef]);
+    const calendarRef: React.RefObject<any> = useRef();
 
     return (
         <>
@@ -68,16 +110,16 @@ export function Calendar() {
                 slotMaxTime={'20:00:00'}
                 events={dates}
                 select={(event) => {
+                    console.log('hola')
                     dispatch(addBusy(
                         {
-                            start: toLuxonDateTime(event.start, calendarRef.current.getApi()).toFormat("yyyy L dd HH mm ss"),
-                            end: toLuxonDateTime(event.end, calendarRef.current.getApi()).toFormat("yyyy L dd HH mm ss"),
+                            start: toLuxonDateTime(event.start, calendarRef.current.getApi()).toFormat(DATE_TIME_FORMAT),
+                            end: toLuxonDateTime(event.end, calendarRef.current.getApi()).toFormat(DATE_TIME_FORMAT),
                             allDay: event.allDay
                         })
                     );
                 }}
-
-                /*eventContent={Test}*/
+                eventContent={(props) =><Test {...props} />}
             />
         </>
     );
