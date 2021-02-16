@@ -2,6 +2,21 @@
  font-family: Nunito, serif;
 }
 
+.PopoverContainer {
+  .EventContent {
+    height: 100%;
+    display: inline-block;
+    cursor: pointer;
+  }
+  .PopoverContent {
+    margin: 0.5em 1em;
+    font-size: 14px;
+    text-align: center;
+  }
+}
+
+//Calendar styling
+
 .fc-toolbar {
   text-transform: capitalize;
 }

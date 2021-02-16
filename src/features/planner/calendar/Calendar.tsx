@@ -10,14 +10,17 @@ import {useDispatch, useSelector} from 'react-redux';
 import {selectBusyDatesCurrentUser, selectBusyDatesOtherUsers} from '../../../app/planner/selectors';
 import {addBusy} from '../../../app/planner/slice';
 import {DATE_TIME_FORMAT} from '../../../app/eventCreator/slice';
-import {Button, Popover} from '@material-ui/core';
-
+import {Popover} from '@material-ui/core';
+import {ReactComponent as TrashIcon} from '../../../assets/icons/evericons/trash-empty.svg';
+import {ReactComponent as InfoIcon} from '../../../assets/icons/evericons/info.svg';
+import { Tooltip } from '../../../components/tooltip/Tooltip';
+import '../../../styles/common.scss'
 
 const Test = (eventInfo: EventContentArg) => {
 
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
+    const handleClick = () => {
+        setAnchorEl(divRef.current);
     };
     const handleClose = () => {
         setAnchorEl(null);
@@ -33,39 +36,44 @@ const Test = (eventInfo: EventContentArg) => {
     } : {
         height: '100%',
     };
-
-    console.log('Event info ', eventInfo)
+    const divRef: React.RefObject<any> = React.useRef();
     return (
-        <div style={style}>
+        <div style={style} ref={divRef} className={'PopoverContainer'}>
             {eventInfo.view.type === 'dayGridMonth' ?
-                <span style={{height: '100%', display: 'inline-block'}}>
-                {eventInfo.timeText} {eventInfo.event.title}
-            </span>
+                <span className={'EventContent'}>{eventInfo.timeText} | {eventInfo.event.title}</span>
                 :
                 <>
-               <span onClick={handleClick} style={{height: '100%', display: 'inline-block'}}>
-                {eventInfo.timeText} {eventInfo.event.title}</span>
+                   <span onClick={handleClick} className={'EventContent'}>
+                    {eventInfo.timeText}<br/>{eventInfo.event.title}
+                   </span>
                     <Popover
+                        onClose={handleClose}
                         open={open}
                         anchorEl={anchorEl}
-                        onClose={handleClose}
                         anchorOrigin={{
-                            vertical: 'top',
+                            vertical: 'center',
                             horizontal: 'center',
                         }}
                         transformOrigin={{
-                            vertical: 'top',
+                            vertical: 'center',
                             horizontal: 'center',
                         }}
                     >
-                        <div>
-                            {eventInfo.timeText} {eventInfo.event.title}
-                            <br/>
-                            {eventInfo.event.extendedProps.canDelete ? <Button>Eliminar</Button> : null}
+                        <div className={'PopoverContainer'}>
+                            <div className={'PopoverContent'}>
+                                <InfoIcon className={'FillPrimary'}/><br/>
+                                <span>{eventInfo.timeText}</span><br/><hr/>
+                                <span>{eventInfo.event.title}</span><br/>
+                                {eventInfo.event.extendedProps.canDelete ?
+                                    <Tooltip icon={<TrashIcon/>} text={'Eliminar'} onClick={() => console.log('eliminar')}/>
+                                    : null
+                                }
+                            </div>
                         </div>
                     </Popover>
                 </>
             }
+
         </div>
 
     )
@@ -77,7 +85,6 @@ export function Calendar() {
     const busyDatesOU: any = useSelector(selectBusyDatesOtherUsers);
 
     const dates = [...busyDatesCU, ...busyDatesOU]
-
 
     const dispatch = useDispatch();
 
@@ -110,7 +117,6 @@ export function Calendar() {
                 slotMaxTime={'20:00:00'}
                 events={dates}
                 select={(event) => {
-                    console.log('hola')
                     dispatch(addBusy(
                         {
                             start: toLuxonDateTime(event.start, calendarRef.current.getApi()).toFormat(DATE_TIME_FORMAT),
@@ -120,6 +126,7 @@ export function Calendar() {
                     );
                 }}
                 eventContent={(props) =><Test {...props} />}
+                selectOverlap={(event) => event.groupId !== 'currentUser'}
             />
         </>
     );
