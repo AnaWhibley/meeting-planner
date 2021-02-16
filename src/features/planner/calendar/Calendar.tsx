@@ -1,5 +1,5 @@
 import React, {useRef} from 'react';
-import FullCalendar, {EventContentArg} from '@fullcalendar/react';
+import FullCalendar, {DateSelectArg, EventApi, EventContentArg} from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import luxonPlugin, {toLuxonDateTime} from '@fullcalendar/luxon';
@@ -8,13 +8,13 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import './Calendar.scss';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectBusyDatesCurrentUser, selectBusyDatesOtherUsers} from '../../../app/planner/selectors';
-import {addBusy} from '../../../app/planner/slice';
-import {DATE_TIME_FORMAT} from '../../../app/eventCreator/slice';
-import {Popover} from '@material-ui/core';
+import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Popover} from '@material-ui/core';
 import {ReactComponent as TrashIcon} from '../../../assets/icons/evericons/trash-empty.svg';
 import {ReactComponent as InfoIcon} from '../../../assets/icons/evericons/info.svg';
 import { Tooltip } from '../../../components/tooltip/Tooltip';
 import '../../../styles/common.scss'
+import {DATE_TIME_FORMAT} from '../../../app/eventCreator/slice';
+import { addBusy } from '../../../app/planner/slice';
 
 const Test = (eventInfo: EventContentArg) => {
 
@@ -25,7 +25,7 @@ const Test = (eventInfo: EventContentArg) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-    const open = Boolean(anchorEl);
+    const openPopover = Boolean(anchorEl);
 
     const style = eventInfo.view.type === 'dayGridMonth' ? {
         background: eventInfo.backgroundColor,
@@ -48,7 +48,7 @@ const Test = (eventInfo: EventContentArg) => {
                    </span>
                     <Popover
                         onClose={handleClose}
-                        open={open}
+                        open={openPopover}
                         anchorEl={anchorEl}
                         anchorOrigin={{
                             vertical: 'center',
@@ -94,6 +94,31 @@ export function Calendar() {
 
     const calendarRef: React.RefObject<any> = useRef();
 
+    const [openDialog, setOpenDialog] = React.useState(false);
+    const [selectInfo, setSelectInfo] = React.useState<DateSelectArg>();
+
+    const handleClickOpenDialog = (event: DateSelectArg) => {
+        setOpenDialog(true);
+        setSelectInfo(event);
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    };
+
+    const handleAcceptDialog = () => {
+        if(selectInfo) {
+            dispatch(addBusy(
+                {
+                    start: toLuxonDateTime(selectInfo.start, calendarRef.current.getApi()).toFormat(DATE_TIME_FORMAT),
+                    end: toLuxonDateTime(selectInfo.end, calendarRef.current.getApi()).toFormat(DATE_TIME_FORMAT),
+                    allDay: selectInfo.allDay
+                })
+            );
+            handleCloseDialog();
+        }
+    };
+
     return (
         <>
             <FullCalendar
@@ -116,18 +141,32 @@ export function Calendar() {
                 slotMinTime={'08:00:00'}
                 slotMaxTime={'20:00:00'}
                 events={dates}
-                select={(event) => {
-                    dispatch(addBusy(
-                        {
-                            start: toLuxonDateTime(event.start, calendarRef.current.getApi()).toFormat(DATE_TIME_FORMAT),
-                            end: toLuxonDateTime(event.end, calendarRef.current.getApi()).toFormat(DATE_TIME_FORMAT),
-                            allDay: event.allDay
-                        })
-                    );
-                }}
-                eventContent={(props) =><Test {...props} />}
-                selectOverlap={(event) => event.groupId !== 'currentUser'}
+                select={(event: DateSelectArg) => handleClickOpenDialog(event)}
+                eventContent={(props: EventContentArg) =><Test {...props} />}
+                selectOverlap={(event: EventApi) => event.groupId !== 'currentUser'}
             />
+
+            <Dialog open={openDialog} onClose={handleCloseDialog}>
+                <DialogTitle>{"¿Quieres crear una nueva indisponibilidad?"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Se creará una nueva indisponibilidad el{'\u00A0'}
+                        {selectInfo ? toLuxonDateTime(selectInfo.start, calendarRef.current.getApi()).toFormat("cccc d 'de' LLLL") : null}
+                        {'\u00A0'}desde las{'\u00A0'}
+                        {selectInfo ? toLuxonDateTime(selectInfo.start, calendarRef.current.getApi()).toFormat('HH:mm') : null}
+                        {'\u00A0'}hasta las{'\u00A0'}
+                        {selectInfo ? toLuxonDateTime(selectInfo.end, calendarRef.current.getApi()).toFormat('HH:mm') : null}.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog} color="primary">
+                        Cancelar
+                    </Button>
+                    <Button onClick={handleAcceptDialog} color="primary" autoFocus>
+                        Aceptar
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 }
