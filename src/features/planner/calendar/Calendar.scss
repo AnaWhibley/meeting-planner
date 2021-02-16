@@ -5,13 +5,20 @@
 .EventContent {
   height: 100%;
   display: inline-block;
-  cursor: pointer;
   width: 100%;
+  padding-left: 3px;
+}
+.EventContainer:hover{
+  font-weight: bold;
 }
 .PopoverContent {
   margin: 0.5em 1em;
   font-size: 14px;
   text-align: center;
+}
+
+.MonthEventPaddingTop {
+  padding-top: 3px;
 }
 
 //Calendar styling
@@ -53,7 +60,6 @@
 
 .fc-daygrid-dot-event:hover, .fc-daygrid-dot-event.fc-event-mirror {
   background: unset !important;
-  font-weight: bold;
 }
 
 .fc-day-today {

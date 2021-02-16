@@ -14,7 +14,7 @@ export interface BusyState {
 
 const busyDatesOtherUsers = [
     {
-        userId: '1',
+        userId: 'Lola Flores',
         busyDates: [{
             start: "2021 2 17 08 00 00",
             end: "2021 2 17 15 30 00",
@@ -27,7 +27,7 @@ const busyDatesOtherUsers = [
             allDay: false
         }]
     }, {
-        userId: '2',
+        userId: 'Rosa Melano',
         busyDates: [{
             start: "2021 2 16 08 00 00",
             end: "2021 2 16 15 30 00",
@@ -41,7 +41,7 @@ const busyDatesOtherUsers = [
         }]
     },
     {
-        userId: '3',
+        userId: 'Pedro Sánchez',
         busyDates: [{
             start: "2021 2 15 08 00 00",
             end: "2021 2 15 15 30 00",
