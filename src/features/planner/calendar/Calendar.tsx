@@ -14,18 +14,25 @@ import {ReactComponent as InfoIcon} from '../../../assets/icons/evericons/info.s
 import { Tooltip } from '../../../components/tooltip/Tooltip';
 import '../../../styles/common.scss'
 import {DATE_TIME_FORMAT} from '../../../app/eventCreator/slice';
-import { addBusy } from '../../../app/planner/slice';
+import { addBusy, deleteBusy } from '../../../app/planner/slice';
+import {Duration} from 'luxon';
 
-const Test = (eventInfo: EventContentArg) => {
+const EventContent = (eventInfo: EventContentArg) => {
 
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-    const handleClick = () => {
-        setAnchorEl(divRef.current);
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+    const handleClick = () => setAnchorEl(divRef.current);
+    const handleClose = () => setAnchorEl(null);
     const openPopover = Boolean(anchorEl);
+
+    const dispatch = useDispatch();
+
+    const handleDelete = () => {
+        dispatch(deleteBusy(eventInfo.event.id))
+    };
+
+    const start = eventInfo.event.start ? toLuxonDateTime(eventInfo.event.start, eventInfo.view.calendar) : null;
+    const end = eventInfo.event.end ? toLuxonDateTime(eventInfo.event.end, eventInfo.view.calendar) : null;
+    const diff : Duration = start && end ? end.diff(start, ['minutes']) : Duration.fromMillis(0);
 
     const style = eventInfo.view.type === 'dayGridMonth' ? {
         background: eventInfo.backgroundColor,
@@ -38,13 +45,19 @@ const Test = (eventInfo: EventContentArg) => {
     };
     const divRef: React.RefObject<any> = React.useRef();
     return (
-        <div style={style} ref={divRef} className={'PopoverContainer'}>
+        <div style={style} ref={divRef}>
             {eventInfo.view.type === 'dayGridMonth' ?
-                <span className={'EventContent'}>{eventInfo.timeText} | {eventInfo.event.title}</span>
+                <span className={'EventContent'}>
+                    {!eventInfo.event.allDay ? <>{eventInfo.timeText} | </> : null}
+                    {eventInfo.event.title}
+                    {eventInfo.event.allDay ? ' todo el día' : null}
+                </span>
                 :
                 <>
                    <span onClick={handleClick} className={'EventContent'}>
-                    {eventInfo.timeText}<br/>{eventInfo.event.title}
+                       {!eventInfo.event.allDay ? <span>{eventInfo.timeText}</span> : null}
+                       {diff.minutes > 30 ? <br/> : ' | '}
+                       <span>{eventInfo.event.title}</span>
                    </span>
                     <Popover
                         onClose={handleClose}
@@ -59,23 +72,20 @@ const Test = (eventInfo: EventContentArg) => {
                             horizontal: 'center',
                         }}
                     >
-                        <div className={'PopoverContainer'}>
                             <div className={'PopoverContent'}>
                                 <InfoIcon className={'FillPrimary'}/><br/>
-                                <span>{eventInfo.timeText}</span><br/><hr/>
+                                {eventInfo.event.allDay ? 'Todo el día' : <>{eventInfo.timeText}</>}
+                                <hr/>
                                 <span>{eventInfo.event.title}</span><br/>
                                 {eventInfo.event.extendedProps.canDelete ?
-                                    <Tooltip icon={<TrashIcon/>} text={'Eliminar'} onClick={() => console.log('eliminar')}/>
+                                    <Tooltip icon={<TrashIcon/>} text={'Eliminar'} onClick={handleDelete}/>
                                     : null
                                 }
                             </div>
-                        </div>
                     </Popover>
                 </>
             }
-
         </div>
-
     )
 }
 
@@ -83,7 +93,6 @@ export function Calendar() {
 
     const busyDatesCU: any = useSelector(selectBusyDatesCurrentUser);
     const busyDatesOU: any = useSelector(selectBusyDatesOtherUsers);
-
     const dates = [...busyDatesCU, ...busyDatesOU]
 
     const dispatch = useDispatch();
@@ -142,13 +151,17 @@ export function Calendar() {
                 slotMaxTime={'20:00:00'}
                 events={dates}
                 select={(event: DateSelectArg) => handleClickOpenDialog(event)}
-                eventContent={(props: EventContentArg) =><Test {...props} />}
+                eventContent={(props: EventContentArg) =><EventContent {...props}/>}
                 selectOverlap={(event: EventApi) => event.groupId !== 'currentUser'}
             />
 
             <Dialog open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>{"¿Quieres crear una nueva indisponibilidad?"}</DialogTitle>
                 <DialogContent>
+                    {selectInfo?.allDay ? <DialogContentText>
+                        Se creará una nueva indisponibilidad para todo el{'\u00A0'}
+                        {selectInfo ? toLuxonDateTime(selectInfo.start, calendarRef.current.getApi()).toFormat("cccc d 'de' LLLL") : null}.
+                    </DialogContentText> :
                     <DialogContentText>
                         Se creará una nueva indisponibilidad el{'\u00A0'}
                         {selectInfo ? toLuxonDateTime(selectInfo.start, calendarRef.current.getApi()).toFormat("cccc d 'de' LLLL") : null}
@@ -156,7 +169,7 @@ export function Calendar() {
                         {selectInfo ? toLuxonDateTime(selectInfo.start, calendarRef.current.getApi()).toFormat('HH:mm') : null}
                         {'\u00A0'}hasta las{'\u00A0'}
                         {selectInfo ? toLuxonDateTime(selectInfo.end, calendarRef.current.getApi()).toFormat('HH:mm') : null}.
-                    </DialogContentText>
+                    </DialogContentText>}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog} color="primary">
