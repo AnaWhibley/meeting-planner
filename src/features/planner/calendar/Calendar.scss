@@ -2,17 +2,16 @@
  font-family: Nunito, serif;
 }
 
-.PopoverContainer {
-  .EventContent {
-    height: 100%;
-    display: inline-block;
-    cursor: pointer;
-  }
-  .PopoverContent {
-    margin: 0.5em 1em;
-    font-size: 14px;
-    text-align: center;
-  }
+.EventContent {
+  height: 100%;
+  display: inline-block;
+  cursor: pointer;
+  width: 100%;
+}
+.PopoverContent {
+  margin: 0.5em 1em;
+  font-size: 14px;
+  text-align: center;
 }
 
 //Calendar styling
@@ -59,4 +58,7 @@
 
 .fc-day-today {
   background: rgba(108, 99, 255, 0.05) !important;
+}
+.fc .fc-timegrid-axis-cushion {
+  text-align: center;
 }
