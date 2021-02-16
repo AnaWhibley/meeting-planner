@@ -8,7 +8,7 @@ export const selectBusyDatesCurrentUser = (state: RootState) => state.planner.bu
         ...date,
         start: DateTime.fromFormat(date.start, DATE_TIME_FORMAT).toJSDate(),
         end: DateTime.fromFormat(date.end, DATE_TIME_FORMAT).toJSDate(),
-        title: 'Estás ocupado',
+        title: 'Estás ocupado/a',
         color: '#3788D8',
         textColor: 'black',
         canDelete: true,
@@ -22,7 +22,7 @@ export const selectBusyDatesOtherUsers = (state: RootState) => state.planner.bus
             start: DateTime.fromFormat(date.start, DATE_TIME_FORMAT).toJSDate(),
             end: DateTime.fromFormat(date.end, DATE_TIME_FORMAT).toJSDate(),
             color: colors[index % colors.length],
-            title: user.userId + ' está ocupado',
+            title: user.userId + ' está ocupado/a',
             textColor: 'black',
             canDelete: false,
         }

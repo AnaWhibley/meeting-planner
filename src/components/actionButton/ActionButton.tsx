@@ -12,22 +12,25 @@ interface ActionButtonProps {
     className?: string;
     icon?: any;
     onClick: () => void;
+    autoFocus?: boolean;
 }
 
 export enum ButtonVariant {
-    CONTAINED = "contained",
-    OUTLINED = "outlined"
+    CONTAINED = 'contained',
+    OUTLINED = 'outlined',
+    TEXT = 'text'
 }
 
 export default class ActionButton extends Component<ActionButtonProps>{
     render() {
-        const {variant, color, icon, innerText, onClick, className, labelClassName} = this.props;
+        const {variant, color, icon, innerText, onClick, className, labelClassName, autoFocus} = this.props;
         return (
             <Button
                 className={cn('ActionButton', className)}
                 variant={variant}
                 color={color}
                 onClick={onClick}
+                autoFocus={autoFocus}
             >
                 <span className={labelClassName}>
                     {icon || null}
