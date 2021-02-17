@@ -12,9 +12,9 @@ import {ReactComponent as TrashIcon} from '../../../assets/icons/evericons/trash
 import './Calendar.scss';
 export function EventContent(eventInfo: EventContentArg) {
 
-    const noShowPopover = !(eventInfo.view.type === 'dayGridMonth' && eventInfo.event.groupId !== 'currentUser');
+    const hidePopover = !(eventInfo.view.type === 'dayGridMonth' && eventInfo.event.groupId !== 'currentUser');
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-    const handleClick = () => { if(noShowPopover) setAnchorEl(divRef.current) };
+    const handleClick = () => { if(hidePopover) setAnchorEl(divRef.current) };
     const handleClose = () => setAnchorEl(null);
     const openPopover = Boolean(anchorEl);
 
@@ -43,7 +43,7 @@ export function EventContent(eventInfo: EventContentArg) {
         <div style={style} ref={divRef} className={'EventContainer'}>
                    <span onClick={handleClick} className={cn('EventContent',
                        {
-                           'CursorPointer': noShowPopover,
+                           'CursorPointer': hidePopover,
                            'Dots': diff.minutes <= 30 || eventInfo.view.type === 'dayGridMonth' || eventInfo.event.allDay,
                            'MonthEventPaddingTop': eventInfo.view.type === 'dayGridMonth'
                        })}
@@ -67,12 +67,14 @@ export function EventContent(eventInfo: EventContentArg) {
                 }}
             >
                 <div className={'PopoverContent'}>
-                    <InfoIcon className={'FillPrimary'}/><br/>
-                    {eventInfo.event.allDay ? 'Todo el día' : <>{eventInfo.timeText}</>}
-                    <hr/>
-                    <span>{eventInfo.event.title}</span><br/>
+                    <div className={'InfoIconContainer'}><InfoIcon className={'FillWhite'}/></div>
+                    <div className={'TextInfoContainer'}>
+                        {eventInfo.event.allDay ? 'Todo el día' : <>{eventInfo.timeText}</>}
+                        <hr/>
+                        <span>{eventInfo.event.title}</span><br/>
+                    </div>
                     {eventInfo.event.extendedProps.canDelete ?
-                        <Tooltip icon={<TrashIcon/>} text={'Eliminar'} onClick={handleDelete}/>
+                        <div className={'ActionsContainer'}><Tooltip icon={<TrashIcon/>} text={''} onClick={handleDelete}/></div>
                         : null
                     }
                 </div>
