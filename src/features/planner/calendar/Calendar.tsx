@@ -9,86 +9,12 @@ import './Calendar.scss';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectBusyDatesCurrentUser, selectBusyDatesOtherUsers} from '../../../app/planner/selectors';
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Popover} from '@material-ui/core';
-import {ReactComponent as TrashIcon} from '../../../assets/icons/evericons/trash-empty.svg';
-import {ReactComponent as InfoIcon} from '../../../assets/icons/evericons/info.svg';
-import {Tooltip} from '../../../components/tooltip/Tooltip';
 import '../../../styles/common.scss'
 import {DATE_TIME_FORMAT} from '../../../app/eventCreator/slice';
-import {addBusy, deleteBusy} from '../../../app/planner/slice';
-import {Duration} from 'luxon';
+import {addBusy} from '../../../app/planner/slice';
 import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
 import {Color} from '../../../styles/theme';
-import cn from 'classnames';
-
-const EventContent = (eventInfo: EventContentArg) => {
-
-    const condition = (eventInfo.view.type === 'dayGridMonth' && eventInfo.event.groupId === 'currentUser') || eventInfo.view.type === 'timeGridWeek';
-    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-    const handleClick = () => { if(condition) setAnchorEl(divRef.current) };
-    const handleClose = () => setAnchorEl(null);
-    const openPopover = Boolean(anchorEl);
-
-    const dispatch = useDispatch();
-
-    const handleDelete = () => {
-        dispatch(deleteBusy(eventInfo.event.id))
-    };
-
-    const start = eventInfo.event.start ? toLuxonDateTime(eventInfo.event.start, eventInfo.view.calendar) : null;
-    const end = eventInfo.event.end ? toLuxonDateTime(eventInfo.event.end, eventInfo.view.calendar) : null;
-    const diff : Duration = start && end ? end.diff(start, ['minutes']) : Duration.fromMillis(0);
-
-    const style = eventInfo.view.type === 'dayGridMonth' ? {
-        background: eventInfo.backgroundColor,
-        borderColor: eventInfo.borderColor,
-        borderRadius: '3px',
-        height: '100%',
-        width: '100%'
-    } : {
-        height: '100%',
-    };
-    const divRef: React.RefObject<any> = React.useRef();
-    return (
-        <div style={style} ref={divRef} className={'EventContainer'}>
-                   <span onClick={handleClick} className={cn('EventContent',
-                       {
-                           'CursorPointer': condition,
-                           'Dots': diff.minutes <= 30 || eventInfo.view.type === 'dayGridMonth' || eventInfo.event.allDay,
-                           'MonthEventPaddingTop': eventInfo.view.type === 'dayGridMonth'
-                       })}
-                   >
-                       {!eventInfo.event.allDay ? <>{eventInfo.timeText}</> : null}
-                       {diff.minutes > 30 && !eventInfo.event.allDay && eventInfo.view.type !== 'dayGridMonth' ? <br/> : eventInfo.event.allDay ? null : ' | '}
-                       <>{eventInfo.event.title}</>
-                       <>{eventInfo.event.allDay ? ' todo el día' : null}</>
-                   </span>
-            <Popover
-                onClose={handleClose}
-                open={openPopover}
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                    vertical: 'center',
-                    horizontal: 'center',
-                }}
-                transformOrigin={{
-                    vertical: 'center',
-                    horizontal: 'center',
-                }}
-            >
-                <div className={'PopoverContent'}>
-                    <InfoIcon className={'FillPrimary'}/><br/>
-                    {eventInfo.event.allDay ? 'Todo el día' : <>{eventInfo.timeText}</>}
-                    <hr/>
-                    <span>{eventInfo.event.title}</span><br/>
-                    {eventInfo.event.extendedProps.canDelete ?
-                        <Tooltip icon={<TrashIcon/>} text={'Eliminar'} onClick={handleDelete}/>
-                        : null
-                    }
-                </div>
-            </Popover>
-        </div>
-    )
-}
+import {EventContent} from './EventContent';
 
 export function Calendar() {
 
@@ -97,17 +23,12 @@ export function Calendar() {
     const dates = [...busyDatesCU, ...busyDatesOU]
 
     const dispatch = useDispatch();
-
-    const handleDateClick = (arg: any) => {
-        console.log(arg)
-    };
-
     const calendarRef: React.RefObject<any> = useRef();
 
     const [openDialog, setOpenDialog] = React.useState(false);
     const [selectInfo, setSelectInfo] = React.useState<DateSelectArg>();
 
-    const handleClickOpenDialog = (event: DateSelectArg) => {
+    const handleOpenDialog = (event: DateSelectArg) => {
         setOpenDialog(true);
         setSelectInfo(event);
     };
@@ -147,11 +68,10 @@ export function Calendar() {
                 selectMirror={true}
                 locale={esLocale}
                 height={'auto'}
-                dateClick={handleDateClick}
                 slotMinTime={'08:00:00'}
                 slotMaxTime={'20:00:00'}
                 events={dates}
-                select={(event: DateSelectArg) => handleClickOpenDialog(event)}
+                select={(event: DateSelectArg) => handleOpenDialog(event)}
                 eventContent={(props: EventContentArg) =><EventContent {...props}/>}
                 selectOverlap={(event: EventApi) => event.groupId !== 'currentUser'}
             />
