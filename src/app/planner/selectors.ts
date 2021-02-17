@@ -10,7 +10,6 @@ export const selectBusyDatesCurrentUser = (state: RootState) => state.planner.bu
         end: DateTime.fromFormat(date.end, DATE_TIME_FORMAT).toJSDate(),
         title: 'Estás ocupado/a',
         color: '#3788D8',
-        textColor: 'black',
         canDelete: true,
         groupId: 'currentUser'
     }
@@ -23,14 +22,13 @@ export const selectBusyDatesOtherUsers = (state: RootState) => state.planner.bus
             end: DateTime.fromFormat(date.end, DATE_TIME_FORMAT).toJSDate(),
             color: colors[index % colors.length],
             title: user.userId + ' está ocupado/a',
-            textColor: 'black',
             canDelete: false,
         }
     });
 });
 
 const colors = [
-    '#81b393',
+    '#9fd7b3',
     '#F2A49D',
     '#B8AFE7',
     '#86B8D4',
