@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import FullCalendar, {DateSelectArg, EventApi, EventContentArg} from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -11,18 +11,22 @@ import {selectBusyDatesCurrentUser, selectBusyDatesOtherUsers} from '../../../ap
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Popover} from '@material-ui/core';
 import '../../../styles/common.scss'
 import {DATE_TIME_FORMAT} from '../../../app/eventCreator/slice';
-import {addBusy} from '../../../app/planner/slice';
+import {addBusy, getBusyDates, getEvents} from '../../../app/planner/slice';
 import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
 import {Color} from '../../../styles/theme';
 import {EventContent} from './EventContent';
 
 export function Calendar() {
 
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getEvents())
+    }, []);
+
     const busyDatesCU: any = useSelector(selectBusyDatesCurrentUser);
     const busyDatesOU: any = useSelector(selectBusyDatesOtherUsers);
-    const dates = [...busyDatesCU, ...busyDatesOU]
+    const dates = [...busyDatesCU, ...busyDatesOU];
 
-    const dispatch = useDispatch();
     const calendarRef: React.RefObject<any> = useRef();
 
     const [openDialog, setOpenDialog] = React.useState(false);
