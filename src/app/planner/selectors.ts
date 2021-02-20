@@ -10,17 +10,20 @@ export const selectBusyDatesCurrentUser = (state: RootState) => state.planner.bu
         end: DateTime.fromFormat(date.end, DATE_TIME_FORMAT).toJSDate(),
         title: 'Estás ocupado/a',
         color: '#3788D8',
+        textColor: 'black',
         canDelete: true,
         groupId: 'currentUser'
     }
 });
 export const selectBusyDatesOtherUsers = (state: RootState) => state.planner.busyDatesOtherUsers.flatMap((user, index) => {
+
     return user.busyDates.map((date: BusyState) => {
         return {
             ...date,
             start: DateTime.fromFormat(date.start, DATE_TIME_FORMAT).toJSDate(),
             end: DateTime.fromFormat(date.end, DATE_TIME_FORMAT).toJSDate(),
             color: colors[index % colors.length],
+            textColor: 'black',
             title: user.userId + ' está ocupado/a',
             canDelete: false,
         }
