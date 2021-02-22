@@ -1,7 +1,6 @@
 import React from 'react';
 import {NavBar} from '../../components/navigationBar/NavBar';
 import {Typography} from '@material-ui/core';
-import {User} from '../../services/userService';
 import {useSelector} from 'react-redux';
 import ActionButton, {ButtonVariant} from '../../components/actionButton/ActionButton';
 import {Color} from '../../styles/theme';
@@ -12,6 +11,7 @@ import choice from '../../assets/icons/undraw/undraw_choice.svg';
 import './Dashboard.scss';
 import '../../styles/common.scss';
 import {selectLoggedInUser} from '../../app/login/selectors';
+import {User} from '../../app/login/slice';
 
 
 export function Dashboard() {

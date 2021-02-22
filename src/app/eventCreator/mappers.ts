@@ -1,16 +1,23 @@
 import {RootState} from '../store';
-import {EventState} from './slice';
+import {EventCreatorSlice, EventState} from './slice';
+import {GroupedEventDto} from '../../services/eventService';
 
-export const mapEvents = (events: Array<any>) => {
-    return events.map((event) => {
+export const mapToCreateEventRequest = (state: EventCreatorSlice): GroupedEventDto => {
+    const events = state.events.map((event) => {
         return {
             id: event.id,
-            groupName: event.groupName,
             name: event.name.value,
-            participants: event.participants,
+            participants: event.participants.map(p => ({email: p.email.value, tag: p.tag})),
             duration: event.duration.value
         };
     });
+
+    return {
+        groupName: state.groupName.value.label,
+        from: state.from.value,
+        to: state.to.value,
+        events
+    }
 };
 
 export const mapJSONToState = (data: any) => {
@@ -32,17 +39,17 @@ const mapJSONEventsToState = (events: Array<any>) => {
     });
 };
 
-export const mapStateToJSON = (state: RootState) => {
+export const mapJSONFromState = (state: RootState) => {
     return {
-        usuario: state.login.username,
-        eventos: mapEventsToJSON(state.eventCreator.events),
+        usuario: state.login.email,
+        eventos: mapJSONToStateEvents(state.eventCreator.events),
         nombreGrupoEventos: state.eventCreator.groupName?.value.label,
         desde: state.eventCreator.from.value,
         hasta: state.eventCreator.to.value,
     };
 };
 
-const mapEventsToJSON = (events: Array<EventState>) => {
+const mapJSONToStateEvents = (events: Array<EventState>) => {
     return events.map((event) => {
         return {
             nombre: event.name.value,

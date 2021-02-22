@@ -1,5 +1,5 @@
 import {DateTime} from 'luxon';
-import {DATE_FORMAT, EventCreatorState} from './slice';
+import {DATE_FORMAT, EventCreatorSlice} from './slice';
 
 enum errorMessages {
     EMPTY = 'Campo requerido',
@@ -53,7 +53,7 @@ const validationRules = {
     }
 };
 
-export const validateFields = (state: EventCreatorState) => {
+export const validateFields = (state: EventCreatorSlice) => {
     let hasErrors = false;
 
     switch(state.stage) {
