@@ -1,10 +1,11 @@
 import {Observable, of} from 'rxjs';
 import {delay} from 'rxjs/operators';
+import {User} from '../app/login/slice';
 
-export interface User {
+interface UserDto {
    name: string;
    role?: Role;
-   id: string; //email
+   id: string;
 }
 
 export enum Role {
@@ -13,67 +14,79 @@ export enum Role {
 }
 
 export interface LoginResponse {
-    data?: User;
+    user?: User;
     success: boolean;
 }
 
-const users = [
+const users: Array<UserDto> = [
     {
-        id: '1',
-        name: 'Eduardo Miguel Rodríguez Barrera'
+        id: 'abraham.rodriguez@ulpgc.es',
+        name: 'Abraham Rodríaguez Rodríguez'
     },
     {
-        id: '2',
-        name: 'Juan Carlos Quevedo Losada'
-    },
-    {
-        id: '3',
+        id: 'alexis.quesada@ulpgc.es',
         name: 'Alexis Quesada Arencibia'
     },
     {
-        id: '4',
-        name: 'Jose Daniel Hernández'
+        id: 'daniel.hernandez@ulpgc.es',
+        name: 'José Daniel Hernández Sosa'
     },
     {
-        id: '5',
-        name: 'Gustavo Rodríguez Rodríguez'
+        id: 'admin@meetingplanner.es',
+        name: 'José Daniel Hernández Sosa',
+        role: Role.ADMIN
     },
     {
-        id: '6',
+        id: 'carmelo.cuenca@ulpgc.es',
+        name: 'Carmelo Cuenca Hernández'
+    },
+    {
+        id: 'eduardo.rodriguez@ulpgc.es',
+        name: 'Eduardo Miguel Rodríguez Barrera'
+    },
+    {
+        id: 'antonio.ocon@ulpgc.es',
+        name: 'Antonio Ocón Carreras'
+    },
+    {
+        id: 'octavio.mayor@ulpgc.es',
+        name: 'Octavio Mayor González'
+    },
+    {
+        id: 'francisco.alayon@ulpgc.es',
         name: 'Francisco Alayón Hernández'
     },
     {
-        id: '7',
-        name: 'Luis Doreste Blanco'
+        id: 'francisca.quintana@ulpgc.es',
+        name: 'Francisca Quintana Domínguez'
     },
     {
-        id: '8',
-        name: 'Julio Esclarín Monreal'
+        id: 'domingo.benitez@ulpgc.es',
+        name: 'Domingo Benítez Díaz'
     },
     {
-        id: '9',
-        name: 'Ibai'
+        id: 'jc.rodriguezdelpino@ulpgc.ess',
+        name: 'Juan Carlos Rodríguez del Pino'
     },
     {
-        id: '10',
-        name: 'Auron'
-    },
-    {
-        id: '11',
-        name: 'Aurelio'
-    },
-    {
-        id: '12',
-        name: 'Rubén'
+        id: 'david.freire@ulpgc.es',
+        name: 'David Sebastián Freire Obregón'
     }
 ];
 
 class UserService {
     public static login(username: string, password: string): Observable<LoginResponse> {
         if(username === 'a' && password === 'a') {
-            return of({data: {name: 'Jose Daniel', role: Role.ADMIN, id: '1000'}, success: true}).pipe(delay(1000))
+            return of(
+                {
+                    user: {name: 'José Daniel Hernández Sosa', role: Role.ADMIN, id: 'admin@meetingplanner.es'},
+                    success: true
+                }).pipe(delay(1000))
         }else{
-            return of({data: {name: 'Jose Daniel', role: Role.USER, id: '8'}, success: true}).pipe(delay(1000))
+            return of({
+                user: {name: 'José Daniel Hernández Sosa', role: Role.USER, id: 'daniel.hernandez@ulpgc.es'},
+                success: true
+            }).pipe(delay(1000))
         }
         //return of({success: false}).pipe(delay(1000))
     }

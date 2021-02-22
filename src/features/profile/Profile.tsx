@@ -1,9 +1,9 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {NavBar} from '../../components/navigationBar/NavBar';
 import {Avatar, createStyles, makeStyles, Theme} from '@material-ui/core';
-import {User} from '../../services/userService';
 import {useSelector} from 'react-redux';
 import {selectLoggedInUser} from '../../app/login/selectors';
+import {User} from '../../app/login/slice';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

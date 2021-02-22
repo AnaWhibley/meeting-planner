@@ -1,14 +1,15 @@
 import {BehaviorSubject, Observable, of} from 'rxjs';
-import {delay, filter, map, tap} from 'rxjs/operators';
+import {delay, map} from 'rxjs/operators';
 import {BusyState} from '../app/planner/slice';
-import {Role, User} from './userService';
 import { v4 as uuidv4 } from 'uuid';
+import {Role} from './userService';
+import {User} from '../app/login/slice';
 
 export interface CreateResponse {
     success: boolean;
 }
 
-export interface BusyDto {
+interface BusyDto {
     id: string;
     start: string;
     end: string;
@@ -22,7 +23,7 @@ interface BusyDateDto {
 
 const busyDates: Array<BusyDateDto> = [
     {
-        userId: '1',
+        userId: 'abraham.rodriguez@ulpgc.es',
         busy: [{
             start: "2021 2 17 00 00 00",
             end: "2021 2 18 00 00 00",
@@ -35,7 +36,7 @@ const busyDates: Array<BusyDateDto> = [
             allDay: false
         }]
     }, {
-        userId: '2',
+        userId: 'daniel.hernandez@ulpgc.es',
         busy: [{
             start: "2021 2 16 08 00 00",
             end: "2021 2 16 20 00 00",
@@ -54,7 +55,7 @@ const busyDates: Array<BusyDateDto> = [
         }]
     },
     {
-        userId: '3',
+        userId: 'alexis.quesada@ulpgc.es',
         busy: [{
             start: "2021 2 15 08 00 00",
             end: "2021 2 15 15 30 00",
@@ -67,7 +68,7 @@ const busyDates: Array<BusyDateDto> = [
             allDay: false
         }]
     }, {
-        userId: '5',
+        userId: 'antonio.ocon@ulpgc.es',
         busy: [{
             start: "2021 2 18 08 00 00",
             end: "2021 2 18 15 30 00",
@@ -90,7 +91,7 @@ const busyDates: Array<BusyDateDto> = [
             allDay: false
         }]
     }, {
-        userId: '9',
+        userId: 'carmelo.cuenca@ulpgc.es',
         busy: [{
             start: "2021 2 18 08 00 00",
             end: "2021 2 18 14 30 00",
@@ -110,7 +111,24 @@ const busyDates: Array<BusyDateDto> = [
     },
 ];
 
-const events = [
+export interface GroupedEventDto {
+    groupName: string;
+    from: string;
+    to: string;
+    events: Array<EventDto>
+}
+
+interface EventDto {
+    id: string;
+    name: string;
+    participants: Array<{
+        email: string;
+        tag: string;
+    }>;
+    duration: number;
+}
+
+const groupedEvents: Array<GroupedEventDto> = [
     {
         groupName: 'Ordinaria 20/21',
         from: "2021 2 10 08 00 00",
@@ -119,33 +137,132 @@ const events = [
             {
                 id: '11',
                 name: 'Defensa TFT Ana Santana',
-                participants: ['1', '2', '3', '4', '5', '6']
+                participants: [
+                    {
+                        email: 'abraham.rodriguez@ulpgc.es',  //1
+                        tag: 'Presidente Tribunal Titular'
+                    },
+                    {
+                        email: 'alexis.quesada@ulpgc.es', //8
+                        tag: 'Secretario Tribunal Titular'
+                    },
+                    {
+                        email: 'daniel.hernandez@ulpgc.es',    //3
+                        tag: 'Vocal Tribunal Titular'
+                    },
+                    {
+                        email: 'carmelo.cuenca@ulpgc.es',  //10
+                        tag: 'Presidente Tribunal Suplente'
+                    },
+                    {
+                        email: 'antonio.ocon@ulpgc.es',  //5
+                        tag: 'Secretario Tribunal Suplente'
+                    },
+                    {
+                        email: 'eduardo.rodriguez@ulpgc.es',  //12
+                        tag: 'Vocal Tribunal Suplente'
+                    }],
+                duration: 300
             },
             {
                 id: '22',
                 name: 'Defensa TFT Lara Viera',
-                participants: ['6', '7', '8', '10', '11', '12']
+                participants: [
+                    {
+                        email: 'octavio.mayor@ulpgc.es',  //7
+                        tag: 'Presidente Tribunal Titular'
+                    },
+                    {
+                        email: 'francisco.alayon@ulpgc.es', //2
+                        tag: 'Secretario Tribunal Titular'
+                    },
+                    {
+                        email: 'francisca.quintana@ulpgc.es',    //9
+                        tag: 'Vocal Tribunal Titular'
+                    },
+                    {
+                        email: 'domingo.benitez@ulpgc.es',  //4
+                        tag: 'Presidente Tribunal Suplente'
+                    },
+                    {
+                        email: 'david.freire@ulpgc.es',  //11
+                        tag: 'Secretario Tribunal Suplente'
+                    },
+                    {
+                        email: 'jc.rodriguezdelpino@ulpgc.es',  //6
+                        tag: 'Vocal Tribunal Suplente'
+                    }],
+                duration: 300
             },
             {
                 id: '33',
                 name: 'Defensa TFT Juan Sánchez',
-                participants: ['5', '7', '8', '1', '10', '12']
+                participants: [
+                    {
+                        email: 'abraham.rodriguez@ulpgc.es',  //1
+                        tag: 'Presidente Tribunal Titular'
+                    },
+                    {
+                        email: 'francisco.alayon@ulpgc.es', //2
+                        tag: 'Secretario Tribunal Titular'
+                    },
+                    {
+                        email: 'daniel.hernandez@ulpgc.es',    //3
+                        tag: 'Vocal Tribunal Titular'
+                    },
+                    {
+                        email: 'octavio.mayor@ulpgc.es',  //7
+                        tag: 'Presidente Tribunal Suplente'
+                    },
+                    {
+                        email: 'alexis.quesada@ulpgc.es', //8
+                        tag: 'Secretario Tribunal Suplente'
+                    },
+                    {
+                        email: 'francisca.quintana@ulpgc.es',    //9
+                        tag: 'Vocal Tribunal Suplente'
+                    }],
+                duration: 300
             },
             {
-                id: '44',
-                name: 'Defensa TFT Juan Pérez',
-                participants: ['5', '7', '8', '6', '12', '11']
+                id: '55',
+                name: 'Defensa TFT Pedro Sánchez',
+                participants: [
+                    {
+                        email: 'domingo.benitez@ulpgc.es',  //4
+                        tag: 'Presidente Tribunal Titular'
+                    },
+                    {
+                        email: 'antonio.ocon@ulpgc.es',  //5
+                        tag: 'Secretario Tribunal Titular'
+                    },
+                    {
+                        email: 'jc.rodriguezdelpino@ulpgc.es',  //6
+                        tag: 'Vocal Tribunal Titular'
+                    },
+                    {
+                        email: 'carmelo.cuenca@ulpgc.es',  //10
+                        tag: 'Presidente Tribunal Suplente'
+                    },
+                    {
+                        email: 'david.freire@ulpgc.es',  //11
+                        tag: 'Secretario Tribunal Suplente'
+                    },
+                    {
+                        email: 'eduardo.rodriguez@ulpgc.es',  //12
+                        tag: 'Vocal Tribunal Suplente'
+                    }],
+                duration: 300
             },
         ]
     },
 ]
 
 class EventService {
-    private static events: any = [];
     private static busyDatesSubject = new BehaviorSubject(busyDates.slice());
 
-    public static create(events: Array<any>): Observable<CreateResponse> {
-        this.events = events;
+    public static create(event: GroupedEventDto): Observable<CreateResponse> {
+        groupedEvents.push(event);
         return of({success: true}).pipe(delay(1000))
     }
 
@@ -176,8 +293,9 @@ class EventService {
         return of(true);
     }
 
-    public static getBusyDates(userIds: Array<string>, currentUser: User): Observable<Array<BusyDateDto>> {
-        if(currentUser.role === Role.ADMIN) {
+    public static getBusyDates(userIds?: Array<string>): Observable<Array<BusyDateDto>> {
+
+        if(!userIds) {
             return this.busyDatesSubject.pipe(delay(100));
         }
 
@@ -187,15 +305,16 @@ class EventService {
         );
     }
 
-    public static getEvents(user: User): Observable<any> {
+    public static getEvents(user: User): Observable<Array<GroupedEventDto>> {
+
         if(user.role === Role.ADMIN) {
-            return of(events.slice()).pipe(delay(1000));
+            return of(groupedEvents.slice()).pipe(delay(1000));
         }
 
-        const filteredEvents = events.map((ev) => {
+        const filteredEvents = groupedEvents.map((ev) => {
             return { ...ev,
-                    events: ev.events.reduce((acc: any, current: any) => {
-                        return current.participants.includes(user.id) ? [...acc, current] : acc;
+                    events: ev.events.reduce((acc: Array<EventDto>, current: EventDto ) => {
+                        return current.participants.find((participant) => participant.email === user.id) ? [...acc, current] : acc;
                     }, [])
                 }
         });
