@@ -2,12 +2,12 @@ import React from 'react';
 import {
     login,
     setPassword,
-    setUsername
+    setEmail, User
 } from '../../app/login/slice';
 import {useDispatch, useSelector} from 'react-redux';
 import {Dispatch} from '@reduxjs/toolkit';
 import {Redirect} from 'react-router-dom';
-import {Role, User} from '../../services/userService';
+import {Role} from '../../services/userService';
 import TextInput from '../../components/textInput/TextInput';
 import {Color} from '../../styles/theme';
 import ActionButton, {ButtonVariant} from '../../components/actionButton/ActionButton';
@@ -17,12 +17,12 @@ import {Typography} from '@material-ui/core';
 import {ReactComponent as AtSignIcon} from '../../assets/icons/evericons/at-sign.svg';
 import {ReactComponent as KeyIcon} from '../../assets/icons/evericons/key.svg';
 import '../../styles/common.scss';
-import {selectLoggedInUser, selectPassword, selectShowErrorMessage, selectUsername} from '../../app/login/selectors';
+import {selectLoggedInUser, selectPassword, selectShowErrorMessage, selectEmail} from '../../app/login/selectors';
 
 export function Login() {
 
     const dispatch: Dispatch<any> = useDispatch();
-    const username = useSelector(selectUsername);
+    const username = useSelector(selectEmail);
     const password = useSelector(selectPassword);
     const showErrorMessage = useSelector(selectShowErrorMessage);
     const loggedInUser: User | undefined = useSelector(selectLoggedInUser);
@@ -46,7 +46,7 @@ export function Login() {
                     fullWidth={true}
                     value={username}
                     icon={<AtSignIcon/>}
-                    onChange={(value: string) => dispatch(setUsername(value))}
+                    onChange={(value: string) => dispatch(setEmail(value))}
                     containerClassName={'InputContainer'}
                 />
                 <TextInput

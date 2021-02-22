@@ -1,11 +1,18 @@
 import {createSlice, Dispatch} from '@reduxjs/toolkit';
 import {RootState} from '../store';
-import EventService from '../../services/eventService';
+import EventService, {GroupedEventDto} from '../../services/eventService';
+import {Role} from '../../services/userService';
 
 export interface PlannerSlice {
     busyDatesCurrentUser: Array<BusyState>;
     busyDatesOtherUsers: Array<BusyDateState>;
-    events: Array<any>;
+    events: Array<GroupedEventDto>;
+}
+
+export interface BusyDateState {
+    userId: string;
+    userName?: string;
+    busy: Array<BusyState>;
 }
 
 export interface BusyState {
@@ -13,12 +20,6 @@ export interface BusyState {
     start: string;
     end: string;
     allDay: boolean;
-}
-
-export interface BusyDateState {
-    userId: string;
-    userName?: string;
-    busy: Array<BusyState>;
 }
 
 export const slice = createSlice({
@@ -41,41 +42,49 @@ export const slice = createSlice({
 
 export const { populateBusyDates, populateEvents } = slice.actions;
 
-export const getBusyDates = (userIds: Array<any>) => (dispatch: Dispatch<any>, getState: () => RootState) => {
-    const { login } = getState();
-    const currentUser = login.loggedInUser;
+export const getBusyDates = (userIds?: Array<string>) => (dispatch: Dispatch<any>, getState: () => RootState) => {
 
-    if (currentUser) {
-        EventService.getBusyDates(userIds, currentUser).subscribe(busyDates => {
-            const { login } = getState();
-            const currentUserId = login.loggedInUser?.id;
+        if(!userIds) {
+            // Admin
+            EventService.getBusyDates().subscribe(busyDates => {
+                const bd = {busyDatesCU: [], busyDatesOU: busyDates};
+                dispatch(populateBusyDates(bd));
+            })
+        }else{
+            // User
+            EventService.getBusyDates(userIds).subscribe(busyDates => {
+                const { login } = getState();
+                const currentUserId = login.loggedInUser?.id;
 
-            const bd = busyDates.reduce((acc: any,current: any) => {
-                const newAcc = {busyDatesCU: acc.busyDatesCU, busyDatesOU: acc.busyDatesOU};
-                if(current.userId === currentUserId){
-                    newAcc.busyDatesCU = current.busy;
-                } else {
-                    newAcc.busyDatesOU = [...acc.busyDatesOU, current]
-                }
-                return newAcc;
-            }, {busyDatesCU: [], busyDatesOU: []});
+                const bd = busyDates.reduce((acc: any,current: any) => {
+                    const newAcc = {busyDatesCU: acc.busyDatesCU, busyDatesOU: acc.busyDatesOU};
+                    if(current.userId === currentUserId){
+                        newAcc.busyDatesCU = current.busy;
+                    } else {
+                        newAcc.busyDatesOU = [...acc.busyDatesOU, current]
+                    }
+                    return newAcc;
+                }, {busyDatesCU: [], busyDatesOU: []});
 
-            dispatch(populateBusyDates(bd));
-        })
-    }
+                dispatch(populateBusyDates(bd));
+            })
+        }
 };
 
 export const getEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
+
     const { login } = getState();
     const currentUser = login.loggedInUser;
     if (currentUser) {
         EventService.getEvents(currentUser).subscribe(events => {
             dispatch(populateEvents(events));
-
-            // No hay que hacer esto si el usuario es un admin
-            let userIds = new Set();
-            events.forEach((ev: any) => ev.events.forEach(((e: any)=> e.participants.forEach((p: string) => userIds.add(p)))))
-            dispatch(getBusyDates(Array.from(userIds)))
+            if(currentUser.role === Role.USER){
+                let userIds: Set<string> = new Set();
+                events.forEach((ev: GroupedEventDto) => ev.events.forEach(((e)=> e.participants.forEach((p) => userIds.add(p.email)))))
+                dispatch(getBusyDates(Array.from(userIds)))
+            }else{
+                dispatch(getBusyDates())
+            }
         })
     }
 }

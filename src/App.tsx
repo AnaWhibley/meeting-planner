@@ -3,7 +3,7 @@ import './App.css';
 import {Login} from './features/login/Login';
 import {useSelector} from 'react-redux';
 import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
-import {Role, User} from './services/userService';
+import {Role} from './services/userService';
 import {Dashboard} from './features/dashboard/Dashboard';
 import {Profile} from './features/profile/Profile';
 import {theme} from './styles/theme';
@@ -14,6 +14,7 @@ import './styles/common.scss';
 import {Form} from './features/eventCreator/form/Form';
 import {selectLoggedInUser} from './app/login/selectors';
 import {Planner} from './features/planner/Planner';
+import {User} from './app/login/slice';
 
 function App() {
 

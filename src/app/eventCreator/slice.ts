@@ -4,7 +4,7 @@ import {RootState} from '../store';
 import {requesting} from '../uiStateSlice';
 import EventService, {CreateResponse} from '../../services/eventService';
 import {validateFields} from './validation';
-import {mapEvents, mapJSONToState, mapStateToJSON} from './mappers';
+import {mapToCreateEventRequest, mapJSONToState, mapJSONFromState} from './mappers';
 
 export enum ParticipantType {
     PRESIDENTE_TT = 'Presidente Tribunal Titular',
@@ -21,7 +21,7 @@ export const DATE_TIME_FORMAT = "yyyy L dd HH mm ss";
 
 const createDefaultEvent = (): EventState => {
     return {
-        id: Math.random(),
+        id: Math.random().toString(),
         name: createFieldState(''),
         participants: Object.keys(ParticipantType).map((k: string) => ( { email: createFieldState(''), tag: (ParticipantType as any)[k] })),
         duration: createFieldState(60)
@@ -39,7 +39,7 @@ interface FieldState<T> {
 }
 
 export interface EventState {
-    id: number;
+    id: string;
     name: FieldState<string>;
     participants: Array<{
         email: FieldState<string>;
@@ -48,7 +48,7 @@ export interface EventState {
     duration: FieldState<number>;
 }
 
-export interface EventCreatorState {
+export interface EventCreatorSlice {
     stage: number;
     currentIndex: number;
     groupName: FieldState<{
@@ -69,7 +69,7 @@ export const slice = createSlice({
         from: createFieldState(DateTime.utc().toFormat(DATE_FORMAT)),
         to: createFieldState(DateTime.utc().toFormat(DATE_FORMAT)),
         events: [createDefaultEvent()]
-    } as EventCreatorState,
+    } as EventCreatorSlice,
     reducers: {
         next: state => {
 
@@ -148,7 +148,7 @@ export const { next, previous, setFrom, setTo, setName, createNew, complete, set
 export const createEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     dispatch(requesting());
     const { eventCreator } = getState();
-    EventService.create(mapEvents(eventCreator.events)).subscribe((response: CreateResponse) => {
+    EventService.create(mapToCreateEventRequest(eventCreator)).subscribe((response: CreateResponse) => {
         if(response.success){
             dispatch(complete());
         }
@@ -157,10 +157,10 @@ export const createEvents = () => (dispatch: Dispatch<any>, getState: () => Root
 
 export const exportJSON = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     const state = getState();
-    const data = JSON.stringify(mapStateToJSON(state));
+    const data = JSON.stringify(mapJSONFromState(state));
     const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(data);
 
-    let link: any = document.createElement('a');
+    let link: HTMLAnchorElement | null = document.createElement('a');
     if(link.download !== undefined) {
         link.setAttribute('href', dataUri);
         link.setAttribute('download', 'temp.json');

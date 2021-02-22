@@ -9,8 +9,6 @@ export const store = configureStore({
         login: loginReducer,
         planner: plannerReducer,
         eventCreator: eventCreatorReducer,
-        //events,
-        //indisponibilidades
         uiState: uiStateReducer
     },
 });
