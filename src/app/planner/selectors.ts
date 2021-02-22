@@ -17,7 +17,7 @@ export const selectBusyDatesCurrentUser = (state: RootState) => state.planner.bu
 });
 export const selectBusyDatesOtherUsers = (state: RootState) => state.planner.busyDatesOtherUsers.flatMap((user, index) => {
 
-    return user.busyDates.map((date: BusyState) => {
+    return user.busy.map((date: BusyState) => {
         return {
             ...date,
             start: DateTime.fromFormat(date.start, DATE_TIME_FORMAT).toJSDate(),

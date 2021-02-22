@@ -4,16 +4,21 @@ import EventService from '../../services/eventService';
 
 export interface PlannerSlice {
     busyDatesCurrentUser: Array<BusyState>;
-    busyDatesOtherUsers: Array<{userId: string, busyDates: Array<BusyState>}>;
+    busyDatesOtherUsers: Array<BusyDateState>;
     events: Array<any>;
 }
 
 export interface BusyState {
-    id: string;
-    username?: string;
+    id?: string;
     start: string;
     end: string;
     allDay: boolean;
+}
+
+export interface BusyDateState {
+    userId: string;
+    userName?: string;
+    busy: Array<BusyState>;
 }
 
 export const slice = createSlice({
@@ -24,18 +29,6 @@ export const slice = createSlice({
         events: []
     } as PlannerSlice,
     reducers: {
-        addBusy: ((state, action) => {
-            state.busyDatesCurrentUser.push({
-                start: action.payload.start,
-                end: action.payload.end,
-                id: Math.random().toString(),
-                allDay: action.payload.allDay
-            });
-        }),
-        deleteBusy: ((state, action) => {
-            const index = state.busyDatesCurrentUser.findIndex((date) => date.id === action.payload);
-            if(index > -1) state.busyDatesCurrentUser.splice(index, 1);
-        }),
         populateBusyDates:((state, action) => {
             state.busyDatesCurrentUser = action.payload.busyDatesCU;
             state.busyDatesOtherUsers = action.payload.busyDatesOU;
@@ -46,7 +39,7 @@ export const slice = createSlice({
     },
 });
 
-export const { addBusy, deleteBusy, populateBusyDates, populateEvents } = slice.actions;
+export const { populateBusyDates, populateEvents } = slice.actions;
 
 export const getBusyDates = (userIds: Array<any>) => (dispatch: Dispatch<any>, getState: () => RootState) => {
     const { login } = getState();
@@ -60,7 +53,7 @@ export const getBusyDates = (userIds: Array<any>) => (dispatch: Dispatch<any>, g
             const bd = busyDates.reduce((acc: any,current: any) => {
                 const newAcc = {busyDatesCU: acc.busyDatesCU, busyDatesOU: acc.busyDatesOU};
                 if(current.userId === currentUserId){
-                    newAcc.busyDatesCU = current.busyDates;
+                    newAcc.busyDatesCU = current.busy;
                 } else {
                     newAcc.busyDatesOU = [...acc.busyDatesOU, current]
                 }
@@ -78,11 +71,27 @@ export const getEvents = () => (dispatch: Dispatch<any>, getState: () => RootSta
     if (currentUser) {
         EventService.getEvents(currentUser).subscribe(events => {
             dispatch(populateEvents(events));
+
+            // No hay que hacer esto si el usuario es un admin
             let userIds = new Set();
             events.forEach((ev: any) => ev.events.forEach(((e: any)=> e.participants.forEach((p: string) => userIds.add(p)))))
             dispatch(getBusyDates(Array.from(userIds)))
         })
     }
+}
+
+export const addBusy = (busyDate: BusyState) => (dispatch: Dispatch<any>, getState: () => RootState) => {
+    const { login } = getState();
+    const currentUser = login.loggedInUser;
+    if (currentUser) {
+        EventService.addBusyDate(busyDate, currentUser.id).subscribe(events => {
+        });
+    }
+}
+
+export const deleteBusy = (busyDateId: string) => (dispatch: Dispatch<any>, getState: () => RootState) => {
+    EventService.deleteBusyDate(busyDateId).subscribe(events => {
+    });
 }
 
 

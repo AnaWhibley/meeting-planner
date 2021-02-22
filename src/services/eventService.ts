@@ -1,23 +1,29 @@
-import {Observable, of} from 'rxjs';
-import {delay} from 'rxjs/operators';
+import {BehaviorSubject, Observable, of} from 'rxjs';
+import {delay, filter, map, tap} from 'rxjs/operators';
 import {BusyState} from '../app/planner/slice';
 import {Role, User} from './userService';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface CreateResponse {
     success: boolean;
 }
 
-export interface BusyStateDto {
+export interface BusyDto {
     id: string;
     start: string;
     end: string;
     allDay: boolean;
 }
 
-const busyDates = [
+interface BusyDateDto {
+    userId: string;
+    busy: Array<BusyDto>;
+}
+
+const busyDates: Array<BusyDateDto> = [
     {
         userId: '1',
-        busyDates: [{
+        busy: [{
             start: "2021 2 17 00 00 00",
             end: "2021 2 18 00 00 00",
             id: '111',
@@ -30,7 +36,7 @@ const busyDates = [
         }]
     }, {
         userId: '2',
-        busyDates: [{
+        busy: [{
             start: "2021 2 16 08 00 00",
             end: "2021 2 16 20 00 00",
             id: '333',
@@ -49,7 +55,7 @@ const busyDates = [
     },
     {
         userId: '3',
-        busyDates: [{
+        busy: [{
             start: "2021 2 15 08 00 00",
             end: "2021 2 15 15 30 00",
             id: '555',
@@ -62,7 +68,7 @@ const busyDates = [
         }]
     }, {
         userId: '5',
-        busyDates: [{
+        busy: [{
             start: "2021 2 18 08 00 00",
             end: "2021 2 18 15 30 00",
             id: '666',
@@ -85,7 +91,7 @@ const busyDates = [
         }]
     }, {
         userId: '9',
-        busyDates: [{
+        busy: [{
             start: "2021 2 18 08 00 00",
             end: "2021 2 18 14 30 00",
             id: '100',
@@ -136,22 +142,49 @@ const events = [
 
 class EventService {
     private static events: any = [];
+    private static busyDatesSubject = new BehaviorSubject(busyDates.slice());
+
     public static create(events: Array<any>): Observable<CreateResponse> {
         this.events = events;
         return of({success: true}).pipe(delay(1000))
     }
 
-    public static addBusyDate(busyDate: BusyState): Observable<any> {
-        return of({success: true}).pipe(delay(1000))
-    }
-
-    public static getBusyDates(userIds: Array<string>, currentUser: User): Observable<Array<{ userId: string, busyDates: Array<BusyState> }>> {
-        if(currentUser.role === Role.ADMIN) {
-            return of(busyDates.slice()).pipe(delay(1000));
+    public static addBusyDate(busyDate: BusyState, userId: string): Observable<boolean> {
+        const index = busyDates.findIndex((bd) => bd.userId === userId);
+        const newBusy = { ...busyDate, id: uuidv4()};
+        if(index > -1){
+            busyDates[index].busy = [ ...busyDates[index].busy, newBusy];
+        }else{
+            busyDates.push({userId, busy: [newBusy]})
         }
 
-        const filteredBusyDates = busyDates.filter((busyDate) => userIds.includes((busyDate.userId)));
-        return of(filteredBusyDates.slice()).pipe(delay(1000));
+        this.busyDatesSubject.next(busyDates.slice());
+        return of(true);
+    }
+
+    public static deleteBusyDate(busyDateId: string): Observable<boolean> {
+        busyDates.forEach((busyDate) => {
+            let index = busyDate.busy.findIndex((busy) => busy.id === busyDateId);
+            if(index > -1) {
+                const copy = busyDate.busy.slice();
+                copy.splice(index, 1);
+                busyDate.busy = copy;
+            }
+        });
+
+        this.busyDatesSubject.next(busyDates.slice());
+        return of(true);
+    }
+
+    public static getBusyDates(userIds: Array<string>, currentUser: User): Observable<Array<BusyDateDto>> {
+        if(currentUser.role === Role.ADMIN) {
+            return this.busyDatesSubject.pipe(delay(100));
+        }
+
+        return this.busyDatesSubject.pipe(
+            delay(200),
+            map((dto: Array<BusyDateDto>) => dto.filter(bd => userIds.includes(bd.userId))),
+        );
     }
 
     public static getEvents(user: User): Observable<any> {

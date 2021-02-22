@@ -11,7 +11,7 @@ import {selectBusyDatesCurrentUser, selectBusyDatesOtherUsers} from '../../../ap
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Popover} from '@material-ui/core';
 import '../../../styles/common.scss'
 import {DATE_TIME_FORMAT} from '../../../app/eventCreator/slice';
-import {addBusy, getBusyDates, getEvents} from '../../../app/planner/slice';
+import {addBusy, getEvents} from '../../../app/planner/slice';
 import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
 import {Color} from '../../../styles/theme';
 import {EventContent} from './EventContent';
