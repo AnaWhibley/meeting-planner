@@ -40,7 +40,7 @@ export function EventContent(eventInfo: EventContentArg) {
 
     const divRef: React.RefObject<any> = React.useRef();
     return (
-        <div style={style} ref={divRef} className={'EventContainer'}>
+        <div style={style} ref={divRef} className={'EventContainer'} title={eventInfo.event.title}>
                    <span onClick={handleClick} className={cn('EventContent',
                        {
                            'CursorPointer': hidePopover,

@@ -1,5 +1,5 @@
 import {Observable, of} from 'rxjs';
-import {delay} from 'rxjs/operators';
+import {delay, map} from 'rxjs/operators';
 import {User} from '../app/login/slice';
 
 interface UserDto {
@@ -93,6 +93,18 @@ class UserService {
 
     public static getUsers(): Observable<Array<User>>{
         return of(users).pipe(delay(1000))
+    }
+
+    public static getNameOfParticipants(userIds?: Array<string>): Observable<Array<User>> {
+        if(!userIds){
+            return of(users).pipe(delay(1000));
+        }
+
+        return of(users)
+            .pipe(
+                delay(1000),
+                map((dto: Array<UserDto>) => dto.filter(u => userIds.includes(u.id))),
+                );
     }
 }
 
