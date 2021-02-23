@@ -1,44 +1,83 @@
 import React from 'react';
 import {NavBar} from '../../components/navigationBar/NavBar';
-import {Avatar, createStyles, makeStyles, Theme} from '@material-ui/core';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {selectLoggedInUser} from '../../app/login/selectors';
-import {User} from '../../app/login/slice';
-
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            display: 'flex',
-            '& > *': {
-                margin: theme.spacing(1),
-            },
-        },
-        primary: {
-            backgroundColor: theme.palette.primary.main,
-        },
-    }),
-);
-
-const getInitials = (s: string) => {
-    const names = s.split(' ');
-    let initials = names[0].substring(0, 1).toUpperCase();
-
-    if (names.length > 1) {
-        initials += names[names.length - 1].substring(0, 1).toUpperCase();
-    }
-    return initials;
-};
+import {editUserName, User} from '../../app/login/slice';
+import defaultAvatar from '../../assets/images/default-avatar.png';
+import './Profile.scss';
+import {Switch, Typography} from '@material-ui/core';
+import '../../styles/common.scss';
+import ActionButton, {ButtonVariant} from '../../components/actionButton/ActionButton';
+import {Color} from '../../styles/theme';
+import {ReactComponent as EditIcon} from '../../assets/icons/evericons/pencil-edit.svg';
+import TextInput from '../../components/textInput/TextInput';
 
 export function Profile() {
-    const classes = useStyles();
     const loggedInUser: User | undefined = useSelector(selectLoggedInUser);
-    const initials = loggedInUser ? getInitials(loggedInUser?.name) : undefined;
+
+    const [showInputName, setShowInputName] = React.useState(false);
+    const [name, setName] = React.useState(useSelector(selectLoggedInUser)?.name);
+
+    const handleClick = () => {
+        setShowInputName(true);
+    };
+
+    const handleConfirm = () => {
+        setShowInputName(false);
+        if(name) dispatch(editUserName(name));
+    };
+    const dispatch = useDispatch();
 
     return (
         <>
-            <NavBar/>
-            <div>
-                <Avatar alt={loggedInUser?.name} className={classes.primary}>{initials}</Avatar>
+            <NavBar view={'Profile'}/>
+            <div className={'ProfileContainer'}>
+                <div className={'Wrapper'}>
+                    <div className={'Data'}>
+                        <div className={'UserImage'}><img src={defaultAvatar} alt="Imagen Usuario Defecto" className={'Image'}/></div>
+                        <div className={'UserData'}>
+                            <div>
+                                <Typography variant={'h3'} color={'primary'} display={'inline'} className={'Bold'}>Nombre: </Typography>
+                                {showInputName ? <TextInput type='text'
+                                                            value={name}
+                                                            placeholder={name}
+                                                            className={'Input'}
+                                                            onChange={(value: string) => setName(value)}/>
+                                    :
+                                    <Typography variant={'h3'} color={'textSecondary'} display={'inline'}>{loggedInUser?.name}</Typography>
+                                }
+
+                            </div>
+                            <br/>
+                            <div>
+                                <Typography variant={'h3'} color={'primary'} display={'inline'} className={'Bold'}>Email: </Typography>
+                                <Typography variant={'h3'} color={'textSecondary'} display={'inline'}>{loggedInUser?.id}</Typography>
+                            </div>
+                        </div>
+                        <br/>
+                    </div>
+                    <div className={'Notifications'}>
+                        <Typography variant={'h3'} color={'primary'} display={'inline'} className={'Bold'}>Notificaciones</Typography>
+                        <Switch disabled checked />
+                    </div>
+                    <div className={'Actions'}>
+                        {showInputName ?
+                            <ActionButton icon={<EditIcon className={'FillWhite'}/>}
+                                          labelClassName={'EditLabel'}
+                                          variant={ButtonVariant.CONTAINED}
+                                          innerText={'Confirmar'}
+                                          color={Color.PRIMARY}
+                                          onClick={handleConfirm}/>
+                            :
+                            <ActionButton icon={<EditIcon className={'FillPrimary'}/>}
+                                          labelClassName={'EditLabel'}
+                                          variant={ButtonVariant.OUTLINED}
+                                          innerText={'Editar perfil'}
+                                          color={Color.PRIMARY}
+                                          onClick={handleClick}/>
+                        }
+                    </div>
+                </div>
             </div>
         </>
     );

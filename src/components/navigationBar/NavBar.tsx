@@ -10,8 +10,10 @@ import {Role} from '../../services/userService';
 import logo from '../../assets/images/logo.svg';
 import './NavBar.scss';
 import {selectLoggedInUser} from '../../app/login/selectors';
+import {Typography} from '@material-ui/core';
+import {AvatarInitials} from '../avatarInitials/AvatarInitials';
 
-export function NavBar() {
+export function NavBar(props: {view?: string}) {
 
     const history = useHistory();
     const loggedInUser = useSelector(selectLoggedInUser);
@@ -47,6 +49,15 @@ export function NavBar() {
                  className={'Logo'}
                  onClick={() => loggedInUser && loggedInUser.role === Role.ADMIN ? history.push('/dashboard') : history.push('/')}/>
             <Menu menuItems={menuItems} className={'Menu'}/>
+            {props.view === 'Planner' || props.view === 'Profile' ? <div className={'AvatarName'}>
+                <div className={'Avatar'}><AvatarInitials userName={loggedInUser?.name || ''}/></div>
+                <Typography variant="subtitle1"
+                            display={'inline'}
+                            color='textSecondary'>
+                    {loggedInUser?.name}
+                </Typography>
+            </div> : null}
+
         </div>
     );
 
