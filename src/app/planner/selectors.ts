@@ -17,6 +17,8 @@ export const selectBusyDatesCurrentUser = (state: RootState) => state.planner.bu
 });
 export const selectBusyDatesOtherUsers = (state: RootState) => state.planner.busyDatesOtherUsers.flatMap((user, index) => {
 
+    const name = state.planner.participants.find(participant => participant.id === user.userId)?.name
+
     return user.busy.map((date: BusyState) => {
         return {
             ...date,
@@ -24,7 +26,7 @@ export const selectBusyDatesOtherUsers = (state: RootState) => state.planner.bus
             end: DateTime.fromFormat(date.end, DATE_TIME_FORMAT).toJSDate(),
             color: colors[index % colors.length],
             textColor: 'black',
-            title: user.userId + ' está ocupado/a',
+            title: name + ' está ocupado/a',
             canDelete: false,
         }
     });
