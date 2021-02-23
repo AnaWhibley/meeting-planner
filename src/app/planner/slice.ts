@@ -1,12 +1,14 @@
 import {createSlice, Dispatch} from '@reduxjs/toolkit';
 import {RootState} from '../store';
 import EventService, {GroupedEventDto} from '../../services/eventService';
-import {Role} from '../../services/userService';
+import UserService, {Role} from '../../services/userService';
+import {User} from '../login/slice';
 
 export interface PlannerSlice {
     busyDatesCurrentUser: Array<BusyState>;
     busyDatesOtherUsers: Array<BusyDateState>;
     events: Array<GroupedEventDto>;
+    participants: Array<User>;
 }
 
 export interface BusyDateState {
@@ -27,7 +29,8 @@ export const slice = createSlice({
     initialState: {
         busyDatesCurrentUser: [],
         busyDatesOtherUsers: [],
-        events: []
+        events: [],
+        participants: []
     } as PlannerSlice,
     reducers: {
         populateBusyDates:((state, action) => {
@@ -37,22 +40,30 @@ export const slice = createSlice({
         populateEvents: ((state, action) => {
             state.events = action.payload;
         }),
+        populateParticipants: ((state, action) => {
+            state.participants = action.payload;
+        }),
     },
 });
 
-export const { populateBusyDates, populateEvents } = slice.actions;
+export const { populateBusyDates, populateEvents, populateParticipants } = slice.actions;
 
 export const getBusyDates = (userIds?: Array<string>) => (dispatch: Dispatch<any>, getState: () => RootState) => {
 
-        if(!userIds) {
-            // Admin
-            EventService.getBusyDates().subscribe(busyDates => {
+    if(!userIds) {
+        // Admin
+        EventService.getBusyDates().subscribe(busyDates => {
+            UserService.getNameOfParticipants().subscribe(participants => {
+                dispatch(populateParticipants(participants));
                 const bd = {busyDatesCU: [], busyDatesOU: busyDates};
                 dispatch(populateBusyDates(bd));
             })
-        }else{
-            // User
-            EventService.getBusyDates(userIds).subscribe(busyDates => {
+        })
+    }else{
+        // User
+        EventService.getBusyDates(userIds).subscribe(busyDates => {
+            UserService.getNameOfParticipants(userIds).subscribe(participants => {
+                dispatch(populateParticipants(participants));
                 const { login } = getState();
                 const currentUserId = login.loggedInUser?.id;
 
@@ -68,7 +79,8 @@ export const getBusyDates = (userIds?: Array<string>) => (dispatch: Dispatch<any
 
                 dispatch(populateBusyDates(bd));
             })
-        }
+        })
+    }
 };
 
 export const getEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
