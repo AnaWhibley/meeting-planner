@@ -8,6 +8,16 @@
   .Logo {
     width: 11em;
     padding: 6px 8px;
+    cursor: pointer;
+  }
+
+  .AvatarName {
+    float: right;
+    .Avatar {
+      display: inline-block;
+      margin-right: 10px;
+    }
+    margin-right: 10px;
   }
 
   .Menu {
