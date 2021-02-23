@@ -1,4 +1,4 @@
-import {Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {delay, map} from 'rxjs/operators';
 import {User} from '../app/login/slice';
 
@@ -21,7 +21,7 @@ export interface LoginResponse {
 const users: Array<UserDto> = [
     {
         id: 'abraham.rodriguez@ulpgc.es',
-        name: 'Abraham Rodríaguez Rodríguez'
+        name: 'Abraham Rodríguez Rodríguez'
     },
     {
         id: 'alexis.quesada@ulpgc.es',
@@ -75,8 +75,11 @@ const users: Array<UserDto> = [
 ];
 
 class UserService {
-    public static login(username: string, password: string): Observable<LoginResponse> {
-        if(username === 'a' && password === 'a') {
+
+    private static usersSubject = new BehaviorSubject(users.slice());
+
+    public static login(email: string, password: string): Observable<LoginResponse> {
+        if(email === 'a' && password === 'a') {
             return of(
                 {
                     user: {name: 'José Daniel Hernández Sosa', role: Role.ADMIN, id: 'admin@meetingplanner.es'},
@@ -105,6 +108,10 @@ class UserService {
                 delay(1000),
                 map((dto: Array<UserDto>) => dto.filter(u => userIds.includes(u.id))),
                 );
+    }
+
+    public static editUserName(user: User, newName: string): Observable<{success: boolean}>{
+        return of({success: true}).pipe(delay(1000))
     }
 }
 

@@ -7,7 +7,7 @@ import './Planner.scss';
 export function Planner() {
     return (
         <>
-            <NavBar/>
+            <NavBar view={'Planner'}/>
             <div className={'PlannerContainer'}>
                 <div className={'ViewSelectorContainer'}>
                     <ViewSelector/>

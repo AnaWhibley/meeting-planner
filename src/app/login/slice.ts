@@ -39,11 +39,14 @@ export const slice = createSlice({
             state.showErrorMessage = false;
             state.email = '';
             state.password = '';
+        },
+        editName: (state, action) => {
+            if (state.loggedInUser) state.loggedInUser.name = action.payload;
         }
     },
 });
 
-export const { setEmail, setPassword, showErrorMessage, setUser } = slice.actions;
+export const { setEmail, setPassword, showErrorMessage, setUser, editName } = slice.actions;
 
 export const login = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     dispatch(requesting());
@@ -55,6 +58,18 @@ export const login = () => (dispatch: Dispatch<any>, getState: () => RootState) 
             dispatch(showErrorMessage())
         }
     });
+};
+
+export const editUserName = (name: string) => (dispatch: Dispatch<any>, getState: () => RootState) => {
+    const { login } = getState();
+    const user = login.loggedInUser;
+    if(user){
+        UserService.editUserName(user, name).subscribe((response: LoginResponse) => {
+            if(response.success){
+                dispatch(editName(name))
+            }
+        });
+    }
 };
 
 export default slice.reducer;
