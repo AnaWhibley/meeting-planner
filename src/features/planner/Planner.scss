@@ -4,9 +4,22 @@
 
   .ViewSelectorContainer {
     flex: 0 0 300px;
+    display: flex;
     margin-top: 1em;
+    flex-direction: column;
+
     .MuiPaper-elevation1 {
       box-shadow: unset !important
+    }
+
+    .MuiAccordionDetails-root {
+      padding: 8px 0 8px 16px !important;
+    }
+
+    .EventsDetailsButton {
+      margin: 1em auto;
+      background: white !important;
+
     }
   }
 

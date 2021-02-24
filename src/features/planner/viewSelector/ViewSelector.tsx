@@ -1,5 +1,5 @@
 import React from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
@@ -10,7 +10,9 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    FormControlLabel, IconButton, ListItemIcon,
+    FormControlLabel,
+    IconButton,
+    ListItemIcon,
     Radio,
     RadioGroup,
     Typography
@@ -20,6 +22,8 @@ import {ReactComponent as InfoIcon} from '../../../assets/icons/evericons/info.s
 import '../../../styles/common.scss';
 import {AvatarInitials} from '../../../components/avatarInitials/AvatarInitials';
 import './ViewSelector.scss';
+import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
+import {Color} from '../../../styles/theme';
 
 export function ViewSelector() {
     return (
@@ -143,12 +147,13 @@ export default function CheckboxListSecondary() {
                     <Typography variant={'h2'} color={'primary'}>Vista</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <RadioGroup name="view" value={value} onChange={handleChange}>
+                    <RadioGroup name="view" value={value} onChange={handleChange} className={'ViewRadioGroup'}>
                         <FormControlLabel value="busyDates" control={<Radio color="primary"/>} label="Mostrar indisponibilidades de participantes" />
                         <FormControlLabel value="events" control={<Radio color="primary"/>} label="Mostrar defensas" />
                     </RadioGroup>
                 </AccordionDetails>
             </Accordion>
+            <ActionButton color={Color.PRIMARY} variant={ButtonVariant.OUTLINED} innerText={'Ver detalles de defensas'} onClick={() => console.log('aaa')} className={'EventsDetailsButton'}/>
         </>
     );
 }
