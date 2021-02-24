@@ -10,6 +10,7 @@ import '../../styles/common.scss';
 import ActionButton, {ButtonVariant} from '../../components/actionButton/ActionButton';
 import {Color} from '../../styles/theme';
 import {ReactComponent as EditIcon} from '../../assets/icons/evericons/pencil-edit.svg';
+import {ReactComponent as BellIcon} from '../../assets/icons/evericons/bell.svg';
 import TextInput from '../../components/textInput/TextInput';
 
 export function Profile() {
@@ -57,7 +58,10 @@ export function Profile() {
                         <br/>
                     </div>
                     <div className={'Notifications'}>
-                        <Typography variant={'h3'} color={'primary'} display={'inline'} className={'Bold'}>Notificaciones</Typography>
+                        <div className={'Text'}>
+                            <BellIcon className={'FillPrimary'}/>
+                            <Typography variant={'h3'} color={'primary'} display={'inline'} className={'Bold'}>Notificaciones</Typography>
+                        </div>
                         <Switch disabled checked />
                     </div>
                     <div className={'Actions'}>
@@ -65,7 +69,7 @@ export function Profile() {
                             <ActionButton icon={<EditIcon className={'FillWhite'}/>}
                                           labelClassName={'EditLabel'}
                                           variant={ButtonVariant.CONTAINED}
-                                          innerText={'Confirmar'}
+                                          innerText={'Confirmar cambios'}
                                           color={Color.PRIMARY}
                                           onClick={handleConfirm}/>
                             :
