@@ -145,7 +145,7 @@ export default function CheckboxListSecondary() {
                 <AccordionDetails>
                     <RadioGroup name="view" value={value} onChange={handleChange}>
                         <FormControlLabel value="busyDates" control={<Radio color="primary"/>} label="Mostrar indisponibilidades de participantes" />
-                        <FormControlLabel value="events" control={<Radio color="primary"/>} label="Mostrar eventos" />
+                        <FormControlLabel value="events" control={<Radio color="primary"/>} label="Mostrar defensas" />
                     </RadioGroup>
                 </AccordionDetails>
             </Accordion>
