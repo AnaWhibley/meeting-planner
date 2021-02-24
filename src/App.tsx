@@ -36,7 +36,7 @@ function App() {
     };
 
     return (
-        <div>
+        <>
             <ThemeProvider theme={theme}>
                 <Router>
                     <Switch>
@@ -54,7 +54,7 @@ function App() {
                     </Switch>
                 </Router>
             </ThemeProvider>
-        </div>
+        </>
     );
 
 }
