@@ -15,7 +15,7 @@ export const selectBusyDatesCurrentUser = (state: RootState) => state.planner.bu
         groupId: 'currentUser'
     }
 });
-export const selectBusyDatesOtherUsers = (state: RootState) => state.planner.busyDatesOtherUsers.flatMap((user, index) => {
+export const selectBusyDatesOtherUsers = (state: RootState) => state.planner.busyDatesOtherUsers.filter((user) => state.planner.selectedParticipants.includes(user.userId)).flatMap((user, index) => {
 
     const name = state.planner.participants.find(participant => participant.id === user.userId)?.name
 
@@ -31,6 +31,9 @@ export const selectBusyDatesOtherUsers = (state: RootState) => state.planner.bus
         }
     });
 });
+
+export const selectParticipants = (state: RootState) => state.planner.participants;
+export const selectSelectedParticipants = (state: RootState) => state.planner.selectedParticipants;
 
 const colors = [
     '#9fd7b3',

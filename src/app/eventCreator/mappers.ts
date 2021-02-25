@@ -41,7 +41,6 @@ const mapJSONEventsToState = (events: Array<any>) => {
 
 export const mapJSONFromState = (state: RootState) => {
     return {
-        usuario: state.login.email,
         eventos: mapJSONToStateEvents(state.eventCreator.events),
         nombreGrupoEventos: state.eventCreator.groupName?.value.label,
         desde: state.eventCreator.from.value,
