@@ -9,10 +9,13 @@ import wizard from '../../assets/icons/undraw/undraw_setup_wizard.svg';
 import DragAndDrop from '../../components/dragAndDrop/DragAndDrop';
 import './EventCreator.scss';
 import '../../styles/common.scss';
+import {useDispatch} from 'react-redux';
+import {setInitialState} from '../../app/eventCreator/slice';
 
 export function EventCreator() {
 
     const history = useHistory();
+    const dispatch = useDispatch();
 
     return (
         <>
@@ -32,7 +35,10 @@ export function EventCreator() {
                 <div className={'ButtonsContainer'}>
                     <div className={'Button ButtonLeft'}>
                         <ActionButton color={Color.PRIMARY}
-                                      onClick={() => history.push('/createEvents/form')}
+                                      onClick={() => {
+                                          dispatch(setInitialState())
+                                          history.push('/createEvents/form')
+                                      }}
                                       innerText={'Crear un evento manualmente'}
                                       variant={ButtonVariant.CONTAINED}
                                       labelClassName={'Label'}
