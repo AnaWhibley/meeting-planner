@@ -14,7 +14,6 @@ import {
     Drawer,
     FormControlLabel,
     IconButton,
-    ListItemIcon,
     Radio,
     RadioGroup,
     Typography
@@ -37,6 +36,8 @@ import {
     toggleShowCalendar
 } from '../../../app/uiStateSlice';
 import {EventsGrid} from '../eventsGrid/EventsGrid';
+import {selectParticipants, selectSelectedParticipants} from '../../../app/planner/selectors';
+import { setSelectedParticipants } from '../../../app/planner/slice';
 
 export function ViewSelector() {
     return (
@@ -54,20 +55,14 @@ export function CheckboxListSecondary() {
         dispatch(setCurrentViewPlanner((event.target as HTMLInputElement).value));
     };
 
-    const [checked, setChecked] = React.useState([1]);
-    const handleToggle = (value: number) => () => {
-        const currentIndex = checked.indexOf(value);
-        const newChecked = [...checked];
-
-        if (currentIndex === -1) {
-            newChecked.push(value);
-        } else {
-            newChecked.splice(currentIndex, 1);
-        }
-
-        setChecked(newChecked);
+    const handleToggle = (value: string) => () => {
+        dispatch(setSelectedParticipants(value))
     };
+
     const showCalendar = useSelector(selectShowCalendar);
+
+    const participants = useSelector(selectParticipants);
+    const selectedParticipants = useSelector(selectSelectedParticipants)
 
     return (
         <>
@@ -79,22 +74,22 @@ export function CheckboxListSecondary() {
                         <Typography variant={'h2'} color={'primary'}>Participantes</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <List dense className={''}>
-                            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => {
-                                const labelId = `checkbox-list-secondary-label-${value}`;
+                        <List dense>
+                            {participants.map((value) => {
+                                const labelId = `checkbox-list-secondary-label-${value.name}`;
                                 return (
-                                    <ListItem key={value} button>
+                                    <ListItem key={value.id} button>
                                         <ListItemAvatar>
-                                            <AvatarInitials userName={`Avatar ${value + 1}`}
+                                            <AvatarInitials userName={`Avatar ${value.name}`}
                                             />
                                         </ListItemAvatar>
-                                        <ListItemText id={labelId} primary={`Line item ${value + 1}`}/>
+                                        <ListItemText id={labelId} primary={value.name}/>
                                         <ListItemSecondaryAction>
                                             <Checkbox
                                                 edge="end"
                                                 color="primary"
-                                                onChange={handleToggle(value)}
-                                                checked={checked.indexOf(value) !== -1}
+                                                onChange={handleToggle(value.id)}
+                                                checked={selectedParticipants.indexOf(value.id) !== -1}
                                             />
                                         </ListItemSecondaryAction>
                                     </ListItem>
@@ -111,7 +106,7 @@ export function CheckboxListSecondary() {
                         <Typography variant={'h2'} color={'primary'}>Defensas</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <List>
+                        {/*<List>
                             {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29 ].map((value) => {
                                 const labelId = `checkbox-list-label-${value}`;
 
@@ -136,7 +131,7 @@ export function CheckboxListSecondary() {
                                     </ListItem>
                                 );
                             })}
-                        </List>
+                        </List>*/}
                     </AccordionDetails>
                 </Accordion>
             }

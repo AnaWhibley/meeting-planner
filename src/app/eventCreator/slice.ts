@@ -59,17 +59,18 @@ export interface EventCreatorSlice {
     to: FieldState<string>;
     events: Array<EventState>;
 }
+const initialState = {
+    stage: 0,
+    currentIndex: 0,
+    groupName: createFieldState({label: '', value: ''}),
+    from: createFieldState(DateTime.utc().toFormat(DATE_FORMAT)),
+    to: createFieldState(DateTime.utc().toFormat(DATE_FORMAT)),
+    events: [createDefaultEvent()]
+};
 
 export const slice = createSlice({
     name: 'eventCreator',
-    initialState: {
-        stage: 0,
-        currentIndex: 0,
-        groupName: createFieldState({label: '', value: ''}),
-        from: createFieldState(DateTime.utc().toFormat(DATE_FORMAT)),
-        to: createFieldState(DateTime.utc().toFormat(DATE_FORMAT)),
-        events: [createDefaultEvent()]
-    } as EventCreatorSlice,
+    initialState: initialState as EventCreatorSlice,
     reducers: {
         next: state => {
 
@@ -123,11 +124,6 @@ export const slice = createSlice({
         },
         complete: (state) => {
             state.stage = 4;
-            state.events = [createDefaultEvent()];
-            state.from = createFieldState(DateTime.utc().toFormat(DATE_FORMAT));
-            state.to = createFieldState(DateTime.utc().toFormat(DATE_FORMAT));
-            state.currentIndex = 0;
-            state.groupName = createFieldState({label: '', value: ''});
         },
         setImportedData: (state,action) => {
             state.events = action.payload.events;
@@ -140,10 +136,13 @@ export const slice = createSlice({
             state.stage = action.payload.stage !== undefined ? action.payload.stage : 0;
             state.currentIndex = action.payload.currentIndex;
         },
+        setInitialState: (state) => {
+            return initialState;
+        },
     },
 });
 
-export const { next, previous, setFrom, setTo, setName, createNew, complete, setParticipants, addTutor, removeTutor, setImportedData, setGroupName, setDuration, editEvent } = slice.actions;
+export const { next, previous, setFrom, setTo, setName, createNew, complete, setParticipants, addTutor, removeTutor, setImportedData, setGroupName, setDuration, editEvent, setInitialState } = slice.actions;
 
 export const createEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     dispatch(requesting());

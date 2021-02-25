@@ -9,6 +9,7 @@ export interface PlannerSlice {
     busyDatesOtherUsers: Array<BusyDateState>;
     events: Array<GroupedEventDto>;
     participants: Array<User>;
+    selectedParticipants: Array<string>;
 }
 
 export interface BusyDateState {
@@ -30,7 +31,8 @@ export const slice = createSlice({
         busyDatesCurrentUser: [],
         busyDatesOtherUsers: [],
         events: [],
-        participants: []
+        participants: [],
+        selectedParticipants: []
     } as PlannerSlice,
     reducers: {
         populateBusyDates:((state, action) => {
@@ -42,11 +44,24 @@ export const slice = createSlice({
         }),
         populateParticipants: ((state, action) => {
             state.participants = action.payload;
+            state.selectedParticipants = action.payload.map((u: User) => u.id);
         }),
+        setSelectedParticipants: ((state, action) => {
+            const currentIndex = state.selectedParticipants.indexOf(action.payload);
+            const newSelectedParticipants = [...state.selectedParticipants];
+
+            if (currentIndex === -1) {
+                newSelectedParticipants.push(action.payload);
+            } else {
+                newSelectedParticipants.splice(currentIndex, 1);
+            }
+
+            state.selectedParticipants = newSelectedParticipants;
+        })
     },
 });
 
-export const { populateBusyDates, populateEvents, populateParticipants } = slice.actions;
+export const { populateBusyDates, populateEvents, populateParticipants, setSelectedParticipants } = slice.actions;
 
 export const getBusyDates = (userIds?: Array<string>) => (dispatch: Dispatch<any>, getState: () => RootState) => {
 
