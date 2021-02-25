@@ -8,20 +8,21 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import './Calendar.scss';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectBusyDatesCurrentUser, selectBusyDatesOtherUsers} from '../../../app/planner/selectors';
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Popover} from '@material-ui/core';
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@material-ui/core';
 import '../../../styles/common.scss'
 import {DATE_TIME_FORMAT} from '../../../app/eventCreator/slice';
 import {addBusy, getEvents} from '../../../app/planner/slice';
 import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
 import {Color} from '../../../styles/theme';
 import {EventContent} from './EventContent';
+import {selectCalendarView} from '../../../app/uiStateSlice';
 
 export function Calendar() {
 
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(getEvents())
-    }, []);
+    }, [dispatch]);
 
     const busyDatesCU: any = useSelector(selectBusyDatesCurrentUser);
     const busyDatesOU: any = useSelector(selectBusyDatesOtherUsers);
@@ -40,6 +41,8 @@ export function Calendar() {
     const handleCloseDialog = () => {
         setOpenDialog(false);
     };
+
+    const calendarView = useSelector(selectCalendarView);
 
     const handleAcceptDialog = () => {
         if(selectInfo) {
@@ -64,9 +67,19 @@ export function Calendar() {
                     center: 'title',
                     end: 'dayGridMonth,timeGridWeek,timeGridDay'
                 }}
-                titleFormat={'LLLL yyyy'}
+                views={{
+                    dayGridMonth: {
+                        titleFormat: 'LLLL yyyy'
+                    },
+                    timeGridWeek: {
+                        titleFormat: 'd LLLL',
+                    },
+                    timeGridDay: {
+                        titleFormat: 'd LLLL yyyy',
+                    }
+                }}
                 timeZone={'UTC'}
-                initialView='timeGridWeek'
+                initialView={calendarView}
                 weekends={false}
                 selectable={true}
                 selectMirror={true}
