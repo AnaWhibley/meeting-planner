@@ -84,7 +84,6 @@ export const getBusyDates = (userIds?: Array<string>) => (dispatch: Dispatch<any
 };
 
 export const getEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
-
     const { login } = getState();
     const currentUser = login.loggedInUser;
     if (currentUser) {
