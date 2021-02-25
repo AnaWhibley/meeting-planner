@@ -100,18 +100,18 @@ class UserService {
 
     public static getNameOfParticipants(userIds?: Array<string>): Observable<Array<User>> {
         if(!userIds){
-            return of(users).pipe(delay(1000));
+            return of(users).pipe(delay(500));
         }
 
         return of(users)
             .pipe(
-                delay(1000),
+                delay(500),
                 map((dto: Array<UserDto>) => dto.filter(u => userIds.includes(u.id))),
                 );
     }
 
     public static editUserName(user: User, newName: string): Observable<{success: boolean}>{
-        return of({success: true}).pipe(delay(1000))
+        return of({success: true}).pipe(delay(500))
     }
 }
 

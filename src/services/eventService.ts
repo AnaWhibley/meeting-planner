@@ -263,7 +263,7 @@ class EventService {
 
     public static create(event: GroupedEventDto): Observable<CreateResponse> {
         groupedEvents.push(event);
-        return of({success: true}).pipe(delay(1000))
+        return of({success: true}).pipe(delay(500))
     }
 
     public static addBusyDate(busyDate: BusyState, userId: string): Observable<boolean> {
@@ -308,7 +308,7 @@ class EventService {
     public static getEvents(user: User): Observable<Array<GroupedEventDto>> {
 
         if(user.role === Role.ADMIN) {
-            return of(groupedEvents.slice()).pipe(delay(1000));
+            return of(groupedEvents.slice()).pipe(delay(500));
         }
 
         const filteredEvents = groupedEvents.map((ev) => {
@@ -319,7 +319,7 @@ class EventService {
                 }
         });
 
-        return of(filteredEvents.slice()).pipe(delay(1000));
+        return of(filteredEvents.slice()).pipe(delay(500));
     }
 }
 
