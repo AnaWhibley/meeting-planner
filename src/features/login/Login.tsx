@@ -22,7 +22,7 @@ import {selectLoggedInUser, selectPassword, selectShowErrorMessage, selectEmail}
 export function Login() {
 
     const dispatch: Dispatch<any> = useDispatch();
-    const username = useSelector(selectEmail);
+    const email = useSelector(selectEmail);
     const password = useSelector(selectPassword);
     const showErrorMessage = useSelector(selectShowErrorMessage);
     const loggedInUser: User | undefined = useSelector(selectLoggedInUser);
@@ -44,7 +44,7 @@ export function Login() {
                 <TextInput
                     label="Nombre de usuario"
                     fullWidth={true}
-                    value={username}
+                    value={email}
                     icon={<AtSignIcon/>}
                     onChange={(value: string) => dispatch(setEmail(value))}
                     containerClassName={'InputContainer'}
