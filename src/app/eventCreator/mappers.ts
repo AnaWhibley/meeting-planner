@@ -8,7 +8,10 @@ export const mapToCreateEventRequest = (state: EventCreatorSlice): GroupedEventD
             id: event.id,
             name: event.name.value,
             participants: event.participants.map(p => ({email: p.email.value, tag: p.tag})),
-            duration: event.duration.value
+            duration: event.duration.value,
+            status: event.status,
+            date: event.date,
+            time: event.time
         };
     });
 

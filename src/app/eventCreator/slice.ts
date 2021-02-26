@@ -24,7 +24,10 @@ const createDefaultEvent = (): EventState => {
         id: Math.random().toString(),
         name: createFieldState(''),
         participants: Object.keys(ParticipantType).map((k: string) => ( { email: createFieldState(''), tag: (ParticipantType as any)[k] })),
-        duration: createFieldState(60)
+        duration: createFieldState(60),
+        status: 'pending',
+        date: 'pending',
+        time: 'pending'
     };
 };
 
@@ -46,6 +49,9 @@ export interface EventState {
         tag: string;
     }>;
     duration: FieldState<number>;
+    status: string;
+    date: string;
+    time: string;
 }
 
 export interface EventCreatorSlice {

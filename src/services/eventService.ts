@@ -126,6 +126,9 @@ interface EventDto {
         tag: string;
     }>;
     duration: number;
+    status: string;
+    date: string;
+    time: string;
 }
 
 const groupedEvents: Array<GroupedEventDto> = [
@@ -162,7 +165,10 @@ const groupedEvents: Array<GroupedEventDto> = [
                         email: 'eduardo.rodriguez@ulpgc.es',  //12
                         tag: 'Vocal Tribunal Suplente'
                     }],
-                duration: 300
+                duration: 60,
+                status: 'confirmed',
+                date: '2021 2 28',
+                time: '10:30'
             },
             {
                 id: '22',
@@ -192,7 +198,10 @@ const groupedEvents: Array<GroupedEventDto> = [
                         email: 'jc.rodriguezdelpino@ulpgc.es',  //6
                         tag: 'Vocal Tribunal Suplente'
                     }],
-                duration: 300
+                duration: 60,
+                status: 'pending',
+                date: '2021 2 28',
+                time: '12:30'
             },
             {
                 id: '33',
@@ -222,7 +231,10 @@ const groupedEvents: Array<GroupedEventDto> = [
                         email: 'francisca.quintana@ulpgc.es',    //9
                         tag: 'Vocal Tribunal Suplente'
                     }],
-                duration: 300
+                duration: 60,
+                status: 'pending',
+                date: 'pending',
+                time: 'pending'
             },
             {
                 id: '55',
@@ -252,7 +264,10 @@ const groupedEvents: Array<GroupedEventDto> = [
                         email: 'eduardo.rodriguez@ulpgc.es',  //12
                         tag: 'Vocal Tribunal Suplente'
                     }],
-                duration: 300
+                duration: 60,
+                status: 'error',
+                date: '2021 2 28',
+                time: '14:30'
             },
         ]
     },

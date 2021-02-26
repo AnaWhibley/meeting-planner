@@ -81,16 +81,16 @@ class UserService {
 
     public static login(email: string, password: string): Observable<LoginResponse> {
         if(email === 'a' && password === 'a') {
+            return of({
+                user: {name: 'José Daniel Hernández Sosa', role: Role.USER, id: 'daniel.hernandez@ulpgc.es'},
+                success: true
+            }).pipe(delay(1000))
+        }else{
             return of(
                 {
                     user: {name: 'José Daniel Hernández Sosa', role: Role.ADMIN, id: 'admin@meetingplanner.es'},
                     success: true
                 }).pipe(delay(1000))
-        }else{
-            return of({
-                user: {name: 'José Daniel Hernández Sosa', role: Role.USER, id: 'daniel.hernandez@ulpgc.es'},
-                success: true
-            }).pipe(delay(1000))
         }
         //return of({success: false}).pipe(delay(1000))
     }
