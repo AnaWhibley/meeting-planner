@@ -1,20 +1,7 @@
 import React from 'react';
 import {Avatar, createStyles, makeStyles, Theme} from '@material-ui/core';
-
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            display: 'flex',
-            '& > *': {
-                margin: theme.spacing(1),
-            },
-        },
-        primary: {
-            backgroundColor: '#F8F7FF',
-            color: theme.palette.primary.main
-        },
-    }),
-);
+import cn from 'classnames';
+import {LightenDarkenColor} from '../../styles/theme';
 
 const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -26,13 +13,33 @@ const getInitials = (name: string) => {
     return initials;
 };
 
-export function AvatarInitials(props: {userName: string}) {
+export function AvatarInitials(props: {text: string, color?: string}) {
+
+    const useStyles = makeStyles((theme: Theme) =>
+        createStyles({
+            root: {
+                display: 'flex',
+                '& > *': {
+                    margin: theme.spacing(1),
+                },
+            },
+            defaultColor: {
+                backgroundColor: '#F8F7FF',
+                color: theme.palette.primary.main
+            },
+            customColor: {
+                backgroundColor: props.color && LightenDarkenColor(props.color, 40),
+                color:  props.color && LightenDarkenColor(props.color, -40)
+            },
+        }),
+    );
+
     const classes = useStyles();
-    const initials = getInitials(props.userName);
+    const initials = getInitials(props.text);
 
     return (
         <>
-            <Avatar alt={props.userName} className={classes.primary}>{initials}</Avatar>
+            <Avatar alt={props.text} className={cn(props.color ? classes.customColor : classes.defaultColor)}>{initials}</Avatar>
         </>
     );
 }

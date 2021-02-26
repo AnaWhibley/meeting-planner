@@ -1,6 +1,7 @@
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {delay, map} from 'rxjs/operators';
 import {User} from '../app/login/slice';
+import {colors} from '../styles/theme';
 
 interface UserDto {
    name: string;
@@ -94,19 +95,16 @@ class UserService {
         //return of({success: false}).pipe(delay(1000))
     }
 
-    public static getUsers(): Observable<Array<User>>{
-        return of(users).pipe(delay(1000))
-    }
-
     public static getNameOfParticipants(userIds?: Array<string>): Observable<Array<User>> {
         if(!userIds){
-            return of(users).pipe(delay(500));
+            return of(users).pipe(delay(500),
+                map((dto: Array<UserDto>) => dto.map((u, i) => ({...u, color: colors[i % colors.length]}))));
         }
 
         return of(users)
             .pipe(
                 delay(500),
-                map((dto: Array<UserDto>) => dto.filter(u => userIds.includes(u.id))),
+                map((dto: Array<UserDto>) => dto.filter(u => userIds.includes(u.id)).map((u, i) => ({...u, color: colors[i % colors.length]}))),
                 );
     }
 

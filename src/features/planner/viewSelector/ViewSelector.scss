@@ -1,4 +1,12 @@
+@import "../../../styles/variables";
+
 .ViewSelectorContainer {
+
+  .ParticipantsList {
+    .MuiListItem-gutters {
+      padding-left: unset !important;
+    }
+  }
 
   .MuiPaper-elevation1 {
     box-shadow: unset !important

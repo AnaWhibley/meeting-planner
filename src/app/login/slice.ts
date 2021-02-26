@@ -15,6 +15,7 @@ export interface User {
     name: string;
     role?: Role;
     id: string;
+    color?: string;
 }
 
 export const slice = createSlice({

@@ -50,7 +50,7 @@ export function NavBar(props: {view?: string}) {
                  onClick={() => loggedInUser && loggedInUser.role === Role.ADMIN ? history.push('/dashboard') : history.push('/')}/>
             <Menu menuItems={menuItems} className={'Menu'}/>
             {props.view === 'Planner' || props.view === 'Profile' ? <div className={'AvatarName'}>
-                <div className={'Avatar'}><AvatarInitials userName={loggedInUser?.name || ''}/></div>
+                <div className={'Avatar'}><AvatarInitials text={loggedInUser?.name || ''}/></div>
                 <Typography variant="subtitle1"
                             display={'inline'}
                             color='textSecondary'>
