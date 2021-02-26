@@ -67,27 +67,30 @@ export function CheckboxListSecondary() {
     return (
         <>
             {currentViewPlanner === 'busyDates' ?
-                <Accordion defaultExpanded className={'Accordion'}>
+                <Accordion defaultExpanded>
                     <AccordionSummary
                         expandIcon={<CirclePlusIcon className={'FillPrimary'}/>}
                     >
                         <Typography variant={'h2'} color={'primary'}>Participantes</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <List dense>
+                        <List dense className={'ParticipantsList'}>
                             {participants.map((value) => {
-                                const labelId = `checkbox-list-secondary-label-${value.name}`;
+                                const labelId = value.id;
                                 return (
                                     <ListItem key={value.id} button>
                                         <ListItemAvatar>
-                                            <AvatarInitials userName={`Avatar ${value.name}`}
-                                            />
+                                            <AvatarInitials text={`Avatar ${value.name}`} color={value.color}/>
                                         </ListItemAvatar>
-                                        <ListItemText id={labelId} primary={value.name}/>
+                                        <ListItemText id={labelId}
+                                                      primary={<Typography color={'textPrimary'}
+                                                                           variant={'body1'}
+                                                      >{value.name}</Typography>}
+                                        />
                                         <ListItemSecondaryAction>
                                             <Checkbox
                                                 edge="end"
-                                                color="primary"
+                                                style={{color: value.color}}
                                                 onChange={handleToggle(value.id)}
                                                 checked={selectedParticipants.indexOf(value.id) !== -1}
                                             />
@@ -142,10 +145,11 @@ export function CheckboxListSecondary() {
                     <Typography variant={'h2'} color={'primary'}>Vista</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <RadioGroup name="view" value={currentViewPlanner} onChange={handleChange} className={'ViewRadioGroup'}>
-                        <FormControlLabel value="busyDates" control={<Radio color="primary"/>}
-                                          label="Mostrar indisponibilidades de participantes"/>
-                        <FormControlLabel value="events" control={<Radio color="primary"/>} label="Mostrar defensas"/>
+                    <RadioGroup name="view" value={currentViewPlanner} onChange={handleChange} className={'ViewRadioGroup'} >
+                        <FormControlLabel value="busyDates" control={<Radio color="primary" size={'small'}/>}
+                                          label={<Typography color={'textPrimary'} variant={'body1'}>Mostrar indisponibilidades de participantes</Typography>}/>
+                        <FormControlLabel value="events" control={<Radio color="primary" size={'small'}/>}
+                                          label={<Typography color={'textPrimary'} variant={'body1'}>Mostrar eventos</Typography>}/>
                     </RadioGroup>
                 </AccordionDetails>
             </Accordion>

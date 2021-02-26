@@ -14,7 +14,6 @@ export interface PlannerSlice {
 
 export interface BusyDateState {
     userId: string;
-    userName?: string;
     busy: Array<BusyState>;
 }
 
@@ -78,6 +77,7 @@ export const getBusyDates = (userIds?: Array<string>) => (dispatch: Dispatch<any
         // User
         EventService.getBusyDates(userIds).subscribe(busyDates => {
             UserService.getNameOfParticipants(userIds).subscribe(participants => {
+                console.log(busyDates, participants)
                 dispatch(populateParticipants(participants));
                 const { login } = getState();
                 const currentUserId = login.loggedInUser?.id;
