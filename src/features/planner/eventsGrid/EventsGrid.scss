@@ -3,3 +3,37 @@
   width: 100%;
   font-family: Nunito, serif;
 }
+
+.StatusVerified {
+  color: #17AE57;
+  svg {
+    fill: #17AE57;
+    vertical-align: middle;
+    margin-right: 5px;
+  }
+}
+
+.StatusPending {
+  color: #FF8A00;
+  svg {
+    fill: #FF8A00;
+    vertical-align: middle;
+    margin-right: 5px;
+  }
+}
+
+.PendingDashDate {
+  margin-left: 30px;
+}
+.PendingDashHour {
+  margin-left: 15px;
+}
+
+.StatusError {
+  color: #DA0000;
+  svg {
+    fill: #DA0000;
+    vertical-align: middle;
+    margin-right: 5px;
+  }
+}
