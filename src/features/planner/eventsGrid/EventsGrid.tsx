@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {Component, FunctionComponent, useEffect, useState} from 'react';
 import {AgGridReact} from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
@@ -10,6 +10,11 @@ import {ColumnApi} from 'ag-grid-community/dist/lib/columnController/columnApi';
 import './EventsGrid.scss';
 import {ColDef} from 'ag-grid-community/dist/lib/entities/colDef';
 import {selectDrawerSelector} from '../../../app/uiStateSlice';
+import {ICellRendererParams} from 'ag-grid-community';
+import {ReactComponent as VerifiedIcon} from '../../../assets/icons/evericons/verified.svg';
+import {ReactComponent as ErrorIcon} from '../../../assets/icons/evericons/x-octagon.svg';
+import {ReactComponent as PendingIcon} from '../../../assets/icons/evericons/question-circle.svg';
+import {DateTime} from 'luxon';
 
 export function EventsGrid() {
     const [gridApi, setGridApi] = useState<GridApi | null>(null);
@@ -21,45 +26,55 @@ export function EventsGrid() {
         {
             field: 'name',
             headerName: 'Nombre',
-            filter: true,
-            sortable: true,
-            lockVisible: true,
-            resizable: true,
             lockPosition: true,
         },{
             field: 'status',
             headerName: 'Estado',
-            lockVisible: true,
-            resizable: true,
+            cellRenderer: 'statusRenderer'
         },{
             field: 'date',
             headerName: 'Fecha',
-            lockVisible: true,
-            resizable: true
+            cellRenderer: 'dateRenderer'
         },{
             field: 'time',
             headerName: 'Hora',
             lockVisible: true,
-            resizable: true
+            cellRenderer: 'hourRenderer'
         },{
             field: 'duration',
             headerName: 'Duración',
             lockVisible: true,
-            resizable: true,
-            sortable: true
+            cellRenderer: 'durationRenderer'
         }
     ];
+
+    const frameworkComponents = {
+        statusRenderer: StatusRenderer,
+        dateRenderer: DateRenderer,
+        hourRenderer: HourRenderer,
+        durationRenderer: DurationRenderer
+    }
+
+    const defaultColDef = {
+        lockVisible: true,
+        sortable: true,
+        flex: 1,
+        filter: true,
+        resizable: true,
+    };
 
     useSelector(selectDrawerSelector, () => false);
 
     useEffect(() => {
         if(gridApi) gridApi.sizeColumnsToFit();
-        if (gridColumnApi) gridColumnApi.autoSizeColumn('name')
+        //if (gridColumnApi) gridColumnApi.autoSizeColumn('name')
     })
 
     const onGridReady = (params: GridReadyEvent)=> {
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
+        params.api.sizeColumnsToFit();
+        //params.columnApi.autoSizeColumn('name');
     }
 
     return (
@@ -67,8 +82,53 @@ export function EventsGrid() {
             <AgGridReact
                 onGridReady={onGridReady}
                 rowData={events[0].events}
-                columnDefs={columnDefs}>
+                columnDefs={columnDefs}
+                frameworkComponents={frameworkComponents}
+                defaultColDef={defaultColDef}
+                immutableData={true}
+            >
             </AgGridReact>
         </div>
     );
+}
+
+const StatusIcon: FunctionComponent = function (props): JSX.Element {
+    if(props.children === 'confirmed') {
+        return <span className={'StatusVerified'}><VerifiedIcon/>Confirmado</span>
+    }else if(props.children === 'pending'){
+        return <span className={'StatusPending'}><PendingIcon/>Pendiente</span>
+    }else{
+        return <span className={'StatusError'}><ErrorIcon/>Necesita intervención</span>
+    }
+};
+
+class StatusRenderer extends Component<ICellRendererParams> {
+    render() {
+        return <StatusIcon>{this.props.value}</StatusIcon>;
+    }
+}
+
+class DateRenderer extends Component<ICellRendererParams> {
+    render() {
+        if(this.props.value === 'pending'){
+            return <span className={'StatusPending PendingDashDate'}>-</span>;
+        }
+        const date = DateTime.fromFormat(this.props.value, 'yyyy M dd').toFormat('dd/MM/yyyy');
+        return <span>{date}</span>;
+    }
+}
+
+class HourRenderer extends Component<ICellRendererParams> {
+    render() {
+        if(this.props.value === 'pending'){
+            return <span className={'StatusPending PendingDashHour'}>-</span>;
+        }
+        return <span>{this.props.value}</span>;
+    }
+}
+
+class DurationRenderer extends Component<ICellRendererParams> {
+    render() {
+        return <span>{this.props.value} minutos</span>;
+    }
 }
