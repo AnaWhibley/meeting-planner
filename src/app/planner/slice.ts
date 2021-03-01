@@ -105,7 +105,7 @@ export const getEvents = () => (dispatch: Dispatch<any>, getState: () => RootSta
         EventService.getEvents(currentUser).subscribe(events => {
             dispatch(populateEvents(events));
             if(currentUser.role === Role.USER){
-                let userIds: Set<string> = new Set();
+                const userIds: Set<string> = new Set();
                 events.forEach((ev: GroupedEventDto) => ev.events.forEach(((e)=> e.participants.forEach((p) => userIds.add(p.email)))))
                 dispatch(getBusyDates(Array.from(userIds)))
             }else{
