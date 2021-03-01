@@ -1,33 +1,26 @@
-import React, {Component, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {AgGridReact} from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
-import {connect, useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import { selectEvents } from '../../../app/planner/selectors';
 import {GridReadyEvent} from 'ag-grid-community/dist/lib/events';
 import {GridApi} from 'ag-grid-community/dist/lib/gridApi';
 import {ColumnApi} from 'ag-grid-community/dist/lib/columnController/columnApi';
 import './EventsGrid.scss';
-import {ColDef} from 'ag-grid-community/dist/lib/entities/colDef';
+import {ColDef, ValueFormatterParams} from 'ag-grid-community/dist/lib/entities/colDef';
 import {
     selectDrawerSelector, selectSelectedOptionsStatusFilter,
-    setSelectedOptionsStatusFilter,
 } from '../../../app/uiStateSlice';
-import {IFilterParams} from 'ag-grid-community';
 import {ReactComponent as VerifiedIcon} from '../../../assets/icons/evericons/verified.svg';
 import {ReactComponent as ErrorIcon} from '../../../assets/icons/evericons/x-octagon.svg';
 import {ReactComponent as PendingIcon} from '../../../assets/icons/evericons/question-circle.svg';
-import {
-    Checkbox,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText, ListSubheader
-} from '@material-ui/core';
-import {RootState} from '../../../app/store';
-import {DateRenderer, DurationRenderer, HourRenderer, StatusRenderer} from './CellRenderers';
+import {DateRenderer, HourRenderer, StatusRenderer} from './CellRenderers';
 import {ConnectedStatusFilter} from './StatusFilter';
 import {AG_GRID_LOCALE_ES} from './locale.es';
+import {GroupedEventDto} from '../../../services/eventService';
+import {Accordion, AccordionDetails, AccordionSummary, Typography} from '@material-ui/core';
+import {ExpandLess, ExpandMore} from '@material-ui/icons';
 
 export const statusMapper = (status: string) => {
     if(status === 'confirmed') {
@@ -56,12 +49,15 @@ export const statusMapper = (status: string) => {
         }
     }
 };
+const durationFormatter = (params: ValueFormatterParams) => {
+    return params.value + ' minutos';
+};
 
 export function EventsGrid() {
     const [gridApi, setGridApi] = useState<GridApi | null>(null);
     const [gridColumnApi, setGridColumnApi] = useState<ColumnApi | null>(null);
 
-    const events = useSelector(selectEvents);
+    const groupedEvents = useSelector(selectEvents);
 
     const columnDefs: Array<ColDef> = [
         {
@@ -87,7 +83,8 @@ export function EventsGrid() {
             field: 'duration',
             headerName: 'Duración',
             lockVisible: true,
-            cellRenderer: 'durationRenderer'
+            valueFormatter: durationFormatter,
+            filter: 'agNumberColumnFilter'
         }
     ];
 
@@ -96,7 +93,6 @@ export function EventsGrid() {
         statusFilter: ConnectedStatusFilter,
         dateRenderer: DateRenderer,
         hourRenderer: HourRenderer,
-        durationRenderer: DurationRenderer,
     }
 
     const defaultColDef = {
@@ -120,21 +116,55 @@ export function EventsGrid() {
         params.api.setFilterModel({status: {filter: statusFilterSelectedOptions}})
     }
 
+    const eventsView = groupedEvents.map((event: GroupedEventDto) => {
+        return (
+            <div className={'EventsGridContainer'} key={event.groupName}>
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMore/>}>
+                        <Typography>{event.groupName}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Accordion>
+                            <AccordionSummary
+                                expandIcon={<ExpandMore/>}
+                            >
+                                <Typography>Información convocatoria</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                Desde {event.from} hasta {event.to}
+                            </AccordionDetails>
+                        </Accordion>
+                        <Accordion>
+                            <AccordionSummary expandIcon={<ExpandMore/>}>
+                                <Typography>Defensas programadas</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <div className='ag-theme-material Grid'>
+                                    <AgGridReact
+                                        localeText={AG_GRID_LOCALE_ES}
+                                        onGridReady={onGridReady}
+                                        rowData={event.events}
+                                        columnDefs={columnDefs}
+                                        frameworkComponents={frameworkComponents}
+                                        defaultColDef={defaultColDef}
+                                        immutableData={true}
+                                        immutableColumns={false}
+                                        pagination={true}
+                                        paginationPageSize={10}
+                                    >
+                                    </AgGridReact>
+                                </div>
+                            </AccordionDetails>
+                        </Accordion>
+                    </AccordionDetails>
+                </Accordion>
+            </div>
+        )
+    });
+
     return (
-        <div className='ag-theme-material GridContainer'>
-            <AgGridReact
-                localeText={AG_GRID_LOCALE_ES}
-                onGridReady={onGridReady}
-                rowData={events[0].events}
-                columnDefs={columnDefs}
-                frameworkComponents={frameworkComponents}
-                defaultColDef={defaultColDef}
-                immutableData={true}
-                immutableColumns={false}
-                pagination={true}
-                paginationPageSize={10}
-            >
-            </AgGridReact>
-        </div>
+        <>
+            {eventsView}
+        </>
     );
 }
