@@ -1,9 +1,21 @@
 import {createAction, createSlice, Dispatch} from '@reduxjs/toolkit';
 import {LoginResponse} from '../services/userService';
 import {RootState} from './store';
+import {GroupedEventDto} from '../services/eventService';
 const incrementByAmount = createAction<number>('counter/incrementByAmount');
 const setUser = createAction<LoginResponse>('login/setUser');
 const showErrorMessage = createAction<boolean>('login/showErrorMessage');
+const populateEvents = createAction<Array<GroupedEventDto>>('planner/populateEvents');
+
+interface uiStateSlice {
+    isBusy: boolean;
+    currentViewPlanner: string;
+    drawerSelector: boolean;
+    showCalendar: boolean;
+    calendarView: string;
+    selectedOptionsStatusFilter: Array<string>;
+    availableOptionsStatusFilter: Array<string>;
+}
 
 export const slice = createSlice({
     name: 'uiState',
@@ -12,8 +24,10 @@ export const slice = createSlice({
         currentViewPlanner: 'busyDates',
         drawerSelector: false,
         showCalendar: true,
-        calendarView: 'timeGridWeek'
-    },
+        calendarView: 'timeGridWeek',
+        selectedOptionsStatusFilter: [],
+        availableOptionsStatusFilter: []
+    } as uiStateSlice,
     reducers: {
         requesting: state => {
             state.isBusy = true;
@@ -26,7 +40,19 @@ export const slice = createSlice({
         },
         toggleShowCalendar: (state) => {
             state.showCalendar = !state.showCalendar;
-        }
+        },
+        setSelectedOptionsStatusFilter: ((state, action) => {
+            const currentIndex = state.selectedOptionsStatusFilter.indexOf(action.payload);
+            const newSelectedOptionsStatusFilter = [...state.selectedOptionsStatusFilter];
+
+            if (currentIndex === -1) {
+                newSelectedOptionsStatusFilter.push(action.payload);
+            } else {
+                newSelectedOptionsStatusFilter.splice(currentIndex, 1);
+            }
+
+            state.selectedOptionsStatusFilter = newSelectedOptionsStatusFilter;
+        })
     },
     extraReducers: (builder) => {
         builder
@@ -39,16 +65,23 @@ export const slice = createSlice({
             .addCase(showErrorMessage, (state) => {
                 state.isBusy = false;
             })
+            .addCase(populateEvents, (state, action) => {
+                const availableStatus: Set<string> = new Set();
+                action.payload.forEach(ev => ev.events.forEach(e => availableStatus.add(e.status)));
+                state.selectedOptionsStatusFilter = Array.from(availableStatus);
+                state.availableOptionsStatusFilter = Array.from(availableStatus);
+            })
             .addDefaultCase((state, action) => {})
     },
 });
-export const { requesting, setCurrentViewPlanner, setDrawerSelector, toggleShowCalendar } = slice.actions;
+export const { requesting, setCurrentViewPlanner, setDrawerSelector, toggleShowCalendar, setSelectedOptionsStatusFilter } = slice.actions;
 
 export const selectIsBusy = (state: RootState) => state.uiState.isBusy;
 export const selectCurrentViewPlanner = (state: RootState) => state.uiState.currentViewPlanner;
 export const selectDrawerSelector = (state: RootState) => state.uiState.drawerSelector;
 export const selectShowCalendar = (state: RootState) => state.uiState.showCalendar;
 export const selectCalendarView = (state: RootState) => state.uiState.calendarView;
+export const selectSelectedOptionsStatusFilter = (state: RootState) => state.uiState.selectedOptionsStatusFilter;
 
 export const toggleDrawerSelectorTransition = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     const current = getState().uiState.drawerSelector;
