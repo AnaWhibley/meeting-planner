@@ -27,9 +27,3 @@ export class HourRenderer extends Component<ICellRendererParams> {
         return <span>{this.props.value}</span>;
     }
 }
-
-export class DurationRenderer extends Component<ICellRendererParams> {
-    render() {
-        return <span>{this.props.value} minutos</span>;
-    }
-}
