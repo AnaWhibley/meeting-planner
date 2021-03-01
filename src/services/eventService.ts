@@ -166,8 +166,8 @@ const groupedEvents: Array<GroupedEventDto> = [
                         tag: 'Vocal Tribunal Suplente'
                     }],
                 duration: 60,
-                status: 'confirmed',
-                date: '2021 2 28',
+                status: 'pending',
+                date: '2021 2 26',
                 time: '10:30'
             },
             {
