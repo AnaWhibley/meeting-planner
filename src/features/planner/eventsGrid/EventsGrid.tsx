@@ -18,8 +18,7 @@ import {ReactComponent as PendingIcon} from '../../../assets/icons/evericons/que
 import {DateRenderer, HourRenderer, StatusRenderer} from './CellRenderers';
 import {ConnectedStatusFilter} from './StatusFilter';
 import {AG_GRID_LOCALE_ES} from './locale.es';
-import {GroupedEventDto} from '../../../services/eventService';
-import {Accordion, AccordionDetails, AccordionSummary, Box, Typography} from '@material-ui/core';
+import {Accordion, AccordionDetails, AccordionSummary, AppBar, Tab, Tabs, Typography} from '@material-ui/core';
 import {ExpandMore} from '@material-ui/icons';
 import {ReactComponent as InfoIcon} from '../../../assets/icons/evericons/info.svg';
 import {Tooltip} from '../../../components/tooltip/Tooltip';
@@ -56,11 +55,10 @@ const durationFormatter = (params: ValueFormatterParams) => {
     return params.value + ' minutos';
 };
 
-let gridApi: Array<GridApi> = [];
+export function EventsGrid(props: any) {
 
-export function EventsGrid() {
-    // const [gridApi, setGridApi] = useState<Array<GridApi>>([]);
-    const [gridColumnApi, setGridColumnApi] = useState<Array<ColumnApi>>([]);
+    const [gridApi, setGridApi] = useState<GridApi | null>(null);
+    const [gridColumnApi, setGridColumnApi] = useState<ColumnApi | null>(null);
 
     const groupedEvents = useSelector(selectEvents);
 
@@ -70,6 +68,9 @@ export function EventsGrid() {
             headerName: 'Nombre',
             lockPosition: true,
             filter: true,
+            filterParams: {
+                buttons: ['reset'],
+            },
         },{
             field: 'status',
             headerName: 'Estado',
@@ -110,91 +111,65 @@ export function EventsGrid() {
     useSelector(selectDrawerSelector, () => false);
 
     useEffect((): any => {
-        console.log('!!! ', gridApi)
-        if(gridApi.length > 0) gridApi.forEach(api => {
-            api.sizeColumnsToFit();
-            console.log('hola');
-        });
-        return () => gridApi = [];
+        if(gridApi) gridApi.sizeColumnsToFit();
     })
 
     const statusFilterSelectedOptions = useSelector(selectSelectedOptionsStatusFilter);
-    const onGridReady = (params: GridReadyEvent, index: number)=> {
-        console.log(params.api, index)
-        /*        const newGridApi = gridApi.slice();
-                newGridApi.push(params.api);
-                setGridApi(newGridApi);*/
-        gridApi.push(params.api);
-
-        console.log('!!!2 ', gridApi)
-
-        const newGridColumnApi = [...gridColumnApi];
-        newGridColumnApi[index] = params.columnApi;
-        setGridColumnApi(newGridColumnApi);
-
+    const onGridReady = (params: GridReadyEvent)=> {
+        setGridApi(params.api);
+        setGridColumnApi(params.columnApi);
         params.api.sizeColumnsToFit();
         params.api.setFilterModel({status: {filter: statusFilterSelectedOptions}})
     }
 
-    const eventsView = groupedEvents.map((event: GroupedEventDto, index: number) => {
-        return (
-            <div className={'EventsGridContainer'} key={event.groupName}>
-                <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMore/>}>
-                        <Typography variant={'h2'} color={'primary'}>{event.groupName}</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <Accordion>
-                            <AccordionSummary
-                                expandIcon={<ExpandMore/>}
-                            >
-                                <Typography  color={'secondary'} variant={'body1'} className={'Bold'}>Información de la convocatoria</Typography>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <div className={'DateRangeContainer'}>
-                                    <Typography color={'textSecondary'} variant={'body1'} display={'inline'} className={'Bold'}>Rango de fechas</Typography>
-                                    <Tooltip icon={<InfoIcon className={'FillTextSecondary InfoIcon'}/>}
-                                             text={'Rango de fecha oficial en el que se celebra la convocatoria. Esta fecha está definida por la universidad.'}
-                                             placement={'right'}/>
-                                    <div className={'DateRange'}>
-                                        <Typography color={'textSecondary'} variant={'body1'} display={'inline'}><span className={'Bold'}>Desde:</span> 10/02/2021</Typography><br/>
-                                        <Typography color={'textSecondary'} variant={'body1'} display={'inline'}><span className={'Bold'}>Hasta:</span> 10/03/2021</Typography>
-                                    </div>
-                                </div>
+    const [value, setValue] = React.useState(0);
 
-                            </AccordionDetails>
-                        </Accordion>
-                        <Accordion>
-                            <AccordionSummary expandIcon={<ExpandMore/>}>
-                                <Typography  color={'secondary'} variant={'body1'} className={'Bold'}>Defensas programadas</Typography>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <div className='ag-theme-material Grid'>
-                                    <AgGridReact
-                                        localeText={AG_GRID_LOCALE_ES}
-                                        onGridReady={(params) => onGridReady(params, index)}
-                                        rowData={event.events}
-                                        columnDefs={columnDefs}
-                                        frameworkComponents={frameworkComponents}
-                                        defaultColDef={defaultColDef}
-                                        immutableData={true}
-                                        immutableColumns={false}
-                                        pagination={true}
-                                        paginationPageSize={10}
-                                    >
-                                    </AgGridReact>
-                                </div>
-                            </AccordionDetails>
-                        </Accordion>
-                    </AccordionDetails>
-                </Accordion>
-            </div>
-        )
-    });
+    const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+        setValue(newValue);
+    };
 
     return (
         <>
-            {eventsView}
+            <div className={'EventsGridContainer'}>
+            <AppBar position="static">
+                <Tabs value={value} onChange={handleTabChange}>
+                    {groupedEvents.map((ev, index) => {return (<Tab key={index} label={ev.groupName} />);})}
+                </Tabs>
+            </AppBar>
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMore/>}>
+                        <Typography  color={'secondary'} variant={'body1'} className={'Bold'}>Información de la convocatoria</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <div className={'DateRangeContainer'}>
+                            <Typography color={'primary'} display={'inline'} className={'Bold'}>Rango de fechas</Typography>
+                            <Tooltip icon={<InfoIcon className={'FillPrimary InfoIcon'}/>}
+                                     text={'Rango de fecha oficial en el que se celebra la convocatoria. Esta fecha está definida por la universidad.'}
+                                     placement={'right'}/>
+                            <div className={'DateRange'}>
+                                <Typography color={'textSecondary'} variant={'body1'} display={'inline'}><span className={'Bold'}>Desde:</span> 10/02/2021</Typography><br/>
+                                <Typography color={'textSecondary'} variant={'body1'} display={'inline'}><span className={'Bold'}>Hasta:</span> 10/03/2021</Typography>
+                            </div>
+                        </div>
+                    </AccordionDetails>
+                </Accordion>
+                <div className='ag-theme-material Grid'>
+                    <AgGridReact
+                        localeText={AG_GRID_LOCALE_ES}
+                        onGridReady={(params) => onGridReady(params)}
+                        rowData={groupedEvents[value].events}
+                        columnDefs={columnDefs}
+                        frameworkComponents={frameworkComponents}
+                        defaultColDef={defaultColDef}
+                        immutableData={true}
+                        immutableColumns={false}
+                        pagination={true}
+                        getRowNodeId={(data) => data.id}
+                        paginationPageSize={10}
+                    >
+                    </AgGridReact>
+                </div>
+            </div>
         </>
     );
 }

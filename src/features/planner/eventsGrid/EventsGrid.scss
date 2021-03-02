@@ -58,14 +58,18 @@
     }
   }
 
-  .MuiAccordionDetails-root {
-    flex-direction: column;
+  .MuiAppBar-root {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
   }
 
-  .MuiAccordionSummary-root {
-      &:hover {
-        background-color: #f1f1f1;
-      }
+  .MuiTab-wrapper {
+    text-transform: capitalize !important;
+    font-size: 16px !important;
+  }
+
+  .MuiAccordionDetails-root {
+    flex-direction: column;
   }
 
   .MuiAccordionSummary-root.Mui-expanded, .MuiAccordionSummary-root {
