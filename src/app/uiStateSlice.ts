@@ -52,7 +52,10 @@ export const slice = createSlice({
             }
 
             state.selectedOptionsStatusFilter = newSelectedOptionsStatusFilter;
-        })
+        }),
+        resetStatusFilter: (state) => {
+            state.selectedOptionsStatusFilter = state.availableOptionsStatusFilter;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -74,7 +77,7 @@ export const slice = createSlice({
             .addDefaultCase((state, action) => {})
     },
 });
-export const { requesting, setCurrentViewPlanner, setDrawerSelector, toggleShowCalendar, setSelectedOptionsStatusFilter } = slice.actions;
+export const { requesting, setCurrentViewPlanner, setDrawerSelector, toggleShowCalendar, setSelectedOptionsStatusFilter, resetStatusFilter } = slice.actions;
 
 export const selectIsBusy = (state: RootState) => state.uiState.isBusy;
 export const selectCurrentViewPlanner = (state: RootState) => state.uiState.currentViewPlanner;
