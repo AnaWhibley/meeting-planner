@@ -16,6 +16,10 @@ html{
   fill: white;
 }
 
+.FillTextSecondary {
+  fill: $textSecondary;
+}
+
 .CursorPointer {
   cursor: pointer;
 }

@@ -51,8 +51,29 @@
     margin-left: 15px;
   }
 
+  .DateRangeContainer {
+    margin-left: 1em;
+    .DateRange {
+      margin-left: 2em;
+    }
+  }
+
   .MuiAccordionDetails-root {
     flex-direction: column;
+  }
+
+  .MuiAccordionSummary-root {
+      &:hover {
+        background-color: #f1f1f1;
+      }
+  }
+
+  .MuiAccordionSummary-root.Mui-expanded, .MuiAccordionSummary-root {
+    min-height: unset;
+  }
+
+  .MuiAccordionSummary-content.Mui-expanded, .MuiAccordionSummary-content {
+    margin: unset;
   }
 }
 
