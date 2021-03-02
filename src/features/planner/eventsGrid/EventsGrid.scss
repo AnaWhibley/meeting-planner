@@ -5,6 +5,57 @@
     height: 400px;
     width: 100%;
     font-family: Nunito, serif;
+
+    .ag-header-cell-label {
+      font-size: 16px;
+    }
+
+    div.ag-row {
+      font-size: 14px;
+    }
+
+    .ResetButton {
+      float: right;
+      margin: 0 12px 16px 0;
+    }
+
+    .ResetLabelButton {
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .ag-input-field-input:focus {
+      border-bottom-color: $primary !important;
+    }
+
+    .ag-standard-button {
+      color: $primary;
+      font-size: 14px;
+      padding: 6px 8px;
+      transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+      font-family: Nunito,cursive;
+      text-transform: none !important;
+      border-radius: 11px !important;
+      border-width: 2px !important;
+      &:hover {
+        background-color: rgba(108, 99, 255, 0.04);
+      }
+    }
+
+    .ag-filter {
+      font-family: Nunito, serif;
+    }
+  }
+
+  .GridTitle {
+    margin-left: 1em;
+  }
+
+  .StatusFilterList {
+    .MuiListItem-dense {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
   }
 
   .StatusVerified {
@@ -68,10 +119,6 @@
     font-size: 16px !important;
   }
 
-  .MuiAccordionDetails-root {
-    flex-direction: column;
-  }
-
   .MuiAccordionSummary-root.Mui-expanded, .MuiAccordionSummary-root {
     min-height: unset;
   }
@@ -79,6 +126,8 @@
   .MuiAccordionSummary-content.Mui-expanded, .MuiAccordionSummary-content {
     margin: unset;
   }
+
+
 }
 
 

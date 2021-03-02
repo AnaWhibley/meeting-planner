@@ -1,13 +1,15 @@
 import React, {Component} from 'react';
-import {IFilterParams} from 'ag-grid-community';
+import {IDoesFilterPassParams, IFilterParams} from 'ag-grid-community';
 import {Checkbox, List, ListItem, ListItemIcon, ListItemText, ListSubheader} from '@material-ui/core';
 import {RootState} from '../../../app/store';
-import {setSelectedOptionsStatusFilter} from '../../../app/uiStateSlice';
+import {resetStatusFilter, setSelectedOptionsStatusFilter} from '../../../app/uiStateSlice';
 import {connect} from 'react-redux';
 import {statusMapper} from './EventsGrid';
 import cn from 'classnames';
+import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
+import {Color} from '../../../styles/theme';
 
-class StatusFilter extends Component<{selectedOptions: Array<string>, setSelectedOptions: (value: string) => void, availableOptions: Array<string>} & IFilterParams>{
+class StatusFilter extends Component<{selectedOptions: Array<string>, setSelectedOptions: (value: string) => void, availableOptions: Array<string>, resetFilter: () => void} & IFilterParams>{
 
     onCheckboxPressed(value: string) {
         this.props.setSelectedOptions(value);
@@ -18,9 +20,8 @@ class StatusFilter extends Component<{selectedOptions: Array<string>, setSelecte
         return this.props.selectedOptions.length !== 3;
     };
 
-    doesFilterPass(params: any) {
-        const value = this.props.valueGetter(params);
-        return this.props.selectedOptions.includes(value);
+    doesFilterPass(params: IDoesFilterPassParams) {
+        return this.props.selectedOptions.includes(params.data.status);
     }
 
     render() {
@@ -50,6 +51,18 @@ class StatusFilter extends Component<{selectedOptions: Array<string>, setSelecte
                         );
                     })}
                 </List>
+                <ActionButton innerText={'Resetear'}
+                              variant={ButtonVariant.TEXT}
+                              color={Color.PRIMARY}
+                              onClick={() => {
+                                  this.props.resetFilter();
+                                  setTimeout(() => {
+                                          this.props.api.setFilterModel(null);
+                                          this.props.api.onFilterChanged();
+                                          }, 0);
+                              }}
+                              className={'ResetButton'}
+                              labelClassName={'ResetLabelButton'}/>
             </>
         );
     }
@@ -66,6 +79,9 @@ const mapDispatchToProps = (dispatch: any) => {
     return {
         setSelectedOptions: (value: string) => {
             dispatch(setSelectedOptionsStatusFilter(value));
+        },
+        resetFilter: () => {
+            dispatch(resetStatusFilter());
         }
     }
 };
