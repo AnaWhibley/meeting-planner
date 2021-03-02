@@ -23,6 +23,7 @@ import {ExpandMore} from '@material-ui/icons';
 import {ReactComponent as InfoIcon} from '../../../assets/icons/evericons/info.svg';
 import {Tooltip} from '../../../components/tooltip/Tooltip';
 import '../../../styles/common.scss';
+import {DateTime} from 'luxon';
 
 export const statusMapper = (status: string) => {
     if(status === 'confirmed') {
@@ -75,11 +76,30 @@ export function EventsGrid(props: any) {
             field: 'status',
             headerName: 'Estado',
             cellRenderer: 'statusRenderer',
-            filter: 'statusFilter'
+            filter: 'statusFilter',
         },{
             field: 'date',
             headerName: 'Fecha',
-            cellRenderer: 'dateRenderer'
+            cellRenderer: 'dateRenderer',
+            filter: 'agDateColumnFilter',
+            filterParams: {
+                comparator: (filterLocalDateAtMidnight: any, cellValue: string) => {
+
+                    if(cellValue === 'pending' || cellValue == null) {
+                        return 0;
+                    }
+
+                    const date = DateTime.fromFormat(cellValue, 'yyyy M dd').toJSDate();
+
+                    if (date < filterLocalDateAtMidnight) {
+                        return -1;
+                    } else if (date > filterLocalDateAtMidnight) {
+                        return 1;
+                    }
+                    return 0;
+                },
+                buttons: ['reset'],
+            },
         },{
             field: 'time',
             headerName: 'Hora',
@@ -138,7 +158,7 @@ export function EventsGrid(props: any) {
             </AppBar>
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMore/>}>
-                        <Typography  color={'secondary'} variant={'body1'} className={'Bold'}>Información de la convocatoria</Typography>
+                        <Typography  color={'textSecondary'} variant={'body1'} className={'Bold'}>Información de la convocatoria</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <div className={'DateRangeContainer'}>
@@ -153,6 +173,7 @@ export function EventsGrid(props: any) {
                         </div>
                     </AccordionDetails>
                 </Accordion>
+                <Typography  color={'textSecondary'} variant={'body1'} className={'Bold GridTitle'}>Defensas programadas</Typography>
                 <div className='ag-theme-material Grid'>
                     <AgGridReact
                         localeText={AG_GRID_LOCALE_ES}
