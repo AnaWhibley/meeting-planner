@@ -310,7 +310,7 @@ const groupedEvents: Array<GroupedEventDto> = [
         events: [
             {
                 id: '11',
-                name: 'Defensa TFT Ana Santana',
+                name: 'Defensa TFT Juan Sánchez',
                 participants: [
                     {
                         email: 'abraham.rodriguez@ulpgc.es',  //1
@@ -343,7 +343,7 @@ const groupedEvents: Array<GroupedEventDto> = [
             },
             {
                 id: '22',
-                name: 'Defensa TFT Lara Viera',
+                name: 'Defensa TFT Juan Ramirez',
                 participants: [
                     {
                         email: 'octavio.mayor@ulpgc.es',  //7
@@ -376,7 +376,7 @@ const groupedEvents: Array<GroupedEventDto> = [
             },
             {
                 id: '33',
-                name: 'Defensa TFT Juan Sánchez',
+                name: 'Defensa TFT Romeo Santos',
                 participants: [
                     {
                         email: 'abraham.rodriguez@ulpgc.es',  //1
@@ -409,7 +409,7 @@ const groupedEvents: Array<GroupedEventDto> = [
             },
             {
                 id: '55',
-                name: 'Defensa TFT Pedro Sánchez',
+                name: 'Defensa TFT Jiming Luan',
                 participants: [
                     {
                         email: 'domingo.benitez@ulpgc.es',  //4
