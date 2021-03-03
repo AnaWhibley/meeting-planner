@@ -74,7 +74,7 @@ export function CheckboxListSecondary() {
                         <Typography variant={'h2'} color={'primary'}>Participantes</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <List dense className={'ParticipantsList'}>
+                        <List dense className={'ParticipantList'}>
                             {participants.map((value) => {
                                 const labelId = value.id;
                                 return (

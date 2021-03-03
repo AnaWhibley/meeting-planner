@@ -15,6 +15,8 @@ import {
 import {ReactComponent as VerifiedIcon} from '../../../assets/icons/evericons/verified.svg';
 import {ReactComponent as ErrorIcon} from '../../../assets/icons/evericons/x-octagon.svg';
 import {ReactComponent as PendingIcon} from '../../../assets/icons/evericons/question-circle.svg';
+import {ReactComponent as MailIcon} from '../../../assets/icons/evericons/mail.svg';
+import {ReactComponent as TagIcon} from '../../../assets/icons/evericons/tag.svg';
 import {ActionsRenderer, DateRenderer, durationFormatter, HourRenderer, StatusRenderer} from './CellRenderers';
 import {ConnectedStatusFilter} from './StatusFilter';
 import {AG_GRID_LOCALE_ES} from './locale.es';
@@ -24,6 +26,7 @@ import {ReactComponent as InfoIcon} from '../../../assets/icons/evericons/info.s
 import {Tooltip} from '../../../components/tooltip/Tooltip';
 import '../../../styles/common.scss';
 import {DateTime} from 'luxon';
+import { ParticipantInfo } from '../../../components/participantInformation/ParticipantInfo';
 
 export const statusMapper = (status: string) => {
     if(status === 'confirmed') {
@@ -148,6 +151,14 @@ export function EventsGrid(props: any) {
         setValue(newValue);
     };
 
+    const [selectedRow, setSelectedRow] = React.useState<any>(null);
+
+    const onSelectionChanged = () => {
+        if(gridApi) {
+            setSelectedRow(gridApi.getSelectedRows()[0])
+        }
+    }
+
     return (
         <>
             <div className={'EventsGridContainer'}>
@@ -184,11 +195,26 @@ export function EventsGrid(props: any) {
                         immutableColumns={false}
                         pagination={true}
                         getRowNodeId={(data) => data.id}
-                        paginationPageSize={10}
+                        paginationPageSize={5}
                         rowSelection={'single'}
+                        onSelectionChanged={onSelectionChanged}
                     >
                     </AgGridReact>
                 </div>
+                {selectedRow &&
+                <div className={'SelectedRowContainer'}>
+                    <Typography  color={'textSecondary'} variant={'body1'} className={'Bold'}>Información de la defensa</Typography><br/>
+                    <Typography  color={'primary'} variant={'body1'} className={'Bold'}>{selectedRow.name}</Typography><br/>
+                    <Typography  color={'textSecondary'} variant={'body2'} className={'Bold'}>Participantes</Typography>
+                    <div className={'ParticipantList'}>
+                        {selectedRow.participants.map((participant: any) => {
+                            return <div className={'Participant'} key={participant.email}>
+                                <ParticipantInfo selectedRow={participant}/>
+                            </div>
+                        })}
+                    </div>
+                </div>
+                }
             </div>
         </>
     );

@@ -2,6 +2,7 @@ import {RootState} from '../store';
 import {BusyState} from './slice';
 import {DateTime} from 'luxon';
 import {DATE_TIME_FORMAT} from '../eventCreator/slice';
+import {User} from '../login/slice';
 
 export const selectBusyDatesCurrentUser = (state: RootState) => state.planner.busyDatesCurrentUser.map((date: BusyState) => {
     return {
@@ -43,3 +44,8 @@ export const selectParticipants = (state: RootState) => state.planner.participan
 export const selectSelectedParticipants = (state: RootState) => state.planner.selectedParticipants;
 
 export const selectEvents = (state: RootState) => state.planner.events;
+
+export const selectNameByEmail = (state: RootState, email: string): string => {
+    const participant = state.planner.participants.find((p) => p.id === email);
+    return participant ? participant.name : '';
+}
