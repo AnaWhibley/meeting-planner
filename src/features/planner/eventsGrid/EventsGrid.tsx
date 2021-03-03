@@ -15,7 +15,7 @@ import {
 import {ReactComponent as VerifiedIcon} from '../../../assets/icons/evericons/verified.svg';
 import {ReactComponent as ErrorIcon} from '../../../assets/icons/evericons/x-octagon.svg';
 import {ReactComponent as PendingIcon} from '../../../assets/icons/evericons/question-circle.svg';
-import {DateRenderer, HourRenderer, StatusRenderer} from './CellRenderers';
+import {ActionsRenderer, DateRenderer, durationFormatter, HourRenderer, StatusRenderer} from './CellRenderers';
 import {ConnectedStatusFilter} from './StatusFilter';
 import {AG_GRID_LOCALE_ES} from './locale.es';
 import {Accordion, AccordionDetails, AccordionSummary, AppBar, Tab, Tabs, Typography} from '@material-ui/core';
@@ -51,9 +51,6 @@ export const statusMapper = (status: string) => {
             element: <span className={style}><ErrorIcon/>{value}</span>
         }
     }
-};
-const durationFormatter = (params: ValueFormatterParams) => {
-    return params.value + ' minutos';
 };
 
 export function EventsGrid(props: any) {
@@ -103,14 +100,14 @@ export function EventsGrid(props: any) {
         },{
             field: 'time',
             headerName: 'Hora',
-            lockVisible: true,
-            cellRenderer: 'hourRenderer'
+            cellRenderer: 'hourRenderer',
         },{
             field: 'duration',
             headerName: 'Duración',
-            lockVisible: true,
             valueFormatter: durationFormatter,
-            filter: 'agNumberColumnFilter'
+            filter: 'agNumberColumnFilter',
+        }, {
+            cellRenderer: 'actionsRenderer',
         }
     ];
 
@@ -119,6 +116,7 @@ export function EventsGrid(props: any) {
         statusFilter: ConnectedStatusFilter,
         dateRenderer: DateRenderer,
         hourRenderer: HourRenderer,
+        actionsRenderer: ActionsRenderer
     }
 
     const defaultColDef = {
