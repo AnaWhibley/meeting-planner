@@ -58,7 +58,7 @@ export function SummaryStage() {
                         </ListItemIcon>
                     </ListItem>
                     <Collapse in={!collapsedEvents[index]} timeout='auto' unmountOnExit>
-                        <List component='div' disablePadding className={'ParticipantsList'}>
+                        <List component='div' disablePadding className={'ParticipantList'}>
                             <ListItem className={'ListItem'}>
                                 <ListItemText primaryTypographyProps={{variant: 'h3', color: 'primary'}} primary={'Nombre del evento'}/>
                                 <Typography color={'textPrimary'} variant='h3'>{e.name.value}</Typography>
@@ -72,7 +72,7 @@ export function SummaryStage() {
                                 {!collapsedParticipants[index] ? <ExpandLess className={'ExpandLessIcon'}/> : <ExpandMore className={'ExpandMoreIcon'}/>}
                             </ListItem>
                             <Collapse in={!collapsedParticipants[index]} timeout='auto' unmountOnExit>
-                                <List component='div' disablePadding className={'ParticipantsList'}>
+                                <List component='div' disablePadding className={'ParticipantList'}>
                                     {participants}
                                 </List>
                             </Collapse>

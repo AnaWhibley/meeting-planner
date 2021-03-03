@@ -1,0 +1,20 @@
+.ParticipantInfoContainer {
+  .Avatar {
+    display: inline-block;
+    margin-right: 5px;
+  }
+
+  .Info {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+
+    .Icon {
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    .Text {
+      font-size: 14px;
+    }
+  }
+}

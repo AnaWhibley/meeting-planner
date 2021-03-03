@@ -66,7 +66,7 @@ const users: Array<UserDto> = [
         name: 'Domingo Benítez Díaz'
     },
     {
-        id: 'jc.rodriguezdelpino@ulpgc.ess',
+        id: 'jc.rodriguezdelpino@ulpgc.es',
         name: 'Juan Carlos Rodríguez del Pino'
     },
     {
