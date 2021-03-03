@@ -15,6 +15,7 @@ interface uiStateSlice {
     calendarView: string;
     selectedOptionsStatusFilter: Array<string>;
     availableOptionsStatusFilter: Array<string>;
+    selectedRowInformation?: any;
 }
 
 export const slice = createSlice({
@@ -26,7 +27,7 @@ export const slice = createSlice({
         showCalendar: true,
         calendarView: 'timeGridWeek',
         selectedOptionsStatusFilter: [],
-        availableOptionsStatusFilter: []
+        availableOptionsStatusFilter: [],
     } as uiStateSlice,
     reducers: {
         requesting: state => {
@@ -56,6 +57,9 @@ export const slice = createSlice({
         resetStatusFilter: (state) => {
             state.selectedOptionsStatusFilter = state.availableOptionsStatusFilter;
         },
+        setSelectedRowInformation: (state, action) => {
+            state.selectedRowInformation = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -77,7 +81,7 @@ export const slice = createSlice({
             .addDefaultCase((state, action) => {})
     },
 });
-export const { requesting, setCurrentViewPlanner, setDrawerSelector, toggleShowCalendar, setSelectedOptionsStatusFilter, resetStatusFilter } = slice.actions;
+export const { requesting, setCurrentViewPlanner, setDrawerSelector, toggleShowCalendar, setSelectedOptionsStatusFilter, resetStatusFilter, setSelectedRowInformation } = slice.actions;
 
 export const selectIsBusy = (state: RootState) => state.uiState.isBusy;
 export const selectCurrentViewPlanner = (state: RootState) => state.uiState.currentViewPlanner;
@@ -85,6 +89,7 @@ export const selectDrawerSelector = (state: RootState) => state.uiState.drawerSe
 export const selectShowCalendar = (state: RootState) => state.uiState.showCalendar;
 export const selectCalendarView = (state: RootState) => state.uiState.calendarView;
 export const selectSelectedOptionsStatusFilter = (state: RootState) => state.uiState.selectedOptionsStatusFilter;
+export const selectSelectedRowInformation = (state: RootState) => state.uiState.selectedRowInformation;
 
 export const toggleDrawerSelectorTransition = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     const current = getState().uiState.drawerSelector;

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {AgGridReact} from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { selectEvents } from '../../../app/planner/selectors';
 import {GridReadyEvent} from 'ag-grid-community/dist/lib/events';
 import {GridApi} from 'ag-grid-community/dist/lib/gridApi';
@@ -10,13 +10,11 @@ import {ColumnApi} from 'ag-grid-community/dist/lib/columnController/columnApi';
 import './EventsGrid.scss';
 import {ColDef} from 'ag-grid-community/dist/lib/entities/colDef';
 import {
-    selectDrawerSelector, selectSelectedOptionsStatusFilter,
+    selectDrawerSelector, selectSelectedOptionsStatusFilter, selectSelectedRowInformation, setSelectedRowInformation,
 } from '../../../app/uiStateSlice';
 import {ReactComponent as VerifiedIcon} from '../../../assets/icons/evericons/verified.svg';
 import {ReactComponent as ErrorIcon} from '../../../assets/icons/evericons/x-octagon.svg';
 import {ReactComponent as PendingIcon} from '../../../assets/icons/evericons/question-circle.svg';
-import {ReactComponent as MailIcon} from '../../../assets/icons/evericons/mail.svg';
-import {ReactComponent as TagIcon} from '../../../assets/icons/evericons/tag.svg';
 import {ActionsRenderer, DateRenderer, durationFormatter, HourRenderer, StatusRenderer} from './CellRenderers';
 import {ConnectedStatusFilter} from './StatusFilter';
 import {AG_GRID_LOCALE_ES} from './locale.es';
@@ -151,11 +149,11 @@ export function EventsGrid(props: any) {
         setValue(newValue);
     };
 
-    const [selectedRow, setSelectedRow] = React.useState<any>(null);
-
+    const dispatch = useDispatch();
+    const selectedRow = useSelector(selectSelectedRowInformation);
     const onSelectionChanged = () => {
         if(gridApi) {
-            setSelectedRow(gridApi.getSelectedRows()[0])
+            dispatch(setSelectedRowInformation(gridApi.getSelectedRows()[0]))
         }
     }
 
