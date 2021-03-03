@@ -172,12 +172,17 @@
 
   .SelectedRowContainer {
     margin-left: 16px;
+    display: flex;
+    flex-direction: column;
+    .GroupTitle {
+      margin-left: 10px;
+    }
     .ParticipantList {
+      margin-left: 20px;
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
       width: 100%;
-      flex: 1 0 100%;
       .Participant {
         padding: 1em 0 1em 1em;
         display: flex;

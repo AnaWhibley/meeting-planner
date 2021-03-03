@@ -176,7 +176,7 @@ export function EventsGrid(props: any) {
                             <Tooltip icon={<InfoIcon className={'FillPrimary'}/>}
                                      text={'Rango de fecha oficial en el que se celebra la convocatoria. Esta fecha está definida por la universidad.'}
                                      placement={'bottom'}/>
-                            <Typography color={'primary'}  display={'inline'} className={'Bold'}>Rango de fecha: </Typography>
+                            <Typography color={'primary'}  display={'inline'} variant={'body1'}  className={'Bold'}>Rango de fecha: </Typography>
                             <Typography color={'textSecondary'} variant={'body1'} display={'inline'}> 10/02/2021 - </Typography>
                             <Typography color={'textSecondary'} variant={'body1'} display={'inline'}> 10/03/2021</Typography>
                         </div>
@@ -205,12 +205,25 @@ export function EventsGrid(props: any) {
                 <div className={'SelectedRowContainer'}>
                     <Typography  color={'textSecondary'} variant={'body1'} className={'Bold'}>Información de la defensa</Typography><br/>
                     <Typography  color={'primary'} variant={'body1'} className={'Bold'}>{selectedRow.name}</Typography><br/>
-                    <Typography  color={'textSecondary'} variant={'body2'} className={'Bold'}>Participantes</Typography>
+                    <Typography  color={'textSecondary'} variant={'body2'} className={'Bold'}>Participantes</Typography><br/>
+                    <Typography  color={'textSecondary'} variant={'subtitle2'} className={'GroupTitle'}>Tribunal Titular</Typography>
                     <div className={'ParticipantList'}>
-                        {selectedRow.participants.map((participant: any) => {
-                            return <div className={'Participant'} key={participant.email}>
-                                <ParticipantInfo selectedRow={participant}/>
-                            </div>
+                        {selectedRow.participants.slice(0,3).map((participant: {email: string, tag: string}) => {
+                            return <>
+                                <div className={'Participant'} key={participant.email}>
+                                    <ParticipantInfo selectedRow={participant}/>
+                                </div>
+                            </>
+                        })}
+                    </div><br/>
+                    <Typography color={'textSecondary'} variant={'subtitle2'} className={'GroupTitle'}>Tribunal Suplente</Typography>
+                    <div className={'ParticipantList'}>
+                        {selectedRow.participants.slice(3,6).map((participant: {email: string, tag: string}) => {
+                            return <>
+                                <div className={'Participant'} key={participant.email}>
+                                    <ParticipantInfo selectedRow={participant}/>
+                                </div>
+                            </>
                         })}
                     </div>
                 </div>
