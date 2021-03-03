@@ -45,6 +45,44 @@
     .ag-filter {
       font-family: Nunito, serif;
     }
+
+    .ActionIcons {
+      display: flex;
+      justify-content: flex-end;
+
+      .TrashIconContainer {
+        button {
+          fill: $textSecondary;
+        }
+        button:hover{
+          fill: #F44336 !important;
+        }
+      }
+      .BellIconContainer {
+        button {
+          fill: $textSecondary;
+        }
+        button:hover{
+          fill: #ffab00 !important;
+        }
+      }
+      .OptionsIconContainer {
+        button {
+          fill: $textSecondary;
+        }
+        button:hover{
+          fill: #2196f3 !important;
+        }
+      }
+      .EyeIconContainer {
+        button {
+          fill: $textSecondary;
+        }
+        button:hover{
+          fill: #8bc34a !important;
+        }
+      }
+    }
   }
 
   .GridTitle {
@@ -95,7 +133,7 @@
   }
 
   .PendingDashDate {
-    margin-left: 30px;
+    margin-left: 35px;
   }
 
   .PendingDashHour {
@@ -126,8 +164,6 @@
   .MuiAccordionSummary-content.Mui-expanded, .MuiAccordionSummary-content {
     margin: unset;
   }
-
-
 }
 
 
