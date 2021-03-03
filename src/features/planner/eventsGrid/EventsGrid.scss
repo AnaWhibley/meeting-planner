@@ -46,6 +46,14 @@
       font-family: Nunito, serif;
     }
 
+    .ag-cell-focus, .ag-cell {
+      border: none !important;
+    }
+
+    .ag-row-selected {
+      background-color: #efefef !important;
+    }
+
     .ActionIcons {
       display: flex;
       justify-content: flex-end;
@@ -79,7 +87,7 @@
           fill: $textSecondary;
         }
         button:hover{
-          fill: #8bc34a !important;
+          fill: #7cbc26 !important;
         }
       }
     }
@@ -142,9 +150,6 @@
 
   .DateRangeContainer {
     margin-left: 1em;
-    .DateRange {
-      margin-left: 2em;
-    }
   }
 
   .MuiAppBar-root {

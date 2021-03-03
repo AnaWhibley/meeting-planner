@@ -8,7 +8,7 @@ import {GridReadyEvent} from 'ag-grid-community/dist/lib/events';
 import {GridApi} from 'ag-grid-community/dist/lib/gridApi';
 import {ColumnApi} from 'ag-grid-community/dist/lib/columnController/columnApi';
 import './EventsGrid.scss';
-import {ColDef, ValueFormatterParams} from 'ag-grid-community/dist/lib/entities/colDef';
+import {ColDef} from 'ag-grid-community/dist/lib/entities/colDef';
 import {
     selectDrawerSelector, selectSelectedOptionsStatusFilter,
 } from '../../../app/uiStateSlice';
@@ -69,6 +69,7 @@ export function EventsGrid(props: any) {
             filterParams: {
                 buttons: ['reset'],
             },
+            minWidth: 250
         },{
             field: 'status',
             headerName: 'Estado',
@@ -108,6 +109,7 @@ export function EventsGrid(props: any) {
             filter: 'agNumberColumnFilter',
         }, {
             cellRenderer: 'actionsRenderer',
+            minWidth: 220
         }
     ];
 
@@ -149,25 +151,23 @@ export function EventsGrid(props: any) {
     return (
         <>
             <div className={'EventsGridContainer'}>
-            <AppBar position="static">
-                <Tabs value={value} onChange={handleTabChange}>
-                    {groupedEvents.map((ev, index) => {return (<Tab key={index} label={ev.groupName} />);})}
-                </Tabs>
-            </AppBar>
+                <AppBar position="static">
+                    <Tabs value={value} onChange={handleTabChange}>
+                        {groupedEvents.map((ev, index) => {return (<Tab key={index} label={ev.groupName} />);})}
+                    </Tabs>
+                </AppBar>
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMore/>}>
                         <Typography  color={'textSecondary'} variant={'body1'} className={'Bold'}>Información de la convocatoria</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <div className={'DateRangeContainer'}>
-                            <Typography color={'primary'} display={'inline'} className={'Bold'}>Rango de fechas</Typography>
-                            <Tooltip icon={<InfoIcon className={'FillPrimary InfoIcon'}/>}
+                            <Tooltip icon={<InfoIcon className={'FillPrimary'}/>}
                                      text={'Rango de fecha oficial en el que se celebra la convocatoria. Esta fecha está definida por la universidad.'}
-                                     placement={'right'}/>
-                            <div className={'DateRange'}>
-                                <Typography color={'textSecondary'} variant={'body1'} display={'inline'}><span className={'Bold'}>Desde:</span> 10/02/2021</Typography><br/>
-                                <Typography color={'textSecondary'} variant={'body1'} display={'inline'}><span className={'Bold'}>Hasta:</span> 10/03/2021</Typography>
-                            </div>
+                                     placement={'bottom'}/>
+                            <Typography color={'primary'}  display={'inline'} className={'Bold'}>Rango de fecha: </Typography>
+                            <Typography color={'textSecondary'} variant={'body1'} display={'inline'}> 10/02/2021 - </Typography>
+                            <Typography color={'textSecondary'} variant={'body1'} display={'inline'}> 10/03/2021</Typography>
                         </div>
                     </AccordionDetails>
                 </Accordion>
@@ -185,6 +185,7 @@ export function EventsGrid(props: any) {
                         pagination={true}
                         getRowNodeId={(data) => data.id}
                         paginationPageSize={10}
+                        rowSelection={'single'}
                     >
                     </AgGridReact>
                 </div>
