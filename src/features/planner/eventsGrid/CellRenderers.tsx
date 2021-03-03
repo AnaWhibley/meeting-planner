@@ -40,7 +40,9 @@ export function ActionsRenderer (props: ICellRendererParams) {
     const eye = <div className={'EyeIconContainer'}>
         <Tooltip icon={<EyeIcon/>}
                  text={'Mostrar más información'}
-                 placement={'bottom'}/>
+                 placement={'bottom'}
+                 onClick={() => console.log('Selected Row')}
+        />
     </div>;
     if(user && user.role === Role.ADMIN) {
         return (
