@@ -169,6 +169,27 @@
   .MuiAccordionSummary-content.Mui-expanded, .MuiAccordionSummary-content {
     margin: unset;
   }
+
+  .SelectedRowContainer {
+    margin-left: 16px;
+    .ParticipantList {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 100%;
+      flex: 1 0 100%;
+      .Participant {
+        padding: 1em 0 1em 1em;
+        display: flex;
+        flex: 0 0 33%;
+        box-sizing: border-box;
+        .Icon {
+          vertical-align: middle;
+          margin-right: 10px;
+        }
+      }
+    }
+  }
 }
 
 
