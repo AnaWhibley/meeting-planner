@@ -3,7 +3,7 @@ import {ICellRendererParams} from 'ag-grid-community';
 import {DateTime} from 'luxon';
 import {statusMapper} from './EventsGrid';
 import {ValueFormatterParams} from 'ag-grid-community/dist/lib/entities/colDef';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {selectLoggedInUser} from '../../../app/login/selectors';
 import {Role} from '../../../services/userService';
 import {ReactComponent as TrashIcon} from '../../../assets/icons/evericons/trash-empty.svg';
@@ -15,6 +15,7 @@ import '../../../styles/common.scss'
 import {Tooltip} from '../../../components/tooltip/Tooltip';
 import {ReactComponent as InfoIcon} from '../../../assets/icons/evericons/info.svg';
 import './EventsGrid.scss';
+import {selectSelectedRowInformation, setSelectedRowInformation} from '../../../app/uiStateSlice';
 
 export function StatusRenderer (props: ICellRendererParams) {
     return statusMapper(props.value).element;
@@ -37,11 +38,19 @@ export function HourRenderer (props: ICellRendererParams) {
 
 export function ActionsRenderer (props: ICellRendererParams) {
     const user = useSelector(selectLoggedInUser);
+
+    const dispatch = useDispatch();
+    const onSelectionChanged = () => {
+        if(props.api) {
+            dispatch(setSelectedRowInformation(props.api.getSelectedRows()[0]))
+        }
+    }
+
     const eye = <div className={'EyeIconContainer'}>
         <Tooltip icon={<EyeIcon/>}
                  text={'Mostrar más información'}
                  placement={'bottom'}
-                 onClick={() => console.log('Selected Row')}
+                 onClick={onSelectionChanged}
         />
     </div>;
     if(user && user.role === Role.ADMIN) {
