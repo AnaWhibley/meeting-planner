@@ -49,3 +49,8 @@ export const selectNameByEmail = (state: RootState, email: string): string => {
     const participant = state.planner.participants.find((p) => p.id === email);
     return participant ? participant.name : '';
 }
+
+export const selectBusyByEmail = (state: RootState, email: string): boolean => {
+    const participant = state.planner.busyDatesOtherUsers.find((p) => p.userId === email);
+    return !!participant;
+}
