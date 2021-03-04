@@ -25,6 +25,7 @@ import {Tooltip} from '../../../components/tooltip/Tooltip';
 import '../../../styles/common.scss';
 import {DateTime} from 'luxon';
 import { ParticipantInfo } from '../../../components/participantInformation/ParticipantInfo';
+import {ParticipantDto} from '../../../services/eventService';
 
 export const statusMapper = (status: string) => {
     if(status === 'confirmed') {
@@ -206,20 +207,20 @@ export function EventsGrid(props: any) {
                     <Typography  color={'textSecondary'} variant={'body2'} className={'Bold'}>Participantes</Typography><br/>
                     <Typography  color={'textSecondary'} variant={'subtitle2'} className={'GroupTitle'}>Tribunal Titular</Typography>
                     <div className={'ParticipantList'}>
-                        {selectedRow.participants.slice(0,3).map((participant: {email: string, tag: string}) => {
+                        {selectedRow.participants.slice(0,3).map((participant: ParticipantDto) => {
                             return <>
                                 <div className={'Participant'} key={participant.email}>
-                                    <ParticipantInfo selectedRow={participant}/>
+                                    <ParticipantInfo participant={participant}/>
                                 </div>
                             </>
                         })}
                     </div><br/>
                     <Typography color={'textSecondary'} variant={'subtitle2'} className={'GroupTitle'}>Tribunal Suplente</Typography>
                     <div className={'ParticipantList'}>
-                        {selectedRow.participants.slice(3,6).map((participant: {email: string, tag: string}) => {
+                        {selectedRow.participants.slice(3,6).map((participant: ParticipantDto) => {
                             return <>
                                 <div className={'Participant'} key={participant.email}>
-                                    <ParticipantInfo selectedRow={participant}/>
+                                    <ParticipantInfo participant={participant}/>
                                 </div>
                             </>
                         })}

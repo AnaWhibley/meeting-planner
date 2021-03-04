@@ -121,14 +121,16 @@ export interface GroupedEventDto {
 interface EventDto {
     id: string;
     name: string;
-    participants: Array<{
-        email: string;
-        tag: string;
-    }>;
+    participants: Array<ParticipantDto>;
     duration: number;
     status: string;
     date: string;
     time: string;
+}
+
+export interface ParticipantDto {
+    email: string;
+    tag: string;
 }
 
 const groupedEvents: Array<GroupedEventDto> = [
