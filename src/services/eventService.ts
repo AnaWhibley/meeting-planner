@@ -9,14 +9,15 @@ export interface CreateResponse {
     success: boolean;
 }
 
-interface BusyDto {
+export interface BusyDto {
     id: string;
     start: string;
     end: string;
     allDay: boolean;
+    eventId?: string;
 }
 
-interface BusyDateDto {
+export interface BusyDateDto {
     userId: string;
     busy: Array<BusyDto>;
 }
@@ -118,7 +119,7 @@ export interface GroupedEventDto {
     events: Array<EventDto>
 }
 
-interface EventDto {
+export interface EventDto {
     id: string;
     name: string;
     participants: Array<ParticipantDto>;
@@ -137,7 +138,7 @@ const groupedEvents: Array<GroupedEventDto> = [
     {
         groupName: 'Ordinaria 20/21',
         from: "2021 2 10 08 00 00",
-        to: "2021 3 15 08 00 00",
+        to: "2021 3 15 19 00 00",
         events: [
             {
                 id: '11',
@@ -307,8 +308,8 @@ const groupedEvents: Array<GroupedEventDto> = [
         ]
     },{
         groupName: 'Extraordinaria 20/21',
-        from: "2021 2 10 08 00 00",
-        to: "2021 3 15 08 00 00",
+        from: "2021 5 10 08 00 00",
+        to: "2021 6 15 19 00 00",
         events: [
             {
                 id: '11',
