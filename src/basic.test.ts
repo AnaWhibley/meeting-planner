@@ -279,7 +279,6 @@ describe('basic 1 event', () => {
                         allDay: false,
                         start: '2021 2 10 08 30 00',
                         end: '2021 2 10 17 30 00',
-                        eventId: '11',
                         id: '1'
                     }, {
                         allDay: false,
@@ -308,10 +307,9 @@ describe('basic 1 event', () => {
                     allDay: false,
                     start: '2021 2 10 08 30 00',
                     end: '2021 2 10 17 30 00',
-                    eventId: '11',
                     id: '1'
                 }]
-            }], () => '1')).toEqual(basicResult);
+            }], () => '1').busyDates).toEqual(basicResult.busyDates);
     });
 
 
