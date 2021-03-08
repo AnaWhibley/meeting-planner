@@ -3,10 +3,6 @@ import {DateTime, Interval} from 'luxon';
 import {DATE_FORMAT, DATE_TIME_FORMAT} from './app/eventCreator/slice';
 import {v4 as uuidv4} from 'uuid';
 
-export function sum(a: number, b: number) {
-    return a + b;
-}
-
 export function search(groupedEvent: GroupedEventDto, busyDates: Array<BusyDateDto>, idFn: () => string = uuidv4, user?: string): { events: Array<EventDto>, busyDates: Array<BusyDateDto>} {
     const events: Array<EventDto> = groupedEvent.events.slice();
     let newBusyDates = busyDates.slice();
@@ -34,9 +30,11 @@ export function search(groupedEvent: GroupedEventDto, busyDates: Array<BusyDateD
             //Último slot posible
             const end: DateTime = j.plus({minutes: duration});
 
-            if(j.weekday === 6 || j.weekday === 7 || j.hour < startWorkingHour ||
-                (j.hour === startWorkingHour && j.minute < workingMinutes) || end.hour > endWorkingHour ||
-                (end.hour === endWorkingHour && end.minute > workingMinutes)){
+            const isWeekend = j.weekday === 6 || j.weekday === 7;
+            const isBeforeWorkingHour = j.hour < startWorkingHour || (j.hour === startWorkingHour && j.minute < workingMinutes);
+            const isAfterWorkingHour = end.hour === 0 || end.hour > endWorkingHour || (end.hour === endWorkingHour && end.minute > workingMinutes);
+
+            if(isWeekend || isBeforeWorkingHour || isAfterWorkingHour){
                 continue;
             }
 
