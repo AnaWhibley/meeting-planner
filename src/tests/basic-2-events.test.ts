@@ -1,6 +1,6 @@
-import {search} from './sum';
+import {search} from "../search";
 
-describe('Basic 2 events', () => {
+xdescribe('Basic 2 events', () => {
 
     beforeEach(() => {
     });
@@ -47,7 +47,7 @@ describe('Basic 2 events', () => {
     };
 
 
-    it('should not overlap with 0 indisponibilidades', () => {
+    xit('should not overlap with 0 indisponibilidades', () => {
         const expected = {
             events: [
                 {

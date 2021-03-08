@@ -17,7 +17,7 @@ export enum ParticipantType {
 }
 
 export const DATE_FORMAT = 'dd-MM-yyyy';
-export const DATE_TIME_FORMAT = "yyyy L dd HH mm ss";
+export const DATE_TIME_FORMAT = "yyyy LL dd HH mm ss";
 
 const createDefaultEvent = (): EventState => {
     return {
