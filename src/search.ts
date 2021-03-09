@@ -3,7 +3,12 @@ import {DateTime, Interval} from 'luxon';
 import {DATE_FORMAT, DATE_TIME_FORMAT} from './app/eventCreator/slice';
 import {v4 as uuidv4} from 'uuid';
 
-export function search(groupedEvent: GroupedEventDto, busyDates: Array<BusyDateDto>, idFn: () => string = uuidv4, user?: string): { events: Array<EventDto>, busyDates: Array<BusyDateDto>} {
+export interface SearchResult {
+    events: Array<EventDto>;
+    busyDates: Array<BusyDateDto>;
+}
+
+export function search(groupedEvent: GroupedEventDto, busyDates: Array<BusyDateDto>, idFn: () => string = uuidv4, user?: string): SearchResult  {
     const events: Array<EventDto> = groupedEvent.events.slice();
     let newBusyDates = busyDates.slice();
     const from: DateTime = DateTime.fromFormat(groupedEvent.from, DATE_TIME_FORMAT);

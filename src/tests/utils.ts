@@ -56,24 +56,3 @@ export function mockBusyDates(userIds: Array<string>, busyDates: Array<Array<{st
     }, []);
 
 }
-
-/*export function mockBusyDatesResult(busyDates: Array<BusyDateDto>, start: string, end: string, eventId: string) {
-
-    const newBusy: BusyDto = {
-        allDay: false,
-        id: '',
-        start,
-        end,
-        eventId
-    }
-
-    if(busyDates.length > 0) {
-        busyDates.forEach((busyDate) => {
-            busyDate.busy.push(newBusy);
-        });
-    }else{
-
-    }
-
-
-}*/
