@@ -116,7 +116,7 @@ export interface GroupedEventDto {
     groupName: string;
     from: string;
     to: string;
-    events: Array<EventDto>
+    events: Array<EventDto>;
 }
 
 export interface EventDto {

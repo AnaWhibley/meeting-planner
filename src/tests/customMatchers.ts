@@ -15,16 +15,28 @@ expect.extend({
             const busyDate: BusyDateDto = result.busyDates.find((x: BusyDateDto) => x.userId === userId);
             expect(busyDate).toBeDefined();
 
-            const pass = this.equals(busyDate.busy, expect.arrayContaining([
-                expect.objectContaining({start, end, eventId})]));
+            let pass;
+            if(eventId) {
+                pass = this.equals(busyDate.busy, expect.arrayContaining([
+                    expect.objectContaining({start, end, eventId})]))
+            }else{
+                pass = this.equals(busyDate.busy, expect.arrayContaining([
+                    expect.objectContaining({start, end})]))
+            }
 
-            return pass ? ({
-                message: () => (`Expected busyDates ${this.utils.printReceived(result.busyDates)} not to contain ${this.utils.printExpected({start, end, eventId})}`),
-                pass: true
-            }) : ({
-                message: () => (`Expected busyDates ${this.utils.printReceived(result)} to contain ${this.utils.printExpected({start, end, eventId})}`),
-                pass: false
-            })
+            if(pass){
+                return {
+                    message: () => (`Expected busyDates ${this.utils.printReceived(result.busyDates)} from ${userId} 
+                    not to contain ${this.utils.printExpected({start, end, eventId})}`),
+                    pass: true
+                }
+            }else{
+                return {
+                    message: () => (`Expected busyDates ${this.utils.printReceived(result.busyDates)} from ${userId} 
+                    to contain ${this.utils.printExpected({start, end, eventId})}`),
+                    pass: false
+                }
+            }
         }
     }
 );
