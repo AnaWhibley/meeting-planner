@@ -1,154 +1,83 @@
 import {search} from "../search";
-import {mockEvent, mockEventsResult} from "./utils";
+import {mockBusyDates, mockBusyDatesResult, MockedEvents, mockEvents, mockEventsResult,} from "./utils";
 import './customMatchers';
+import {DateTime} from "luxon";
+import {DATE_TIME_FORMAT} from "../app/eventCreator/slice";
+import {EventDto} from "../services/eventService";
 
 const abraham = 'abraham.rodriguez@ulpgc.es';
+const alexis = 'alexis.quesada@ulpgc.es';
 const idFn = () => '';
+const from = "2021 05 03 08 00 00";
+const to = "2021 05 31 19 00 00";
+const events: Array<MockedEvents> = [
+    {
+        participants: [abraham, alexis],
+        duration: 60
+    }
+];
+
+const mockedGroupedEvent = mockEvents(events, from, to);
 
 describe('Caso básico un evento', () => {
 
-    const oneEventTwoParticipants = mockEvent("2021 05 03 08 00 00",
-        "2021 05 31 19 00 00", ['abraham.rodriguez@ulpgc.es', 'alexis.quesada@ulpgc.es']);
+    let eventsResult: Map<string, {status: string; date?: string; time?: string}>;
+    let busyDatesResult: Map<string, Array<{start: string; end: string; eventId: string}>>;
+    let busyDatesMap: Map<string, Array<{start: string; end: string;}>>;
+    let mockedEventsResult: Array<EventDto>;
+
+    beforeEach(() => {
+        eventsResult = new Map();
+        busyDatesResult = new Map();
+        busyDatesMap = new Map();
+    });
 
     it('0 indisponibilidades', () => {
 
-        const busyDatesResult = [{
-            userId: abraham,
-            busy: [{
-                allDay: false,
-                start: '2021 05 03 08 30 00',
-                end: '2021 05 03 09 30 00',
-                eventId: '11',
-                id: ''
-            }]
-        }, {
-            userId: 'alexis.quesada@ulpgc.es',
-            busy: [{
-                allDay: false,
-                start: '2021 05 03 08 30 00',
-                end: '2021 05 03 09 30 00',
-                eventId: '11',
-                id: ''
-            }]
-        }];
+        mockedGroupedEvent.events.forEach((ev) => eventsResult.set(ev.id, {status: 'pending', date: '03-05-2021', time: '08:30'}));
+        mockedEventsResult = mockEventsResult(mockedGroupedEvent.events, eventsResult);
+        mockedGroupedEvent.events.forEach(ev => {
+            const dateTime = ev.date + ' ' + ev.time;
+            const start = DateTime.fromFormat(dateTime, 'dd-LL-yyyy HH:mm');
+            const end = start.plus({minutes: ev.duration});
+            const busyDate = {eventId: ev.id, start: start.toFormat(DATE_TIME_FORMAT), end: end.toFormat(DATE_TIME_FORMAT)};
+            ev.participants.forEach(p => {
+                const busyArray = busyDatesResult.has(p.email) ? busyDatesResult.get(p.email) : [];
+                if(busyArray) {
+                    busyArray.push(busyDate);
+                    busyDatesResult.set(p.email, busyArray);
+                }
+            });
+        });
+        const mockedBusyDatesResult = mockBusyDatesResult([], busyDatesResult);
 
-        const result = search(oneEventTwoParticipants, [], idFn);
-        const eventsResult = mockEventsResult(oneEventTwoParticipants, ['pending'], ['03-05-2021'], ['08:30'])
-        expect(result.events).toEqual(eventsResult);
-        expect(result.busyDates).toEqual(busyDatesResult);
+        const result = search(mockedGroupedEvent, [], idFn);
+        expect(result.events).toEqual(mockedEventsResult);
+        expect(result.busyDates).toEqual(mockedBusyDatesResult);
         expect(result).toHaveNBusyDates(abraham, 1)
         expect(result).not.toHaveBusyDates(abraham, '2021 05 05 08 30 00', '2021 05 03 09 30 00', '11')
     });
 
     it('1 indisponibilidad en el límite del día', () => {
 
-        const eventsResult = mockEventsResult(oneEventTwoParticipants, ['pending'], ['03-05-2021'], ['17:30'])
+        busyDatesMap.set(alexis, [{start: '2021 05 03 08 30 00', end:'2021 05 03 17 30 00'}]);
+        const busyDates = mockBusyDates(busyDatesMap);
+        const result = search(mockedGroupedEvent, busyDates, idFn);
+        const mockedBusyDatesResult = mockBusyDatesResult(busyDates, busyDatesResult);
 
-        const busyDatesResult = [{
-            userId: 'alexis.quesada@ulpgc.es',
-            busy: [{
-                allDay: false,
-                start: '2021 05 03 08 30 00',
-                end: '2021 05 03 17 30 00',
-                id: ''
-            }, {
-                allDay: false,
-                start: '2021 05 03 17 30 00',
-                end: '2021 05 03 18 30 00',
-                eventId: '11',
-                id: ''
-            }]
-        }, {
-            userId: 'abraham.rodriguez@ulpgc.es',
-            busy: [{
-                allDay: false,
-                start: '2021 05 03 17 30 00',
-                end: '2021 05 03 18 30 00',
-                eventId: '11',
-                id: ''
-            }]
-        },
-        ];
-
-        expect(search(oneEventTwoParticipants, [
-            {
-                userId: 'alexis.quesada@ulpgc.es',
-                busy: [{
-                    allDay: false,
-                    start: '2021 05 03 08 30 00',
-                    end: '2021 05 03 17 30 00',
-                    id: ''
-                }]
-            }], () => '').events).toEqual(eventsResult);
-
-
-        expect(search(oneEventTwoParticipants, [
-            {
-                userId: 'alexis.quesada@ulpgc.es',
-                busy: [{
-                    allDay: false,
-                    start: '2021 05 03 08 30 00',
-                    end: '2021 05 03 17 30 00',
-                    id: ''
-                }]
-            }], idFn).busyDates).toEqual(busyDatesResult);
+        expect(result).toHaveBusyDates(alexis, '2021 05 03 08 30 00', '2021 05 03 17 30 00');
+        expect(result).toHaveBusyDates(alexis, '2021 05 03 17 30 00', '2021 05 03 18 30 00');
 
     });
 
     it('1 indisponibilidad último slot del día no posible', () => {
 
-        const eventsResult = mockEventsResult(oneEventTwoParticipants, ['pending'], ['04-05-2021'], ['08:30'])
+        busyDatesMap.set(alexis, [{start: '2021 05 03 08 30 00', end:'2021 05 03 18 00 00'}]);
+        const busyDates = mockBusyDates(busyDatesMap);
+        const result = search(mockedGroupedEvent, busyDates, idFn);
 
-        const busyDatesResult = [
-            {
-                userId: 'alexis.quesada@ulpgc.es',
-                busy: [{
-                    allDay: false,
-                    start: '2021 05 03 08 30 00',
-                    end: '2021 05 03 18 00 00',
-                    id: ''
-                }, {
-                    allDay: false,
-                    start: '2021 05 04 08 30 00',
-                    end: '2021 05 04 09 30 00',
-                    eventId: '11',
-                    id: ''
-                }]
-            },
-            {
-                userId: 'abraham.rodriguez@ulpgc.es',
-                busy: [{
-                    allDay: false,
-                    start: '2021 05 04 08 30 00',
-                    end: '2021 05 04 09 30 00',
-                    eventId: '11',
-                    id: ''
-                }]
-            },
-        ];
-
-        expect(search(oneEventTwoParticipants, [
-            {
-                userId: 'alexis.quesada@ulpgc.es',
-                busy: [{
-                    allDay: false,
-                    start: '2021 05 03 08 30 00',
-                    end: '2021 05 03 18 00 00',
-                    id: ''
-                }]
-            }], idFn).busyDates).toEqual(busyDatesResult);
-
-        expect(search(oneEventTwoParticipants, [
-            {
-                userId: 'alexis.quesada@ulpgc.es',
-                busy: [{
-                    allDay: false,
-                    start: '2021 05 03 08 30 00',
-                    end: '2021 05 03 18 00 00',
-                    id: ''
-                }]
-            }], idFn).events).toEqual(eventsResult);
-
+        expect(result).toHaveBusyDates(alexis, '2021 05 03 08 30 00', '2021 05 03 18 00 00');
+        expect(result).toHaveBusyDates(abraham, '2021 05 04 08 30 00', '2021 05 04 09 30 00', '0');
     });
 
 });

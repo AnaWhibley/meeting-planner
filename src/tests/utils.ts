@@ -1,58 +1,82 @@
-import {BusyDateDto, BusyDto, GroupedEventDto} from "../services/eventService";
+import {BusyDateDto, BusyDto, EventDto, GroupedEventDto} from "../services/eventService";
 
-export function mockEvent(from: string, to: string, participantsId: Array<string>, duration: number = 60): GroupedEventDto {
-    const participants = participantsId.reduce((acc: Array<{email: string, tag: string}>, current) => {
-            const participant = {
-                email: current,
-                tag: ''
-            };
-        return [...acc, participant];
-        }, []);
-    return {groupName: 'Test 20/21',
-        from,
-        to,
-        events: [
-            {
-                id: '11',
-                name: 'Defensa TFT Test',
-                participants,
-                duration,
-                status: '',
-                date: '',
-                time: ''
+export interface MockedEvents {
+    participants: Array<string>;
+    duration: number;
+}
+
+export function mockEvents(events: Array<MockedEvents>, from: string, to: string): GroupedEventDto {
+
+    const mockedEvents: Array<EventDto> = events.map((ev, i) => ({
+            id: i.toString(),
+            name: 'Defensa TFT Test',
+            status: '',
+            date: '',
+            time: '',
+            duration: ev.duration,
+            participants: ev.participants.map(p => ({email: p, tag: ''}))
+        }));
+        return {
+            groupName: 'Test 20/21',
+            from,
+            to,
+            events: mockedEvents
+        }
+}
+
+export function mockEventsResult(events: Array<EventDto>, data: Map<string, {status: string; date?: string; time?: string}>): Array<EventDto> {
+    return events.map(ev => {
+        const info = data.get(ev.id);
+        if(info) {
+            ev.status = info.status;
+            ev.date = info.date || '';
+            ev.time = info.time || '';
+        }
+        return ev;
+    })
+}
+
+export function mockBusyDates(data: Map<string, Array<{start: string; end: string;}>>): Array<BusyDateDto> {
+    const busyDates: Array<BusyDateDto> = [];
+    for(let entry of data) {
+        const userId: string = entry[0];
+        const busy = entry[1].map((bd) => {
+            return {
+                allDay: false,
+                start: bd.start,
+                end: bd.end,
+                id: ''
             }
-        ]
-    }
-}
-
-export function mockEventsResult(event: GroupedEventDto, status: Array<string>, date: Array<string>, time: Array<string>) {
-
-    event.events.forEach((e, i) => {
-        e.status = status[i];
-        e.date = date[i];
-        e.time = time[i]
-    });
-
-    return event.events;
-}
-
-export function mockBusyDates(userIds: Array<string>, busyDates: Array<Array<{start: string, end: string, eventId?: string}>>) {
-
-    return userIds.reduce((acc: Array<BusyDateDto>, current: string, index: number) => {
-
-        const busy = busyDates[index].map((busy) => {
-            const b: BusyDto = {start: busy.start, end: busy.end, allDay: false, id: ''};
-            if(busy.eventId) b.eventId = busy.eventId;
-            return b;
         });
+        busyDates.push({userId, busy});
+    }
+    return busyDates;
+}
 
-        const busyDate = {
-            userId: current,
-            busy
-        };
+export function mockBusyDatesResult(busyDates: Array<BusyDateDto>, data: Map<string, Array<{start: string; end: string; eventId: string}>>): Array<BusyDateDto> {
+    const busyDatesCopy = busyDates.slice();
+    for(let entry of data) {
+        const userId: string = entry[0];
+        const busyDatesUserIndex = busyDatesCopy.findIndex((bd) => bd.userId === userId);
+        const busy: Array<BusyDto> = entry[1].map((bd) => {
+            return {
+                allDay: false,
+                start: bd.start,
+                end: bd.end,
+                id: '',
+                eventId: bd.eventId
+            }
+        });
+       if(busyDatesUserIndex !== -1) {
+           busyDatesCopy[busyDatesUserIndex].busy.concat(busy);
+       }else{
+           const newBusy: BusyDateDto = {
+               userId,
+               busy
+           }
+           busyDatesCopy.push(newBusy);
+       }
+    }
 
-        return [...acc, busyDate];
-
-    }, []);
-
+    return busyDatesCopy;
 }
