@@ -19,6 +19,8 @@ const events: Array<MockedEvents> = [
 
 const mockedGroupedEvent = mockEvents(events, from, to);
 
+// Caso básico que contiene un solo evento con dos participantes
+
 describe('Caso básico un evento', () => {
 
     let eventsResult: Map<string, {status: string; date?: string; time?: string}>;
@@ -52,6 +54,7 @@ describe('Caso básico un evento', () => {
         const mockedBusyDatesResult = mockBusyDatesResult([], busyDatesResult);
 
         const result = search(mockedGroupedEvent, [], idFn);
+
         expect(result.events).toEqual(mockedEventsResult);
         expect(result.busyDates).toEqual(mockedBusyDatesResult);
         expect(result).toHaveNBusyDates(abraham, 1)
@@ -62,8 +65,9 @@ describe('Caso básico un evento', () => {
 
         busyDatesMap.set(alexis, [{start: '2021 05 03 08 30 00', end:'2021 05 03 17 30 00'}]);
         const busyDates = mockBusyDates(busyDatesMap);
-        const result = search(mockedGroupedEvent, busyDates, idFn);
         const mockedBusyDatesResult = mockBusyDatesResult(busyDates, busyDatesResult);
+
+        const result = search(mockedGroupedEvent, busyDates, idFn);
 
         expect(result).toHaveBusyDates(alexis, '2021 05 03 08 30 00', '2021 05 03 17 30 00');
         expect(result).toHaveBusyDates(alexis, '2021 05 03 17 30 00', '2021 05 03 18 30 00');
@@ -80,4 +84,14 @@ describe('Caso básico un evento', () => {
         expect(result).toHaveBusyDates(abraham, '2021 05 04 08 30 00', '2021 05 04 09 30 00', '0');
     });
 
+    it('2 indisponibilidades último slot del día no posible y primero del día siguiente tampoco', () => {
+
+        busyDatesMap.set(alexis, [{start: '2021 05 03 08 30 00', end:'2021 05 03 18 00 00'}]);
+        busyDatesMap.set(abraham, [{start: '2021 05 04 08 30 00', end:'2021 05 04 10 00 00'}]);
+        const busyDates = mockBusyDates(busyDatesMap);
+        const result = search(mockedGroupedEvent, busyDates, idFn);
+
+        expect(result).toHaveBusyDates(alexis, '2021 05 04 10 00 00', '2021 05 04 11 00 00', '0');
+        expect(result).toHaveBusyDates(abraham, '2021 05 04 10 00 00', '2021 05 04 11 00 00', '0');
+    });
 });
