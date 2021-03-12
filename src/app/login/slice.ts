@@ -8,7 +8,10 @@ export interface LoginSlice {
     email: string;
     password: string;
     loggedInUser?: User;
-    showErrorMessage: boolean;
+    errorMessage: {
+        show: boolean;
+        error: string;
+    };
 }
 
 export interface User {
@@ -23,7 +26,7 @@ export const slice = createSlice({
     initialState: {
         email: '',
         password: '',
-        showErrorMessage: false
+        errorMessage: { show: false, error: '' }
     } as LoginSlice,
     reducers: {
         setEmail: (state, action) => {
@@ -32,12 +35,15 @@ export const slice = createSlice({
         setPassword: (state, action) => {
             state.password = action.payload;
         },
-        showErrorMessage: (state) => {
-            state.showErrorMessage = true;
+        showErrorMessage: (state, action) => {
+            state.errorMessage = {
+                show: true,
+                error: action.payload
+            };
         },
         setUser: (state, action) => {
             state.loggedInUser = action.payload;
-            state.showErrorMessage = false;
+            state.errorMessage = { show: false, error: '' };
             state.email = '';
             state.password = '';
         },
@@ -56,7 +62,7 @@ export const login = () => (dispatch: Dispatch<any>, getState: () => RootState) 
         if(response.success){
             dispatch(setUser(response.user))
         } else {
-            dispatch(showErrorMessage())
+            dispatch(showErrorMessage(response.error))
         }
     });
 };
@@ -73,4 +79,7 @@ export const editUserName = (name: string) => (dispatch: Dispatch<any>, getState
     }
 };
 
+/*const getUserService = () => {
+  return window.isDev ? MockUserService : UserService;
+};*/
 export default slice.reducer;

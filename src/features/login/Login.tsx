@@ -17,14 +17,19 @@ import {Typography} from '@material-ui/core';
 import {ReactComponent as AtSignIcon} from '../../assets/icons/evericons/at-sign.svg';
 import {ReactComponent as KeyIcon} from '../../assets/icons/evericons/key.svg';
 import '../../styles/common.scss';
-import {selectLoggedInUser, selectPassword, selectShowErrorMessage, selectEmail} from '../../app/login/selectors';
+import {
+    selectLoggedInUser,
+    selectPassword,
+    selectEmail,
+    selectErrorMessage
+} from '../../app/login/selectors';
 
 export function Login() {
 
     const dispatch: Dispatch<any> = useDispatch();
     const email = useSelector(selectEmail);
     const password = useSelector(selectPassword);
-    const showErrorMessage = useSelector(selectShowErrorMessage);
+    const errorMessage = useSelector(selectErrorMessage);
     const loggedInUser: User | undefined = useSelector(selectLoggedInUser);
 
     if (loggedInUser) {
@@ -58,12 +63,12 @@ export function Login() {
                     onChange={value => dispatch(setPassword(value))}
                     containerClassName={'InputContainer'}
                 />
-                { showErrorMessage ?
+                { errorMessage.show ?
                     <Typography variant="subtitle1"
                                 display="inline"
                                 className={"ErrorMessage"}
                                 color={"error"}>
-                        Nombre de usuario o contraseña incorrecto.
+                        {errorMessage.error}
                     </Typography>
                     : null
                 }

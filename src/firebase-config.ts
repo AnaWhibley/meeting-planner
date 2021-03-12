@@ -1,4 +1,6 @@
 import firebase from 'firebase/app';
+// You don't need to import firebase/app either since it's being imported above
+import 'firebase/auth';
 import 'firebase/firestore';
 
 const config = {
