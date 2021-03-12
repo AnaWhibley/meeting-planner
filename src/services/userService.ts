@@ -1,7 +1,8 @@
-import {BehaviorSubject, Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {delay, map} from 'rxjs/operators';
 import {User} from '../app/login/slice';
 import {colors} from '../styles/theme';
+import firebase from '../firebase-config';
 
 interface UserDto {
    name: string;
@@ -16,6 +17,7 @@ export enum Role {
 
 export interface LoginResponse {
     user?: User;
+    error?: string;
     success: boolean;
 }
 
@@ -77,22 +79,64 @@ const users: Array<UserDto> = [
 
 class UserService {
 
-    private static usersSubject = new BehaviorSubject(users.slice());
-
     public static login(email: string, password: string): Observable<LoginResponse> {
-        if(email === 'a' && password === 'a') {
-            return of({
-                user: {name: 'José Daniel Hernández Sosa', role: Role.USER, id: 'daniel.hernandez@ulpgc.es'},
-                success: true
-            }).pipe(delay(1000))
-        }else{
-            return of(
-                {
-                    user: {name: 'José Daniel Hernández Sosa', role: Role.ADMIN, id: 'admin@meetingplanner.es'},
-                    success: true
-                }).pipe(delay(1000))
+
+        return new Observable((subscriber) => {
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then((data) => {
+                    const email = data.user?.email;
+                    if(email) {
+                        UserService.getUserById(email).subscribe((user) => {
+                            subscriber.next({
+                                user: {id: email, name: user.name},
+                                success: true
+                            })
+                        });
+                    }
+                    
+                }).catch(function (error) {
+                    const errorMessage = email.length === 0 || password.length === 0 ? getErrorMessage('auth/empty_login') : getErrorMessage(error.code);
+                    subscriber.next({
+                        error: errorMessage,
+                        success: false
+                    })
+            });
+        })
+
+        function getErrorMessage(errorCode: string) {
+            let errorMessage;
+            switch (errorCode) {
+                case 'auth/empty_login': {
+                    errorMessage = 'El email y la contraseña son campos requeridos';
+                    break;
+                }
+                case 'auth/wrong-password': {
+                    errorMessage = 'El email o la contraseña no es válido/a';
+                    break;
+                }
+                case 'auth/invalid-email': {
+                    errorMessage = 'El email no tiene un formato válido';
+                    break;
+                }
+                case 'auth/user-not-found': {
+                    errorMessage = 'No hemos encontrado un usuario con ese email y contraseña';
+                    break;
+                }
+                default: {
+                    errorMessage = 'Ocurrió un error al intentar iniciar sesión'
+                    break;
+                }
+            }
+            return errorMessage;
         }
-        //return of({success: false}).pipe(delay(1000))
+    }
+
+    public logout() {
+        firebase.auth().signOut().then(() => {
+
+        }).catch(function (error) {
+            // error
+        });
     }
 
     public static getNameOfParticipants(userIds?: Array<string>): Observable<Array<User>> {
@@ -110,6 +154,16 @@ class UserService {
 
     public static editUserName(user: User, newName: string): Observable<{success: boolean}>{
         return of({success: true}).pipe(delay(500))
+    }
+
+    public static getUserById(id: string): Observable<any> {
+        return new Observable(subscriber => {
+            firebase.firestore().collection('users').doc(id).get().then((document) => {
+                if (!document.exists) return;
+                subscriber.next(document.data());
+                subscriber.complete();
+            });
+        });
     }
 }
 
