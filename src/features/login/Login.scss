@@ -1,3 +1,5 @@
+@import '../../styles/variables';
+
 .LoginFormContainer {
   display: flex;
   justify-content: center;
@@ -27,5 +29,15 @@
       width: 80%;
       margin-bottom: 1em;
     }
+
+    .Link:hover {
+      color: $textSecondaryDark;
+      transition: 0.2s;
+      cursor: pointer;
+    }
   }
+}
+
+.ErrorMessageForgotPassword {
+  margin-top: 1em !important;
 }

@@ -16,11 +16,12 @@ interface TextInputProps {
     onChange: (value: string) => void;
     value?: string;
     disabled?: boolean;
+    onEnterPress?: () => void;
 }
 
 export default class TextInput extends Component<TextInputProps>{
     render() {
-        const {icon, placeholder, fullWidth, value, type, onChange, label, containerClassName, className, disabled, error, errorMessage} = this.props;
+        const {icon, placeholder, fullWidth, value, type, onChange, label, containerClassName, className, disabled, error, errorMessage, onEnterPress} = this.props;
         const textField = (
             <TextField placeholder={placeholder}
                        error={error}
@@ -33,6 +34,11 @@ export default class TextInput extends Component<TextInputProps>{
                        onChange={(ev) => onChange(ev.target.value)}
                        className={className}
                        disabled={disabled}
+                       onKeyPress={(ev) => {
+                           if (ev.key === 'Enter' && onEnterPress) {
+                               onEnterPress()
+                           }
+                       }}
             />
         );
 
