@@ -26,6 +26,7 @@ import '../../../styles/common.scss';
 import {DateTime} from 'luxon';
 import { ParticipantInfo } from '../../../components/participantInformation/ParticipantInfo';
 import {ParticipantDto} from '../../../services/eventService';
+import {DATE_FORMAT} from '../../../app/eventCreator/slice';
 
 export const statusMapper = (status: string) => {
     if(status === 'confirmed') {
@@ -89,7 +90,7 @@ export function EventsGrid(props: any) {
                         return 0;
                     }
 
-                    const date = DateTime.fromFormat(cellValue, 'yyyy M dd').toJSDate();
+                    const date = DateTime.fromFormat(cellValue, DATE_FORMAT).toJSDate();
 
                     if (date < filterLocalDateAtMidnight) {
                         return -1;

@@ -67,6 +67,15 @@ export const login = () => (dispatch: Dispatch<any>, getState: () => RootState) 
     });
 };
 
+export const logout = () => (dispatch: Dispatch<any>) => {
+    dispatch(requesting());
+    UserService.logout().subscribe((response: boolean) => {
+        if(response){
+            dispatch(setUser(undefined));
+        }
+    });
+};
+
 export const editUserName = (name: string) => (dispatch: Dispatch<any>, getState: () => RootState) => {
     const { login } = getState();
     const user = login.loggedInUser;
