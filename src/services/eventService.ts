@@ -26,86 +26,86 @@ const busyDates: Array<BusyDateDto> = [
     {
         userId: 'abraham.rodriguez@ulpgc.es',
         busy: [{
-            start: "2021 2 17 00 00 00",
-            end: "2021 2 18 00 00 00",
+            start: "17/02/2021 00:00",
+            end: "18/02/2021 00:00",
             id: '111',
             allDay: true,
         }, {
-            start: "2021 2 18 16 00 00",
-            end: "2021 2 18 18 30 00",
+            start: "18/02/2021 16:00",
+            end: "18/02/2021 18:30",
             id: '222',
             allDay: false
         }]
     }, {
         userId: 'daniel.hernandez@ulpgc.es',
         busy: [{
-            start: "2021 2 16 08 00 00",
-            end: "2021 2 16 20 00 00",
+            start: "16/02/2021 08:00",
+            end: "16/02/2021 20:00",
             id: '333',
             allDay: false
         }, {
-            start: "2021 2 19 08 00 00",
-            end: "2021 2 19 19 30 00",
+            start: "19/02/2021 08:00",
+            end: "19/02/2021 19:30",
             id: '444',
             allDay: false
         },{
-            start: "2021 2 15 08 00 00",
-            end: "2021 2 15 19 30 00",
-            id: '444',
+            start: "15/02/2021 08:00",
+            end: "15/02/2021 19:30",
+            id: '4454',
             allDay: false
         }]
     },
     {
         userId: 'alexis.quesada@ulpgc.es',
         busy: [{
-            start: "2021 2 15 08 00 00",
-            end: "2021 2 15 15 30 00",
+            start: "15/02/2021 08:00",
+            end: "15/02/2021 15:30",
             id: '555',
             allDay: false
         },{
-            start: "2021 2 15 16 00 00",
-            end: "2021 2 15 18 30 00",
-            id: '555',
+            start: "15/02/2021 16:00",
+            end: "15/02/2021 18:30",
+            id: '556',
             allDay: false
         }]
     }, {
         userId: 'antonio.ocon@ulpgc.es',
         busy: [{
-            start: "2021 2 18 08 00 00",
-            end: "2021 2 18 15 30 00",
+            start: "18/02/2021 08:00",
+            end: "18/02/2021 15:30",
             id: '666',
             allDay: false
         }, {
-            start: "2021 2 15 08 00 00",
-            end: "2021 2 15 15 30 00",
+            start: "15/02/2021 08:00",
+            end: "15/02/2021 15:30",
             id: '777',
             allDay: false
         }, {
-            start: "2021 2 17 08 00 00",
-            end: "2021 2 17 10 30 00",
+            start: "17/02/2021 08:00",
+            end: "17/02/2021 10:30",
             id: '888',
             allDay: false
         }, {
-            start: "2021 2 17 12 00 00",
-            end: "2021 2 17 14 30 00",
+            start: "17/02/2021 12:00",
+            end: "17/02/2021 14:30",
             id: '999',
             allDay: false
         }]
     }, {
         userId: 'carmelo.cuenca@ulpgc.es',
         busy: [{
-            start: "2021 2 18 08 00 00",
-            end: "2021 2 18 14 30 00",
+            start: "18/02/2021 08:00",
+            end: "18/02/2021 15:30",
             id: '100',
             allDay: false
         }, {
-            start: "2021 2 16 08 00 00",
-            end: "2021 2 16 16 00 00",
+            start: "16/02/2021 08:00",
+            end: "16/02/2021 16:30",
             id: '101',
             allDay: false
         }, {
-            start: "2021 2 17 10 00 00",
-            end: "2021 2 17 12 30 00",
+            start: "17/02/2021 18:00",
+            end: "17/02/2021 18:30",
             id: '102',
             allDay: false
         }]
@@ -137,8 +137,8 @@ export interface ParticipantDto {
 const groupedEvents: Array<GroupedEventDto> = [
     {
         groupName: 'Ordinaria 20/21',
-        from: "2021 2 10 08 00 00",
-        to: "2021 3 15 19 00 00",
+        from: "10/02/2021",
+        to: "15/03/2021",
         events: [
             {
                 id: '11',
@@ -170,7 +170,7 @@ const groupedEvents: Array<GroupedEventDto> = [
                     }],
                 duration: 60,
                 status: 'pending',
-                date: '2021 2 26',
+                date: '26/02/2021',
                 time: '10:30'
             },
             {
@@ -203,7 +203,7 @@ const groupedEvents: Array<GroupedEventDto> = [
                     }],
                 duration: 60,
                 status: 'pending',
-                date: '2021 2 28',
+                date: '28/02/2021',
                 time: '12:30'
             },
             {
@@ -269,7 +269,7 @@ const groupedEvents: Array<GroupedEventDto> = [
                     }],
                 duration: 60,
                 status: 'error',
-                date: '2021 2 28',
+                date: '28/02/2021',
                 time: '14:30'
             },
             {
@@ -302,17 +302,17 @@ const groupedEvents: Array<GroupedEventDto> = [
                     }],
                 duration: 90,
                 status: 'confirmed',
-                date: '2021 1 30',
+                date: '01/03/2021',
                 time: '15:30'
             },
         ]
     },{
         groupName: 'Extraordinaria 20/21',
-        from: "2021 5 10 08 00 00",
-        to: "2021 6 15 19 00 00",
+        from: "10/05/2021",
+        to: "15/06/2021",
         events: [
             {
-                id: '11',
+                id: '21',
                 name: 'Defensa TFT Juan Sánchez',
                 participants: [
                     {
@@ -341,7 +341,7 @@ const groupedEvents: Array<GroupedEventDto> = [
                     }],
                 duration: 60,
                 status: 'pending',
-                date: '2021 2 26',
+                date: '10/05/2021',
                 time: '10:30'
             },
             {
@@ -374,7 +374,7 @@ const groupedEvents: Array<GroupedEventDto> = [
                     }],
                 duration: 60,
                 status: 'pending',
-                date: '2021 2 28',
+                date: '10/05/2021',
                 time: '12:30'
             },
             {
@@ -440,7 +440,7 @@ const groupedEvents: Array<GroupedEventDto> = [
                     }],
                 duration: 60,
                 status: 'error',
-                date: '2021 2 28',
+                date: '15/05/2021',
                 time: '14:30'
             },
             {
@@ -473,7 +473,7 @@ const groupedEvents: Array<GroupedEventDto> = [
                     }],
                 duration: 90,
                 status: 'confirmed',
-                date: '2021 1 30',
+                date: '12/05/2021',
                 time: '15:30'
             },
         ]

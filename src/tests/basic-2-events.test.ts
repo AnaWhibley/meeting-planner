@@ -7,8 +7,8 @@ import {DATE_TIME_FORMAT} from "../app/eventCreator/slice";
 const abraham = 'abraham.rodriguez@ulpgc.es';
 const alexis = 'alexis.quesada@ulpgc.es';
 const idFn = () => '';
-const from = "2021 05 03 08 00 00";
-const to = "2021 05 31 19 00 00";
+const from = "03/05/2021";
+const to = "31/05/2021";
 const events: Array<MockedEvents> = [
     {
         participants: [abraham, alexis],
@@ -36,12 +36,12 @@ describe('Basic 2 events', () => {
     });
 
     it('should not overlap with 0 indisponibilidades', () => {
-        const data = [{status: 'pending', date: '03-05-2021', time: '08:30'}, {status: 'pending', date: '03-05-2021', time: '09:30'}];
+        const data = [{status: 'pending', date: '03/05/2021', time: '08:30'}, {status: 'pending', date: '03/05/2021', time: '09:30'}];
         mockedGroupedEvent.events.forEach((ev, i) => eventsResult.set(ev.id, data[i]));
         mockedEventsResult = mockEventsResult(mockedGroupedEvent.events, eventsResult);
         mockedGroupedEvent.events.forEach(ev => {
             const dateTime = ev.date + ' ' + ev.time;
-            const start = DateTime.fromFormat(dateTime, 'dd-LL-yyyy HH:mm');
+            const start = DateTime.fromFormat(dateTime, DATE_TIME_FORMAT);
             const end = start.plus({minutes: ev.duration});
             const busyDate = {eventId: ev.id, start: start.toFormat(DATE_TIME_FORMAT), end: end.toFormat(DATE_TIME_FORMAT)};
             ev.participants.forEach(p => {

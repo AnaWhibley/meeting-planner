@@ -5,18 +5,20 @@ import {ReactComponent as ProfileIcon} from '../../assets/icons/evericons/user.s
 import {ReactComponent as CalendarCreateIcon} from '../../assets/icons/evericons/calendar-create.svg';
 import {ReactComponent as CalendarDatesIcon} from '../../assets/icons/evericons/calendar-dates.svg';
 import {ReactComponent as SignOutIcon} from '../../assets/icons/evericons/share-arrow.svg';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {Role} from '../../services/userService';
 import logo from '../../assets/images/logo.svg';
 import './NavBar.scss';
 import {selectLoggedInUser} from '../../app/login/selectors';
 import {Typography} from '@material-ui/core';
 import {AvatarInitials} from '../avatarInitials/AvatarInitials';
+import {logout} from '../../app/login/slice';
 
 export function NavBar(props: {view?: string}) {
 
     const history = useHistory();
     const loggedInUser = useSelector(selectLoggedInUser);
+    const dispatch = useDispatch();
 
     const menuItems = [{
         label: 'Mi perfil',
@@ -29,7 +31,10 @@ export function NavBar(props: {view?: string}) {
     }, {
         label: 'Cerrar sesión',
         icon: <SignOutIcon className={'SignOutIcon'}/>,
-        onClick: () => history.push('/login')
+        onClick: () =>  {
+            dispatch(logout());
+            history.push('/login');
+        }
     }];
 
     if(loggedInUser && loggedInUser.role === Role.ADMIN) {
