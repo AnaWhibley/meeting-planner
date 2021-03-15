@@ -1,5 +1,5 @@
 import {createAction, createSlice, Dispatch} from '@reduxjs/toolkit';
-import {LoginResponse} from '../services/userService';
+import UserService, {LoginResponse} from '../services/userService';
 import {RootState} from './store';
 import {GroupedEventDto} from '../services/eventService';
 const incrementByAmount = createAction<number>('counter/incrementByAmount');
@@ -16,6 +16,12 @@ interface uiStateSlice {
     selectedOptionsStatusFilter: Array<string>;
     availableOptionsStatusFilter: Array<string>;
     selectedRowInformation?: any;
+    forgotPasswordDialog: {
+        show: boolean;
+        inputErrorMessage: string;
+        emailSent: boolean;
+        emailSentError: boolean;
+    };
 }
 
 export const slice = createSlice({
@@ -28,6 +34,12 @@ export const slice = createSlice({
         calendarView: 'timeGridWeek',
         selectedOptionsStatusFilter: [],
         availableOptionsStatusFilter: [],
+        forgotPasswordDialog: {
+            show: false,
+            inputErrorMessage: '',
+            emailSent: false,
+            emailSentError: false
+        },
     } as uiStateSlice,
     reducers: {
         requesting: state => {
@@ -60,6 +72,9 @@ export const slice = createSlice({
         setSelectedRowInformation: (state, action) => {
             state.selectedRowInformation = action.payload;
         },
+        setForgotPasswordDialogProperty: (state, action) => {
+            state.forgotPasswordDialog = {...state.forgotPasswordDialog, ...action.payload};
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -81,7 +96,8 @@ export const slice = createSlice({
             .addDefaultCase((state, action) => {})
     },
 });
-export const { requesting, setCurrentViewPlanner, setDrawerSelector, toggleShowCalendar, setSelectedOptionsStatusFilter, resetStatusFilter, setSelectedRowInformation } = slice.actions;
+export const { requesting, setCurrentViewPlanner, setDrawerSelector, toggleShowCalendar, setSelectedOptionsStatusFilter,
+    resetStatusFilter, setSelectedRowInformation, setForgotPasswordDialogProperty } = slice.actions;
 
 export const selectIsBusy = (state: RootState) => state.uiState.isBusy;
 export const selectCurrentViewPlanner = (state: RootState) => state.uiState.currentViewPlanner;
@@ -90,6 +106,7 @@ export const selectShowCalendar = (state: RootState) => state.uiState.showCalend
 export const selectCalendarView = (state: RootState) => state.uiState.calendarView;
 export const selectSelectedOptionsStatusFilter = (state: RootState) => state.uiState.selectedOptionsStatusFilter;
 export const selectSelectedRowInformation = (state: RootState) => state.uiState.selectedRowInformation;
+export const selectForgotPasswordDialogInfo = (state: RootState) => state.uiState.forgotPasswordDialog;
 
 export const toggleDrawerSelectorTransition = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     const current = getState().uiState.drawerSelector;
@@ -97,5 +114,26 @@ export const toggleDrawerSelectorTransition = () => (dispatch: Dispatch<any>, ge
     setTimeout(() => dispatch(setDrawerSelector(!current)), 275);
 }
 
+export const forgotPassword = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
+    dispatch(requesting());
+    const { login } = getState();
+
+    if (!login.email) {
+        dispatch(setForgotPasswordDialogProperty({inputErrorMessage: 'Introduzca un correo electrónico'}));
+    } else {
+        const re = /.+\@.+\..+/;
+        if (re.test(String(login.email).toLowerCase())){
+            UserService.forgotPassword(login.email).subscribe((response: boolean) => {
+                if(response) {
+                    dispatch(setForgotPasswordDialogProperty({ show: false, emailSent: true}));
+                }else {
+                    dispatch(setForgotPasswordDialogProperty({ show: false, emailSentError: true}));
+                }
+            });
+        }else{
+            dispatch(setForgotPasswordDialogProperty({inputErrorMessage: 'El correo no tiene un formato válido'}));
+        }
+    }
+};
 
 export default slice.reducer;

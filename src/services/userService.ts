@@ -143,6 +143,18 @@ class UserService {
         });
     }
 
+    public static forgotPassword(email: string): Observable<boolean> {
+        return new Observable((subscriber) => {
+            firebase.auth().sendPasswordResetEmail(email).then(() => {
+                subscriber.next(true);
+                subscriber.complete();
+            }).catch((error) => {
+                console.log('Error on forgotPassword - ', error);
+                subscriber.next(false);
+            });
+        });
+    }
+
     public static getNameOfParticipants(userIds?: Array<string>): Observable<Array<User>> {
         if(!userIds){
             return of(users).pipe(delay(500),
