@@ -1,6 +1,6 @@
 import {BusyDateDto, BusyDto, EventDto, GroupedEventDto} from './services/eventService';
 import {DateTime, Interval} from 'luxon';
-import {DATE_FORMAT, DATE_TIME_FORMAT} from './app/eventCreator/slice';
+import {DATE_FORMAT, DATE_TIME_FORMAT, TIME_FORMAT} from './app/eventCreator/slice';
 import {v4 as uuidv4} from 'uuid';
 
 export interface SearchResult {
@@ -11,8 +11,8 @@ export interface SearchResult {
 export function search(groupedEvent: GroupedEventDto, busyDates: Array<BusyDateDto>, idFn: () => string = uuidv4, user?: string): SearchResult  {
     const events: Array<EventDto> = groupedEvent.events.slice();
     let newBusyDates = busyDates.slice();
-    const from: DateTime = DateTime.fromFormat(groupedEvent.from, DATE_TIME_FORMAT);
-    const to: DateTime = DateTime.fromFormat(groupedEvent.to, DATE_TIME_FORMAT);
+    const from: DateTime = DateTime.fromFormat(groupedEvent.from, DATE_FORMAT);
+    const to: DateTime = DateTime.fromFormat(groupedEvent.to, DATE_FORMAT);
     const endWorkingHour: number = 18;
     const startWorkingHour: number = 8;
     const workingMinutes: number = 30;
@@ -63,7 +63,7 @@ export function search(groupedEvent: GroupedEventDto, busyDates: Array<BusyDateD
                 });
 
                 events[i].date = event.start.toFormat(DATE_FORMAT);
-                events[i].time = event.start.toFormat('HH:mm'); //Change this
+                events[i].time = event.start.toFormat(TIME_FORMAT);
                 events[i].status = 'pending';
 
                 newBusyDates = mapBusyDatesFromIntervals(busyIntervals);

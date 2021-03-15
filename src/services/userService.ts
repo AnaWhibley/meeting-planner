@@ -93,13 +93,13 @@ class UserService {
                             })
                         });
                     }
-                    
                 }).catch(function (error) {
                     const errorMessage = email.length === 0 || password.length === 0 ? getErrorMessage('auth/empty_login') : getErrorMessage(error.code);
                     subscriber.next({
                         error: errorMessage,
                         success: false
-                    })
+                    });
+                    subscriber.complete();
             });
         })
 
@@ -131,11 +131,15 @@ class UserService {
         }
     }
 
-    public logout() {
-        firebase.auth().signOut().then(() => {
-
-        }).catch(function (error) {
-            // error
+    public static logout(): Observable<boolean> {
+        return new Observable((subscriber) => {
+            firebase.auth().signOut().then(() => {
+                subscriber.next(true);
+                subscriber.complete();
+            }).catch(function (error) {
+                console.log('Error on logout - ', error);
+                subscriber.next(false);
+            });
         });
     }
 

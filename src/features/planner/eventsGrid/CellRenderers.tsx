@@ -8,14 +8,13 @@ import {selectLoggedInUser} from '../../../app/login/selectors';
 import {Role} from '../../../services/userService';
 import {ReactComponent as TrashIcon} from '../../../assets/icons/evericons/trash-empty.svg';
 import {ReactComponent as OptionsIcon} from '../../../assets/icons/evericons/options.svg';
-import {ReactComponent as EyeNoIcon} from '../../../assets/icons/evericons/eye-no.svg';
 import {ReactComponent as EyeIcon} from '../../../assets/icons/evericons/eye.svg';
 import {ReactComponent as BellIcon} from '../../../assets/icons/evericons/bell.svg';
 import '../../../styles/common.scss'
 import {Tooltip} from '../../../components/tooltip/Tooltip';
-import {ReactComponent as InfoIcon} from '../../../assets/icons/evericons/info.svg';
 import './EventsGrid.scss';
-import {selectSelectedRowInformation, setSelectedRowInformation} from '../../../app/uiStateSlice';
+import {setSelectedRowInformation} from '../../../app/uiStateSlice';
+import {DATE_FORMAT} from '../../../app/eventCreator/slice';
 
 export function StatusRenderer (props: ICellRendererParams) {
     return statusMapper(props.value).element;
@@ -25,8 +24,7 @@ export function DateRenderer (props: ICellRendererParams) {
     if(props.value === 'pending'){
         return <div className={'StatusPending PendingDashDate'}>-</div>;
     }
-    const date = DateTime.fromFormat(props.value, 'yyyy M dd').toFormat('dd/MM/yyyy');
-    return <>{date}</>;
+    return <>{props.value}</>;
 }
 
 export function HourRenderer (props: ICellRendererParams) {
@@ -79,7 +77,7 @@ export function ActionsRenderer (props: ICellRendererParams) {
             </div>
         );
     }else{
-        return eye;
+        return <div className={'ActionIcons'}>{eye}</div>;
     }
 }
 

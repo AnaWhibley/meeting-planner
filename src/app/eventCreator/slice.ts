@@ -16,8 +16,9 @@ export enum ParticipantType {
     TUTOR = 'Tutor'
 }
 
-export const DATE_FORMAT = 'dd-MM-yyyy';
-export const DATE_TIME_FORMAT = "yyyy LL dd HH mm ss";
+export const DATE_FORMAT = 'dd/MM/yyyy';
+export const DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm";
+export const TIME_FORMAT = 'HH:mm';
 
 const createDefaultEvent = (): EventState => {
     return {
