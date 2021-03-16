@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { requesting } from '../uiStateSlice';
-import UserService, {LoginResponse, Role} from '../../services/userService';
+import {LoginResponse, Role} from '../../services/userService';
 import { Dispatch } from '@reduxjs/toolkit';
 import {RootState} from '../store';
+import {getUserService} from "../../services/utils";
 
 export interface LoginSlice {
     email: string;
@@ -58,7 +59,7 @@ export const { setEmail, setPassword, showErrorMessage, setUser, editName } = sl
 export const login = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     dispatch(requesting());
     const { login } = getState();
-    UserService.login(login.email, login.password).subscribe((response: LoginResponse) => {
+    getUserService().login(login.email, login.password).subscribe((response: LoginResponse) => {
         if(response.success){
             dispatch(setUser(response.user))
         } else {
@@ -69,26 +70,23 @@ export const login = () => (dispatch: Dispatch<any>, getState: () => RootState) 
 
 export const logout = () => (dispatch: Dispatch<any>) => {
     dispatch(requesting());
-    UserService.logout().subscribe((response: boolean) => {
-        if(response){
+    getUserService().logout().subscribe((success: boolean) => {
+        if(success){
             dispatch(setUser(undefined));
         }
     });
 };
 
-export const editUserName = (name: string) => (dispatch: Dispatch<any>, getState: () => RootState) => {
+export const editUserName = (newName: string) => (dispatch: Dispatch<any>, getState: () => RootState) => {
     const { login } = getState();
     const user = login.loggedInUser;
     if(user){
-        UserService.editUserName(user, name).subscribe((response: LoginResponse) => {
-            if(response.success){
-                dispatch(editName(name))
+        getUserService().editUserName(user.id, newName).subscribe((success: boolean) => {
+            if(success){
+                dispatch(editName(newName))
             }
         });
     }
 };
 
-/*const getUserService = () => {
-  return window.isDev ? MockUserService : UserService;
-};*/
 export default slice.reducer;
