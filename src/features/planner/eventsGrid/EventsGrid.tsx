@@ -161,7 +161,7 @@ export function EventsGrid(props: any) {
 
     return (
         <>
-            <div className={'EventsGridContainer'}>
+            {groupedEvents.length > 0 ? <div className={'EventsGridContainer'}>
                 <AppBar position="static">
                     <Tabs value={value} onChange={handleTabChange}>
                         {groupedEvents.map((ev, index) => {return (<Tab key={index} label={ev.groupName} />);})}
@@ -185,6 +185,7 @@ export function EventsGrid(props: any) {
                 <Typography  color={'textSecondary'} variant={'body1'} className={'Bold GridTitle'}>Defensas programadas</Typography>
                 <div className='ag-theme-material Grid'>
                     <AgGridReact
+                        domLayout='autoHeight'
                         localeText={AG_GRID_LOCALE_ES}
                         onGridReady={(params) => onGridReady(params)}
                         rowData={groupedEvents[value].events}
@@ -228,7 +229,7 @@ export function EventsGrid(props: any) {
                     </div>
                 </div>
                 }
-            </div>
+            </div> : <div>No hay eventos para mostrar</div>}
         </>
     );
 }

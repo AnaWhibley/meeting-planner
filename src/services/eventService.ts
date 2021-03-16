@@ -236,8 +236,8 @@ const groupedEvents: Array<GroupedEventDto> = [
                     }],
                 duration: 60,
                 status: 'pending',
-                date: 'pending',
-                time: 'pending'
+                date: '01/03/2021',
+                time: '12:30'
             },
             {
                 id: '55',
@@ -407,8 +407,8 @@ const groupedEvents: Array<GroupedEventDto> = [
                     }],
                 duration: 60,
                 status: 'pending',
-                date: 'pending',
-                time: 'pending'
+                date: '02/03/2021',
+                time: '12:30'
             },
             {
                 id: '55',
@@ -534,12 +534,13 @@ class EventService {
         }
 
         const filteredEvents = groupedEvents.map((ev) => {
-            return { ...ev,
-                    events: ev.events.reduce((acc: Array<EventDto>, current: EventDto ) => {
-                        return current.participants.find((participant) => participant.email === user.id) ? [...acc, current] : acc;
-                    }, [])
-                }
-        });
+            return {
+                ...ev,
+                events: ev.events.reduce((acc: Array<EventDto>, current: EventDto ) => {
+                    return current.participants.find((participant) => participant.email === user.id) ? [...acc, current] : acc;
+                }, [])
+            }
+        }).filter((grouped) => grouped.events.length > 0);
 
         return of(filteredEvents.slice()).pipe(delay(500));
     }
