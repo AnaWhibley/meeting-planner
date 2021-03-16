@@ -1,4 +1,4 @@
-import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {delay, map} from 'rxjs/operators';
 import {User} from '../app/login/slice';
 import {colors} from '../styles/theme';
@@ -77,7 +77,7 @@ const users: Array<UserDto> = [
     }
 ];
 
-class UserService {
+export class UserService {
 
     public static login(email: string, password: string): Observable<LoginResponse> {
 
@@ -86,7 +86,7 @@ class UserService {
                 .then((data) => {
                     const email = data.user?.email;
                     if(email) {
-                        UserService.getUserById(email).subscribe((user) => {
+                        this.getUserById(email).subscribe((user) => {
                             subscriber.next({
                                 user: {id: email, name: user.name},
                                 success: true
@@ -155,6 +155,16 @@ class UserService {
         });
     }
 
+    public static getUserById(id: string): Observable<any> {
+        return new Observable(subscriber => {
+            firebase.firestore().collection('users').doc(id).get().then((document) => {
+                if (!document.exists) return;
+                subscriber.next(document.data());
+                subscriber.complete();
+            });
+        });
+    }
+
     public static getNameOfParticipants(userIds?: Array<string>): Observable<Array<User>> {
         if(!userIds){
             return of(users).pipe(delay(500),
@@ -165,22 +175,65 @@ class UserService {
             .pipe(
                 delay(500),
                 map((dto: Array<UserDto>) => dto.filter(u => userIds.includes(u.id)).map((u, i) => ({...u, color: colors[i % colors.length]}))),
-                );
+            );
     }
 
-    public static editUserName(user: User, newName: string): Observable<{success: boolean}>{
-        return of({success: true}).pipe(delay(500))
-    }
+    public static editUserName(userId: string, newName: string): Observable<boolean>{
+        return new Observable((subscriber) => {
+            firebase.firestore().collection('users').doc(userId).update({name: newName})
+                .then(() => {
+                    subscriber.next(true);
+                    subscriber.complete();
+                })
+                .catch((error) => {
+                    console.error('Error updating user name: ', error);
+                    subscriber.next(false);
+                    subscriber.complete();
+                });
 
-    public static getUserById(id: string): Observable<any> {
-        return new Observable(subscriber => {
-            firebase.firestore().collection('users').doc(id).get().then((document) => {
-                if (!document.exists) return;
-                subscriber.next(document.data());
-                subscriber.complete();
-            });
         });
     }
 }
 
-export default UserService;
+export class MockUserService {
+
+    public static login(email: string, password: string): Observable<LoginResponse> {
+        if(email === 'a' && password === 'a') {
+            return of({
+                user: {name: 'José Daniel Hernández Sosa', role: Role.USER, id: 'daniel.hernandez@ulpgc.es'},
+                success: true
+            }).pipe(delay(1000))
+        }else{
+            return of(
+                {
+                    user: {name: 'José Daniel Hernández Sosa', role: Role.ADMIN, id: 'admin@meetingplanner.es'},
+                    success: true
+                }).pipe(delay(1000))
+        }
+    }
+
+    public static logout() {
+        return of(true).pipe(delay(1000));
+    }
+
+    public static getNameOfParticipants(userIds?: Array<string>): Observable<Array<User>> {
+        if(!userIds){
+            return of(users).pipe(delay(500),
+                map((dto: Array<UserDto>) => dto.map((u, i) => ({...u, color: colors[i % colors.length]}))));
+        }
+
+        return of(users)
+            .pipe(
+                delay(500),
+                map((dto: Array<UserDto>) => dto.filter(u => userIds.includes(u.id)).map((u, i) => ({...u, color: colors[i % colors.length]}))),
+            );
+    }
+
+    public static editUserName(userId: string, newName: string): Observable<boolean>{
+        return of(true).pipe(delay(500))
+    }
+
+    public static forgotPassword(email: string): Observable<boolean> {
+        return of(true).pipe(delay(1000));
+    }
+}
