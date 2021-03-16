@@ -1,8 +1,9 @@
 import {createSlice, Dispatch} from '@reduxjs/toolkit';
 import {RootState} from '../store';
 import EventService, {GroupedEventDto} from '../../services/eventService';
-import UserService, {Role} from '../../services/userService';
+import {Role} from '../../services/userService';
 import {User} from '../login/slice';
+import {getUserService} from "../../services/utils";
 
 export interface PlannerSlice {
     busyDatesCurrentUser: Array<BusyState>;
@@ -62,22 +63,25 @@ export const slice = createSlice({
 
 export const { populateBusyDates, populateEvents, populateParticipants, setSelectedParticipants } = slice.actions;
 
-export const getBusyDates = (userIds?: Array<string>) => (dispatch: Dispatch<any>, getState: () => RootState) => {
-
-    if(!userIds) {
-        // Admin
-        EventService.getBusyDates().subscribe(busyDates => {
-            UserService.getNameOfParticipants().subscribe(participants => {
-                dispatch(populateParticipants(participants));
-                const bd = {busyDatesCU: [], busyDatesOU: busyDates};
-                dispatch(populateBusyDates(bd));
-            })
+export const getBusyDatesAdmin = () => (dispatch: Dispatch<any>) => {
+    EventService.getBusyDates().subscribe(busyDates => {
+        getUserService().getNameOfParticipants().subscribe(participants => {
+            dispatch(populateParticipants(participants));
+            const bd = {busyDatesCU: [], busyDatesOU: busyDates};
+            dispatch(populateBusyDates(bd));
         })
+    })
+};
+
+
+export const getBusyDates = (userIds: Array<string>) => (dispatch: Dispatch<any>, getState: () => RootState) => {
+
+    if(userIds.length === 0) {
+        //show message there are not busy dates to show
+        console.log('there are not busy dates to show');
     }else{
-        // User
         EventService.getBusyDates(userIds).subscribe(busyDates => {
-            UserService.getNameOfParticipants(userIds).subscribe(participants => {
-                console.log(busyDates, participants)
+            getUserService().getNameOfParticipants(userIds).subscribe(participants => {
                 dispatch(populateParticipants(participants));
                 const { login } = getState();
                 const currentUserId = login.loggedInUser?.id;
@@ -102,18 +106,27 @@ export const getEvents = () => (dispatch: Dispatch<any>, getState: () => RootSta
     const { login } = getState();
     const currentUser = login.loggedInUser;
     if (currentUser) {
-        EventService.getEvents(currentUser).subscribe(events => {
+        //If admin get all events
+        EventService.getEvents(currentUser).subscribe((events: Array<GroupedEventDto>) => {
             dispatch(populateEvents(events));
-            if(currentUser.role === Role.USER){
-                const userIds: Set<string> = new Set();
-                events.forEach((ev: GroupedEventDto) => ev.events.forEach(((e)=> e.participants.forEach((p) => userIds.add(p.email)))))
-                dispatch(getBusyDates(Array.from(userIds)))
+
+            if(events.length === 0) {
+                //show message there are not events to show
+                console.log('there are not events to show');
+            } else if(currentUser.role === Role.USER){
+                dispatch(getBusyDates(getParticipantsId(events)));
             }else{
-                dispatch(getBusyDates())
+                dispatch(getBusyDatesAdmin())
             }
         })
     }
 }
+
+const getParticipantsId = (events: Array<GroupedEventDto>): Array<string> => {
+    const userIds: Set<string> = new Set();
+    events.forEach((ev: GroupedEventDto) => ev.events.forEach(((e)=> e.participants.forEach((p) => userIds.add(p.email)))))
+    return Array.from(userIds);
+};
 
 export const addBusy = (busyDate: BusyState) => (dispatch: Dispatch<any>, getState: () => RootState) => {
     const { login } = getState();
@@ -128,6 +141,5 @@ export const deleteBusy = (busyDateId: string) => (dispatch: Dispatch<any>, getS
     EventService.deleteBusyDate(busyDateId).subscribe(events => {
     });
 }
-
 
 export default slice.reducer;

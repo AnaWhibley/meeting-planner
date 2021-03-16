@@ -1,7 +1,8 @@
 import {createAction, createSlice, Dispatch} from '@reduxjs/toolkit';
-import UserService, {LoginResponse} from '../services/userService';
+import {LoginResponse} from '../services/userService';
 import {RootState} from './store';
 import {GroupedEventDto} from '../services/eventService';
+import {getUserService} from "../services/utils";
 const incrementByAmount = createAction<number>('counter/incrementByAmount');
 const setUser = createAction<LoginResponse>('login/setUser');
 const showErrorMessage = createAction<boolean>('login/showErrorMessage');
@@ -123,8 +124,8 @@ export const forgotPassword = () => (dispatch: Dispatch<any>, getState: () => Ro
     } else {
         const re = /.+\@.+\..+/;
         if (re.test(String(login.email).toLowerCase())){
-            UserService.forgotPassword(login.email).subscribe((response: boolean) => {
-                if(response) {
+            getUserService().forgotPassword(login.email).subscribe((success: boolean) => {
+                if(success) {
                     dispatch(setForgotPasswordDialogProperty({ show: false, emailSent: true}));
                 }else {
                     dispatch(setForgotPasswordDialogProperty({ show: false, emailSentError: true}));
