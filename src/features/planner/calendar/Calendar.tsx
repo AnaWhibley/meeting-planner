@@ -42,8 +42,6 @@ export function Calendar() {
         setOpenDialog(false);
     };
 
-    console.log(dates)
-
     const calendarView = useSelector(selectCalendarView);
 
     const handleAcceptDialog = () => {

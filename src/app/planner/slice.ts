@@ -1,6 +1,6 @@
 import {createSlice, Dispatch} from '@reduxjs/toolkit';
 import {RootState} from '../store';
-import EventService, {GroupedEventDto} from '../../services/eventService';
+import EventService, {BusyDateDto, GroupedEventDto} from '../../services/eventService';
 import {Role} from '../../services/userService';
 import {User} from '../login/slice';
 import {getUserService} from "../../services/utils";
@@ -11,6 +11,7 @@ export interface PlannerSlice {
     events: Array<GroupedEventDto>;
     participants: Array<User>;
     selectedParticipants: Array<string>;
+    selectedEvents: Array<string>;
 }
 
 export interface BusyDateState {
@@ -32,7 +33,8 @@ export const slice = createSlice({
         busyDatesOtherUsers: [],
         events: [],
         participants: [],
-        selectedParticipants: []
+        selectedParticipants: [],
+        selectedEvents: []
     } as PlannerSlice,
     reducers: {
         populateBusyDates:((state, action) => {
@@ -41,6 +43,7 @@ export const slice = createSlice({
         }),
         populateEvents: ((state, action) => {
             state.events = action.payload;
+            state.selectedEvents = action.payload.flatMap((groupedEvent: GroupedEventDto) => groupedEvent.events.map(event => event.id));
         }),
         populateParticipants: ((state, action) => {
             state.participants = action.payload;
@@ -57,13 +60,82 @@ export const slice = createSlice({
             }
 
             state.selectedParticipants = newSelectedParticipants;
+        }),
+        setSelectedEvents: ((state, action) => {
+            const currentIndex = state.selectedEvents.indexOf(action.payload);
+            const newSelectedEvents = [...state.selectedEvents];
+
+            if (currentIndex === -1) {
+                newSelectedEvents.push(action.payload);
+            } else {
+                newSelectedEvents.splice(currentIndex, 1);
+            }
+
+            state.selectedParticipants = newSelectedEvents;
         })
     },
 });
 
-export const { populateBusyDates, populateEvents, populateParticipants, setSelectedParticipants } = slice.actions;
+export const { populateBusyDates, populateEvents, populateParticipants, setSelectedParticipants, setSelectedEvents } = slice.actions;
 
-export const getBusyDatesAdmin = () => (dispatch: Dispatch<any>) => {
+export const getEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
+    const { login } = getState();
+    const currentUser = login.loggedInUser;
+    if (currentUser) {
+        // Get grouped events in which user participates (for admin get all events)
+        EventService.getEvents(currentUser).subscribe((groupedEvents: Array<GroupedEventDto>) => {
+            dispatch(populateEvents(groupedEvents));
+
+            if(groupedEvents.length > 0) {
+                if(currentUser.role === Role.ADMIN){
+                    dispatch(getBusyDatesAdmin())
+                }else{
+                    dispatch(getBusyDates(getParticipantsId(groupedEvents)));
+                }
+            }
+        })
+    }
+};
+
+const getParticipantsId = (events: Array<GroupedEventDto>): Array<string> => {
+    const userIds: Set<string> = new Set();
+    events.forEach((ev: GroupedEventDto) => ev.events.forEach(((e)=> e.participants.forEach((p) => userIds.add(p.email)))))
+    return Array.from(userIds);
+};
+
+const getBusyDates = (userIds: Array<string>) => (dispatch: Dispatch<any>, getState: () => RootState) => {
+
+    if(userIds.length === 0) {
+        //show message there are not busy dates to show
+        console.log('there are not busy dates to show');
+    }else{
+        EventService.getBusyDates(userIds).subscribe((busyDates) => {
+            getUserService().getNameOfParticipants(userIds).subscribe((participants) => {
+                dispatch(populateParticipants(participants));
+
+                const { login } = getState();
+                const currentUser = login.loggedInUser;
+                if(currentUser) {
+                    dispatch(populateBusyDates(filterBusyDatesByCurrentUser(busyDates, currentUser.id)));
+                }
+            })
+        })
+    }
+};
+
+const filterBusyDatesByCurrentUser = (busyDates: Array<BusyDateDto>, currentUserId: string) => {
+    return busyDates.reduce((acc: any,current: any) => {
+        const newAcc = {busyDatesCU: acc.busyDatesCU, busyDatesOU: acc.busyDatesOU};
+        if(current.userId === currentUserId){
+            newAcc.busyDatesCU = current.busy;
+        } else {
+            newAcc.busyDatesOU = [...acc.busyDatesOU, current]
+        }
+        return newAcc;
+    }, {busyDatesCU: [], busyDatesOU: []});
+}
+
+const getBusyDatesAdmin = () => (dispatch: Dispatch<any>) => {
     EventService.getBusyDates().subscribe(busyDates => {
         getUserService().getNameOfParticipants().subscribe(participants => {
             dispatch(populateParticipants(participants));
@@ -73,61 +145,6 @@ export const getBusyDatesAdmin = () => (dispatch: Dispatch<any>) => {
     })
 };
 
-
-export const getBusyDates = (userIds: Array<string>) => (dispatch: Dispatch<any>, getState: () => RootState) => {
-
-    if(userIds.length === 0) {
-        //show message there are not busy dates to show
-        console.log('there are not busy dates to show');
-    }else{
-        EventService.getBusyDates(userIds).subscribe(busyDates => {
-            getUserService().getNameOfParticipants(userIds).subscribe(participants => {
-                dispatch(populateParticipants(participants));
-                const { login } = getState();
-                const currentUserId = login.loggedInUser?.id;
-
-                const bd = busyDates.reduce((acc: any,current: any) => {
-                    const newAcc = {busyDatesCU: acc.busyDatesCU, busyDatesOU: acc.busyDatesOU};
-                    if(current.userId === currentUserId){
-                        newAcc.busyDatesCU = current.busy;
-                    } else {
-                        newAcc.busyDatesOU = [...acc.busyDatesOU, current]
-                    }
-                    return newAcc;
-                }, {busyDatesCU: [], busyDatesOU: []});
-
-                dispatch(populateBusyDates(bd));
-            })
-        })
-    }
-};
-
-export const getEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
-    const { login } = getState();
-    const currentUser = login.loggedInUser;
-    if (currentUser) {
-        //If admin get all events
-        EventService.getEvents(currentUser).subscribe((events: Array<GroupedEventDto>) => {
-            dispatch(populateEvents(events));
-
-            if(events.length === 0) {
-                //show message there are not events to show
-                console.log('there are not events to show');
-            } else if(currentUser.role === Role.USER){
-                dispatch(getBusyDates(getParticipantsId(events)));
-            }else{
-                dispatch(getBusyDatesAdmin())
-            }
-        })
-    }
-}
-
-const getParticipantsId = (events: Array<GroupedEventDto>): Array<string> => {
-    const userIds: Set<string> = new Set();
-    events.forEach((ev: GroupedEventDto) => ev.events.forEach(((e)=> e.participants.forEach((p) => userIds.add(p.email)))))
-    return Array.from(userIds);
-};
-
 export const addBusy = (busyDate: BusyState) => (dispatch: Dispatch<any>, getState: () => RootState) => {
     const { login } = getState();
     const currentUser = login.loggedInUser;
@@ -135,11 +152,11 @@ export const addBusy = (busyDate: BusyState) => (dispatch: Dispatch<any>, getSta
         EventService.addBusyDate(busyDate, currentUser.id).subscribe(events => {
         });
     }
-}
+};
 
 export const deleteBusy = (busyDateId: string) => (dispatch: Dispatch<any>, getState: () => RootState) => {
     EventService.deleteBusyDate(busyDateId).subscribe(events => {
     });
-}
+};
 
 export default slice.reducer;

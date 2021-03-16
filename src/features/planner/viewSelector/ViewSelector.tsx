@@ -13,7 +13,7 @@ import {
     AccordionSummary,
     Drawer,
     FormControlLabel,
-    IconButton,
+    IconButton, ListItemIcon,
     Radio,
     RadioGroup,
     Typography
@@ -36,8 +36,14 @@ import {
     toggleShowCalendar
 } from '../../../app/uiStateSlice';
 import {EventsGrid} from '../eventsGrid/EventsGrid';
-import {selectParticipants, selectSelectedParticipants} from '../../../app/planner/selectors';
-import { setSelectedParticipants } from '../../../app/planner/slice';
+import {
+    selectEvents,
+    selectParticipants,
+    selectSelectedEvents,
+    selectSelectedParticipants
+} from '../../../app/planner/selectors';
+import {setSelectedEvents, setSelectedParticipants } from '../../../app/planner/slice';
+import {GroupedEventDto} from '../../../services/eventService';
 
 export function ViewSelector() {
     return (
@@ -56,13 +62,21 @@ export function CheckboxListSecondary() {
     };
 
     const handleToggle = (value: string) => () => {
-        dispatch(setSelectedParticipants(value))
+        if(currentViewPlanner === 'busyDates') {
+            dispatch(setSelectedParticipants(value));
+        }else{
+            dispatch(setSelectedEvents(value));
+        }
+
     };
 
     const showCalendar = useSelector(selectShowCalendar);
 
     const participants = useSelector(selectParticipants);
-    const selectedParticipants = useSelector(selectSelectedParticipants)
+    const selectedParticipants = useSelector(selectSelectedParticipants);
+
+    const groupedEvents = useSelector(selectEvents);
+    const selectedEvents = useSelector(selectSelectedEvents);
 
     return (
         <>
@@ -109,32 +123,31 @@ export function CheckboxListSecondary() {
                         <Typography variant={'h2'} color={'primary'}>Defensas</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        {/*<List>
-                            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29 ].map((value) => {
-                                const labelId = `checkbox-list-label-${value}`;
-
-                                return (
-                                    <ListItem key={value} role={undefined} dense button onClick={handleToggle(value)}>
-                                        <ListItemIcon>
-                                            <Checkbox
-                                                edge="start"
-                                                checked={checked.indexOf(value) !== -1}
-                                                tabIndex={-1}
-                                                color={'primary'}
-                                                disableRipple
-                                                inputProps={{'aria-labelledby': labelId}}
-                                            />
-                                        </ListItemIcon>
-                                        <ListItemText id={labelId} primary={`Line item ${value + 1}`}/>
-                                        <ListItemSecondaryAction>
-                                            <IconButton edge="end">
-                                                <InfoIcon className={'FillPrimary'}/>
-                                            </IconButton>
-                                        </ListItemSecondaryAction>
-                                    </ListItem>
-                                );
+                        <List>
+                            {groupedEvents.map((groupedEvent: GroupedEventDto) => {
+                                return (groupedEvent.events.map(event => {
+                                    return (
+                                        <ListItem key={event.id} role={undefined} dense button onClick={handleToggle(event.id)}>
+                                            <ListItemIcon>
+                                                <Checkbox
+                                                    edge="start"
+                                                    checked={selectedEvents.indexOf(event.id) !== -1}
+                                                    tabIndex={-1}
+                                                    color={'primary'}
+                                                    disableRipple
+                                                />
+                                            </ListItemIcon>
+                                            <ListItemText primary={event.name}/>
+                                            <ListItemSecondaryAction>
+                                                <IconButton edge="end">
+                                                    <InfoIcon className={'FillPrimary'}/>
+                                                </IconButton>
+                                            </ListItemSecondaryAction>
+                                        </ListItem>
+                                    );
+                                }));
                             })}
-                        </List>*/}
+                        </List>
                     </AccordionDetails>
                 </Accordion>
             }
