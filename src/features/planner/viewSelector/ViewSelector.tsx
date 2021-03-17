@@ -31,8 +31,13 @@ import {Calendar} from "../calendar/Calendar";
 import {useDispatch, useSelector} from 'react-redux';
 import {
     selectCurrentViewPlanner,
-    selectDrawerSelector, selectShowCalendar,
-    setCurrentViewPlanner, toggleDrawerSelectorTransition,
+    selectDrawerSelector,
+    selectShowCalendar,
+    setCurrentViewPlanner,
+    setEventsGridSelectedTab,
+    setSelectedRowInformation,
+    showGrid,
+    toggleDrawerSelectorTransition,
     toggleShowCalendar
 } from '../../../app/uiStateSlice';
 import {EventsGrid} from '../eventsGrid/EventsGrid';
@@ -78,80 +83,94 @@ export function CheckboxListSecondary() {
     const groupedEvents = useSelector(selectEvents);
     const selectedEvents = useSelector(selectSelectedEvents);
 
+
+    const participantList = <List dense>
+        {participants.map((value) => {
+            return (
+                <ListItem key={value.id} button>
+                    <ListItemAvatar className={'ParticipantAvatar'}>
+                        <AvatarInitials text={value.name} color={value.color}/>
+                    </ListItemAvatar>
+                    <ListItemText primary={<Typography color={'textPrimary'} variant={'body1'}>{value.name}</Typography>}/>
+                    <ListItemSecondaryAction>
+                        <Checkbox
+                            edge="end"
+                            style={{color: value.color}}
+                            onChange={handleToggle(value.id)}
+                            checked={selectedParticipants.indexOf(value.id) !== -1}
+                        />
+                    </ListItemSecondaryAction>
+                </ListItem>
+            );
+        })}
+    </List>;
+
+    const showEventInfo = (id: string, index: number) => {
+        dispatch(setSelectedRowInformation({eventId: id, groupId: index}));
+        dispatch(setEventsGridSelectedTab(index));
+        dispatch(showGrid());
+    };
+
+    const groupedEventList = groupedEvents.map((groupedEvent: GroupedEventDto, index: number) => {
+        return (
+            <Accordion defaultExpanded key={groupedEvent.groupName}>
+                <AccordionSummary
+                    expandIcon={<CirclePlusIcon className={'FillTextSecondary'}/>}
+                >
+                    <Typography variant={'h3'} color={'textSecondary'}>{groupedEvent.groupName}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <List dense>
+                        {groupedEvent.events.map(event => {
+                            return (
+                                <ListItem key={event.id} dense button onClick={handleToggle(event.id)}>
+                                    <ListItemIcon className={'Checkbox'}>
+                                        <Checkbox
+                                            edge="start"
+                                            checked={selectedEvents.indexOf(event.id) !== -1}
+                                            tabIndex={-1}
+                                            color={'primary'}
+                                            disableRipple
+                                        />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={<Typography color={'textPrimary'} variant={'body1'}>{event.name}</Typography>}
+                                    />
+                                    <ListItemSecondaryAction>
+                                        <IconButton edge="end" onClick={() => showEventInfo(event.id, index)}>
+                                            <InfoIcon className={'FillPrimary'}/>
+                                        </IconButton>
+                                    </ListItemSecondaryAction>
+                                </ListItem>
+                            );
+                        })}
+                    </List>
+                </AccordionDetails>
+            </Accordion>
+        )
+    });
+
+    const AccordionList = (props: {title: string, list: any, className?: string}) => {
+        return (<Accordion defaultExpanded className={props.className}>
+            <AccordionSummary
+                expandIcon={<CirclePlusIcon className={'FillPrimary'}/>}
+            >
+                <Typography variant={'h2'} color={'primary'}>{props.title}</Typography>
+            </AccordionSummary>
+            <AccordionDetails style={{flexDirection: 'column', display: 'flex'}}>
+                {props.list}
+            </AccordionDetails>
+        </Accordion>);
+    }
+
     return (
         <>
             {currentViewPlanner === 'busyDates' ?
-                <Accordion defaultExpanded>
-                    <AccordionSummary
-                        expandIcon={<CirclePlusIcon className={'FillPrimary'}/>}
-                    >
-                        <Typography variant={'h2'} color={'primary'}>Participantes</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <List dense className={'ParticipantList'}>
-                            {participants.map((value) => {
-                                const labelId = value.id;
-                                return (
-                                    <ListItem key={value.id} button>
-                                        <ListItemAvatar>
-                                            <AvatarInitials text={`Avatar ${value.name}`} color={value.color}/>
-                                        </ListItemAvatar>
-                                        <ListItemText id={labelId}
-                                                      primary={<Typography color={'textPrimary'}
-                                                                           variant={'body1'}
-                                                      >{value.name}</Typography>}
-                                        />
-                                        <ListItemSecondaryAction>
-                                            <Checkbox
-                                                edge="end"
-                                                style={{color: value.color}}
-                                                onChange={handleToggle(value.id)}
-                                                checked={selectedParticipants.indexOf(value.id) !== -1}
-                                            />
-                                        </ListItemSecondaryAction>
-                                    </ListItem>
-                                );
-                            })}
-                        </List>
-                    </AccordionDetails>
-                </Accordion>
+                <AccordionList title={'Participantes'} list={participantList} className={'ParticipantsList'}/>
                 :
-                <Accordion defaultExpanded>
-                    <AccordionSummary
-                        expandIcon={<CirclePlusIcon className={'FillPrimary'}/>}
-                    >
-                        <Typography variant={'h2'} color={'primary'}>Defensas</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <List>
-                            {groupedEvents.map((groupedEvent: GroupedEventDto) => {
-                                return (groupedEvent.events.map(event => {
-                                    return (
-                                        <ListItem key={event.id} role={undefined} dense button onClick={handleToggle(event.id)}>
-                                            <ListItemIcon>
-                                                <Checkbox
-                                                    edge="start"
-                                                    checked={selectedEvents.indexOf(event.id) !== -1}
-                                                    tabIndex={-1}
-                                                    color={'primary'}
-                                                    disableRipple
-                                                />
-                                            </ListItemIcon>
-                                            <ListItemText primary={event.name}/>
-                                            <ListItemSecondaryAction>
-                                                <IconButton edge="end">
-                                                    <InfoIcon className={'FillPrimary'}/>
-                                                </IconButton>
-                                            </ListItemSecondaryAction>
-                                        </ListItem>
-                                    );
-                                }));
-                            })}
-                        </List>
-                    </AccordionDetails>
-                </Accordion>
+                <AccordionList title={'Defensas'} list={groupedEventList} className={'GroupedEventList'}/>
             }
-            <Accordion>
+            <Accordion className={'ViewToggleContainer'}>
                 <AccordionSummary
                     expandIcon={<CirclePlusIcon className={'FillPrimary'}/>}
                 >
@@ -172,7 +191,8 @@ export function CheckboxListSecondary() {
     );
 }
 
-const drawerWidth = 250;
+
+const drawerWidth = 260;
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

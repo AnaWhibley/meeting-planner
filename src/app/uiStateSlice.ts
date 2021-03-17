@@ -16,13 +16,14 @@ interface uiStateSlice {
     calendarView: string;
     selectedOptionsStatusFilter: Array<string>;
     availableOptionsStatusFilter: Array<string>;
-    selectedRowInformation?: string;
+    selectedRowInformation?: {eventId: string; groupId: number};
     forgotPasswordDialog: {
         show: boolean;
         inputErrorMessage: string;
         emailSent: boolean;
         emailSentError: boolean;
     };
+    eventsGridSelectedTab: number;
 }
 
 export const slice = createSlice({
@@ -41,6 +42,7 @@ export const slice = createSlice({
             emailSent: false,
             emailSentError: false
         },
+        eventsGridSelectedTab: 0,
     } as uiStateSlice,
     reducers: {
         requesting: state => {
@@ -54,6 +56,9 @@ export const slice = createSlice({
         },
         toggleShowCalendar: (state) => {
             state.showCalendar = !state.showCalendar;
+        },
+        showGrid: (state) => {
+            state.showCalendar = false;
         },
         setSelectedOptionsStatusFilter: ((state, action) => {
             const currentIndex = state.selectedOptionsStatusFilter.indexOf(action.payload);
@@ -75,6 +80,9 @@ export const slice = createSlice({
         },
         setForgotPasswordDialogProperty: (state, action) => {
             state.forgotPasswordDialog = {...state.forgotPasswordDialog, ...action.payload};
+        },
+        setEventsGridSelectedTab: (state, action) => {
+            state.eventsGridSelectedTab = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -98,16 +106,21 @@ export const slice = createSlice({
     },
 });
 export const { requesting, setCurrentViewPlanner, setDrawerSelector, toggleShowCalendar, setSelectedOptionsStatusFilter,
-    resetStatusFilter, setSelectedRowInformation, setForgotPasswordDialogProperty } = slice.actions;
+    resetStatusFilter, setSelectedRowInformation, setForgotPasswordDialogProperty, showGrid, setEventsGridSelectedTab } = slice.actions;
 
 export const selectIsBusy = (state: RootState) => state.uiState.isBusy;
+export const selectEventsGridSelectedTab = (state: RootState) => state.uiState.eventsGridSelectedTab;
 export const selectCurrentViewPlanner = (state: RootState) => state.uiState.currentViewPlanner;
 export const selectDrawerSelector = (state: RootState) => state.uiState.drawerSelector;
 export const selectShowCalendar = (state: RootState) => state.uiState.showCalendar;
 export const selectCalendarView = (state: RootState) => state.uiState.calendarView;
 export const selectSelectedOptionsStatusFilter = (state: RootState) => state.uiState.selectedOptionsStatusFilter;
 export const selectSelectedRowInformation = (state: RootState) => {
-    return state.planner.events.flatMap(groupedEvent => groupedEvent.events.find(event => event.id === state.uiState.selectedRowInformation)).filter(x => !!x)[0];
+    const info = state.uiState.selectedRowInformation;
+    if(info){
+        return state.planner.events[info.groupId].events.find(event => event.id === info.eventId)
+    }
+    //return state.planner.events.flatMap(groupedEvent => groupedEvent.events.find(event => event.id === state.uiState.selectedRowInformation)).filter(x => !!x)[0];
 };
 export const selectForgotPasswordDialogInfo = (state: RootState) => state.uiState.forgotPasswordDialog;
 
