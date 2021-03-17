@@ -11,7 +11,7 @@ export interface PlannerSlice {
     events: Array<GroupedEventDto>;
     participants: Array<User>;
     selectedParticipants: Array<string>;
-    selectedEvents: Array<string>;
+    selectedEvents: Array<Array<string>>;
 }
 
 export interface BusyDateState {
@@ -43,7 +43,7 @@ export const slice = createSlice({
         }),
         populateEvents: ((state, action) => {
             state.events = action.payload;
-            state.selectedEvents = action.payload.flatMap((groupedEvent: GroupedEventDto) => groupedEvent.events.map(event => event.id));
+            state.selectedEvents = action.payload.map((groupedEvent: GroupedEventDto) => groupedEvent.events.map(event => event.id));
         }),
         populateParticipants: ((state, action) => {
             state.participants = action.payload;
@@ -62,21 +62,30 @@ export const slice = createSlice({
             state.selectedParticipants = newSelectedParticipants;
         }),
         setSelectedEvents: ((state, action) => {
-            const currentIndex = state.selectedEvents.indexOf(action.payload);
+            const currentIndex = state.selectedEvents[action.payload.groupId].indexOf(action.payload.eventId);
             const newSelectedEvents = [...state.selectedEvents];
 
             if (currentIndex === -1) {
-                newSelectedEvents.push(action.payload);
+                newSelectedEvents[action.payload.groupId].push(action.payload.eventId);
             } else {
-                newSelectedEvents.splice(currentIndex, 1);
+                newSelectedEvents[action.payload.groupId].splice(currentIndex, 1);
             }
 
             state.selectedEvents = newSelectedEvents;
-        })
+        }),
+        toggleAllEventsSelected: ((state, action) => {
+            const groupedEvents = state.events.slice();
+            const isAllSelected = groupedEvents[action.payload.groupIndex].events.length === state.selectedEvents[action.payload.groupIndex].length;
+            if(isAllSelected) {
+                state.selectedEvents[action.payload.groupIndex] = [];
+            }else{
+                state.selectedEvents[action.payload.groupIndex] = groupedEvents[action.payload.groupIndex].events.map(event => event.id);
+            }
+        }),
     },
 });
 
-export const { populateBusyDates, populateEvents, populateParticipants, setSelectedParticipants, setSelectedEvents } = slice.actions;
+export const { populateBusyDates, populateEvents, populateParticipants, setSelectedParticipants, setSelectedEvents, toggleAllEventsSelected } = slice.actions;
 
 export const getEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     const { login } = getState();

@@ -6,7 +6,7 @@ import {
     setSelectedRowInformation, showGrid, toggleShowCalendar
 } from '../../../app/uiStateSlice';
 import React from 'react';
-import {setSelectedEvents, setSelectedParticipants} from '../../../app/planner/slice';
+import {setSelectedEvents, setSelectedParticipants, toggleAllEventsSelected} from '../../../app/planner/slice';
 import {
     selectEvents,
     selectParticipants,
@@ -45,11 +45,11 @@ export function DrawerContent() {
         dispatch(setCurrentViewPlanner((event.target as HTMLInputElement).value));
     };
 
-    const handleToggle = (value: string) => () => {
+    const handleToggle = (value: string, index?: number) => () => {
         if(currentViewPlanner === 'busyDates') {
             dispatch(setSelectedParticipants(value));
         }else{
-            dispatch(setSelectedEvents(value));
+            dispatch(setSelectedEvents({eventId: value, groupId: index}));
         }
 
     };
@@ -112,13 +112,17 @@ export function DrawerContent() {
                 </AccordionSummary>
                 <AccordionDetails>
                     <List dense>
+                        <FormControlLabel control={<Checkbox checked={selectedEvents[index].length === groupedEvent.events.length} onChange={() => dispatch(toggleAllEventsSelected({groupIndex: index}))}/>}
+                                          label={<Typography color={'textPrimary'} variant={'body1'}>Seleccionar todos</Typography>}
+                                          className={'SelectAll'}
+                        />
                         {groupedEvent.events.map(event => {
                             return (
-                                <ListItem key={event.id} dense button onClick={handleToggle(event.id)}>
+                                <ListItem key={event.id} dense button onClick={handleToggle(event.id, index)}>
                                     <ListItemIcon className={'Checkbox'}>
                                         <Checkbox
                                             edge="start"
-                                            checked={selectedEvents.indexOf(event.id) !== -1}
+                                            checked={selectedEvents[index].indexOf(event.id) !== -1}
                                             tabIndex={-1}
                                             color={'primary'}
                                             disableRipple
