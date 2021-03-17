@@ -35,8 +35,8 @@ const users: Array<UserDto> = [
         name: 'José Daniel Hernández Sosa'
     },
     {
-        id: 'admin@meetingplanner.es',
-        name: 'José Daniel Hernández Sosa',
+        id: 'meetingplannertfg@gmail.com',
+        name: 'Administración Meeting Planner',
         role: Role.ADMIN
     },
     {
@@ -88,7 +88,7 @@ export class UserService {
                     if(email) {
                         this.getUserById(email).subscribe((user) => {
                             subscriber.next({
-                                user: {id: email, name: user.name},
+                                user: {id: email, name: user.name, role: user.role === 'admin' ? Role.ADMIN : Role.USER},
                                 success: true
                             })
                         });
@@ -198,7 +198,7 @@ export class UserService {
 export class MockUserService {
 
     public static login(email: string, password: string): Observable<LoginResponse> {
-        if(email === 'a' && password === 'a') {
+        if(email === 'u' && password === 'u') {
             return of({
                 user: {name: 'José Daniel Hernández Sosa', role: Role.USER, id: 'daniel.hernandez@ulpgc.es'},
                 success: true
@@ -206,7 +206,7 @@ export class MockUserService {
         }else{
             return of(
                 {
-                    user: {name: 'José Daniel Hernández Sosa', role: Role.ADMIN, id: 'admin@meetingplanner.es'},
+                    user: {name: 'Administración Meeting Planner', role: Role.ADMIN, id: 'meetingplannertfg@gmail.com'},
                     success: true
                 }).pipe(delay(1000))
         }
