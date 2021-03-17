@@ -71,7 +71,7 @@ export const slice = createSlice({
                 newSelectedEvents.splice(currentIndex, 1);
             }
 
-            state.selectedParticipants = newSelectedEvents;
+            state.selectedEvents = newSelectedEvents;
         })
     },
 });
