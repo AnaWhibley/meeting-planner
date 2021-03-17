@@ -10,7 +10,12 @@ import {ColumnApi} from 'ag-grid-community/dist/lib/columnController/columnApi';
 import './EventsGrid.scss';
 import {ColDef} from 'ag-grid-community/dist/lib/entities/colDef';
 import {
-    selectDrawerSelector, selectSelectedOptionsStatusFilter, selectSelectedRowInformation, setSelectedRowInformation,
+    selectDrawerSelector,
+    selectEventsGridSelectedTab,
+    selectSelectedOptionsStatusFilter,
+    selectSelectedRowInformation,
+    setEventsGridSelectedTab,
+    setSelectedRowInformation,
 } from '../../../app/uiStateSlice';
 import {ReactComponent as VerifiedIcon} from '../../../assets/icons/evericons/verified.svg';
 import {ReactComponent as ErrorIcon} from '../../../assets/icons/evericons/x-octagon.svg';
@@ -145,17 +150,17 @@ export function EventsGrid(props: any) {
         params.api.setFilterModel({status: {filter: statusFilterSelectedOptions}})
     }
 
-    const [value, setValue] = React.useState(0);
+    const currentTab = useSelector(selectEventsGridSelectedTab);
 
     const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-        setValue(newValue);
+        dispatch(setEventsGridSelectedTab(newValue));
     };
 
     const dispatch = useDispatch();
     const selectedRow = useSelector(selectSelectedRowInformation);
     const onSelectionChanged = () => {
         if(gridApi) {
-            dispatch(setSelectedRowInformation(gridApi.getSelectedRows()[0].id))
+            dispatch(setSelectedRowInformation({eventId: gridApi.getSelectedRows()[0].id, groupId: currentTab}))
         }
     }
 
@@ -163,7 +168,7 @@ export function EventsGrid(props: any) {
         <>
             {groupedEvents.length > 0 ? <div className={'EventsGridContainer'}>
                 <AppBar position="static">
-                    <Tabs value={value} onChange={handleTabChange}>
+                    <Tabs value={currentTab} onChange={handleTabChange}>
                         {groupedEvents.map((ev, index) => {return (<Tab key={index} label={ev.groupName} />);})}
                     </Tabs>
                 </AppBar>
@@ -188,7 +193,7 @@ export function EventsGrid(props: any) {
                         domLayout='autoHeight'
                         localeText={AG_GRID_LOCALE_ES}
                         onGridReady={(params) => onGridReady(params)}
-                        rowData={groupedEvents[value].events}
+                        rowData={groupedEvents[currentTab].events}
                         columnDefs={columnDefs}
                         frameworkComponents={frameworkComponents}
                         defaultColDef={defaultColDef}

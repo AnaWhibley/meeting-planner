@@ -6,14 +6,33 @@
     .MuiListItem-gutters {
       padding-left: unset !important;
     }
+
+    .MuiAccordionDetails-root {
+      padding: 0 !important;
+    }
+
+    .ParticipantAvatar {
+      margin-left: 20px;
+    }
   }
 
   .MuiPaper-elevation1 {
     box-shadow: unset !important
   }
 
-  .MuiAccordionDetails-root {
-    padding: 8px 0 8px 16px !important;
+  .ViewToggleContainer {
+
+    .ViewRadioGroup {
+      padding-left: 14px;
+    }
+
+    .MuiAccordionDetails-root {
+      padding: 8px !important;
+    }
+
+    .MuiFormControlLabel-root {
+      margin-right: 10px !important;
+    }
   }
 
   .EventsDetailsButton {
@@ -21,8 +40,24 @@
     background: white !important;
   }
 
-  .ViewRadioGroup {
-    padding-left: 14px;
+  .GroupedEventList {
+
+    .MuiAccordionDetails-root {
+      padding: 0 !important;
+    }
+
+    .MuiAccordion-root.Mui-expanded {
+      margin: 0 !important;
+    }
+
+    .MuiListItemIcon-root {
+      min-width: unset;
+      margin-right: 5px;
+    }
+
+    .Checkbox {
+      margin-left: 10px;
+    }
   }
 
 }
