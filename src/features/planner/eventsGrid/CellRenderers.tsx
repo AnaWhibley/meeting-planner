@@ -13,7 +13,7 @@ import {ReactComponent as BellIcon} from '../../../assets/icons/evericons/bell.s
 import '../../../styles/common.scss'
 import {Tooltip} from '../../../components/tooltip/Tooltip';
 import './EventsGrid.scss';
-import {setSelectedRowInformation} from '../../../app/uiStateSlice';
+import {selectEventsGridSelectedTab, setSelectedRowInformation} from '../../../app/uiStateSlice';
 import {DATE_FORMAT} from '../../../app/eventCreator/slice';
 
 export function StatusRenderer (props: ICellRendererParams) {
@@ -36,11 +36,12 @@ export function HourRenderer (props: ICellRendererParams) {
 
 export function ActionsRenderer (props: ICellRendererParams) {
     const user = useSelector(selectLoggedInUser);
+    const currentTab = useSelector(selectEventsGridSelectedTab);
 
     const dispatch = useDispatch();
     const onSelectionChanged = () => {
         if(props.api) {
-            dispatch(setSelectedRowInformation(props.api.getSelectedRows()[0]))
+            dispatch(setSelectedRowInformation({eventId: props.api.getSelectedRows()[0].id, groupId: currentTab}))
         }
     }
 

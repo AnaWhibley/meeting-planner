@@ -17,6 +17,7 @@ import {
     setEventsGridSelectedTab,
     setSelectedRowInformation,
 } from '../../../app/uiStateSlice';
+import {ReactComponent as XIcon} from '../../../assets/icons/evericons/x.svg';
 import {ReactComponent as VerifiedIcon} from '../../../assets/icons/evericons/verified.svg';
 import {ReactComponent as ErrorIcon} from '../../../assets/icons/evericons/x-octagon.svg';
 import {ReactComponent as PendingIcon} from '../../../assets/icons/evericons/question-circle.svg';
@@ -154,13 +155,15 @@ export function EventsGrid(props: any) {
 
     const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         dispatch(setEventsGridSelectedTab(newValue));
+        dispatch(setSelectedRowInformation(undefined));
     };
 
     const dispatch = useDispatch();
     const selectedRow = useSelector(selectSelectedRowInformation);
     const onSelectionChanged = () => {
         if(gridApi) {
-            dispatch(setSelectedRowInformation({eventId: gridApi.getSelectedRows()[0].id, groupId: currentTab}))
+            const selectedRow = gridApi.getSelectedRows()[0];
+            dispatch(setSelectedRowInformation({eventId: selectedRow && selectedRow.id, groupId: currentTab}))
         }
     }
 
@@ -209,7 +212,11 @@ export function EventsGrid(props: any) {
                 </div>
                 {selectedRow &&
                 <div className={'SelectedRowContainer'}>
-                    <Typography  color={'textSecondary'} variant={'body1'} className={'Bold'}>Información de la defensa</Typography><br/>
+                    <div className={'Title'}>
+                        <Typography color={'textSecondary'} variant={'body1'} className={'Bold'}>Información de la defensa</Typography>
+                        <Tooltip icon={<XIcon className={'FillTextSecondary'}/>} text={''} onClick={() => dispatch(setSelectedRowInformation(undefined))}/>
+                    </div>
+                    <br/>
                     <Typography  color={'primary'} variant={'body1'} className={'Bold'}>{selectedRow.name}</Typography><br/>
                     <Typography  color={'textSecondary'} variant={'body2'} className={'Bold'}>Participantes</Typography><br/>
                     <Typography  color={'textSecondary'} variant={'subtitle2'} className={'GroupTitle'}>Tribunal Titular</Typography>
