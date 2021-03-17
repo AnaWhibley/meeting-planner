@@ -117,10 +117,10 @@ export const selectCalendarView = (state: RootState) => state.uiState.calendarVi
 export const selectSelectedOptionsStatusFilter = (state: RootState) => state.uiState.selectedOptionsStatusFilter;
 export const selectSelectedRowInformation = (state: RootState) => {
     const info = state.uiState.selectedRowInformation;
+    const groupedEvents = state.planner.events.slice();
     if(info){
-        return state.planner.events[info.groupId].events.find(event => event.id === info.eventId)
+        return groupedEvents[info.groupId].events.find(event => event.id === info.eventId)
     }
-    //return state.planner.events.flatMap(groupedEvent => groupedEvent.events.find(event => event.id === state.uiState.selectedRowInformation)).filter(x => !!x)[0];
 };
 export const selectForgotPasswordDialogInfo = (state: RootState) => state.uiState.forgotPasswordDialog;
 
