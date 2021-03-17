@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {login, setEmail, setPassword, User} from '../../app/login/slice';
 import {useDispatch, useSelector} from 'react-redux';
 import {Dispatch} from '@reduxjs/toolkit';
@@ -26,7 +26,7 @@ import {
     forgotPassword, selectForgotPasswordDialogInfo,
     setForgotPasswordDialogProperty,
 } from '../../app/uiStateSlice';
-import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
+import {Alert} from '../../components/alert/Alert';
 
 export function Login() {
 
@@ -148,6 +148,3 @@ export function Login() {
     );
 }
 
-function Alert(props: AlertProps) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-}

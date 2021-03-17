@@ -8,14 +8,17 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import './Calendar.scss';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectBusyDatesCurrentUser, selectBusyDatesOtherUsers} from '../../../app/planner/selectors';
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@material-ui/core';
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar} from '@material-ui/core';
 import '../../../styles/common.scss'
 import {DATE_TIME_FORMAT} from '../../../app/eventCreator/slice';
 import {addBusy, getEvents} from '../../../app/planner/slice';
 import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
 import {Color} from '../../../styles/theme';
 import {EventContent} from './EventContent';
-import {selectCalendarView} from '../../../app/uiStateSlice';
+import {selectCalendarView, setForgotPasswordDialogProperty} from '../../../app/uiStateSlice';
+import {selectLoggedInUser} from '../../../app/login/selectors';
+import {Role} from '../../../services/userService';
+import {Alert} from '../../../components/alert/Alert';
 
 export function Calendar() {
 
@@ -28,10 +31,14 @@ export function Calendar() {
     const busyDatesOU: any = useSelector(selectBusyDatesOtherUsers);
     const dates = [...busyDatesCU, ...busyDatesOU];
 
+    const currentUser = useSelector(selectLoggedInUser);
+
     const calendarRef: React.RefObject<any> = useRef();
 
     const [openDialog, setOpenDialog] = React.useState(false);
     const [selectInfo, setSelectInfo] = React.useState<DateSelectArg>();
+
+    const [openSnackbarAdmin, setOpenSnackbarAdmin] = React.useState(false);
 
     const handleOpenDialog = (event: DateSelectArg) => {
         setOpenDialog(true);
@@ -82,16 +89,22 @@ export function Calendar() {
                 initialView={calendarView}
                 weekends={false}
                 selectable={true}
-                selectMirror={true}
+                selectMirror={currentUser?.role !== Role.ADMIN}
                 locale={esLocale}
                 height={'auto'}
                 slotMinTime={'08:00:00'}
                 slotMaxTime={'20:00:00'}
                 events={dates}
-                select={(event: DateSelectArg) => handleOpenDialog(event)}
+                select={currentUser?.role !== Role.ADMIN ? (event: DateSelectArg) => handleOpenDialog(event) : () => setOpenSnackbarAdmin(true)}
                 eventContent={(props: EventContentArg) =><EventContent {...props}/>}
                 selectOverlap={(event: EventApi) => event.groupId !== 'currentUser'}
             />
+
+            <Snackbar open={openSnackbarAdmin} autoHideDuration={6000} onClose={() => setOpenSnackbarAdmin(false)}>
+                <Alert severity="error" onClose={() => setOpenSnackbarAdmin(false)}>
+                    No se pueden crear indisponibilidades con el perfil de administrador.
+                </Alert>
+            </Snackbar>
 
             <Dialog open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>{"¿Quieres crear una nueva indisponibilidad?"}</DialogTitle>
