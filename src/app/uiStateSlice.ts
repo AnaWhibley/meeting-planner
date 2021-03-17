@@ -16,7 +16,7 @@ interface uiStateSlice {
     calendarView: string;
     selectedOptionsStatusFilter: Array<string>;
     availableOptionsStatusFilter: Array<string>;
-    selectedRowInformation?: any;
+    selectedRowInformation?: string;
     forgotPasswordDialog: {
         show: boolean;
         inputErrorMessage: string;
@@ -106,7 +106,9 @@ export const selectDrawerSelector = (state: RootState) => state.uiState.drawerSe
 export const selectShowCalendar = (state: RootState) => state.uiState.showCalendar;
 export const selectCalendarView = (state: RootState) => state.uiState.calendarView;
 export const selectSelectedOptionsStatusFilter = (state: RootState) => state.uiState.selectedOptionsStatusFilter;
-export const selectSelectedRowInformation = (state: RootState) => state.uiState.selectedRowInformation;
+export const selectSelectedRowInformation = (state: RootState) => {
+    return state.planner.events.flatMap(groupedEvent => groupedEvent.events.find(event => event.id === state.uiState.selectedRowInformation)).filter(x => !!x)[0];
+};
 export const selectForgotPasswordDialogInfo = (state: RootState) => state.uiState.forgotPasswordDialog;
 
 export const toggleDrawerSelectorTransition = () => (dispatch: Dispatch<any>, getState: () => RootState) => {

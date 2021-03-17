@@ -141,7 +141,7 @@ const groupedEvents: Array<GroupedEventDto> = [
         to: "15/03/2021",
         events: [
             {
-                id: '11',
+                id: '11a',
                 name: 'Defensa TFT Ana Santana',
                 participants: [
                     {
@@ -174,7 +174,7 @@ const groupedEvents: Array<GroupedEventDto> = [
                 time: '10:30'
             },
             {
-                id: '22',
+                id: '22a',
                 name: 'Defensa TFT Lara Viera',
                 participants: [
                     {
@@ -207,7 +207,7 @@ const groupedEvents: Array<GroupedEventDto> = [
                 time: '12:30'
             },
             {
-                id: '33',
+                id: '33a',
                 name: 'Defensa TFT Juan Sánchez',
                 participants: [
                     {
@@ -240,7 +240,7 @@ const groupedEvents: Array<GroupedEventDto> = [
                 time: '12:30'
             },
             {
-                id: '55',
+                id: '55a',
                 name: 'Defensa TFT Pedro Sánchez',
                 participants: [
                     {
@@ -273,7 +273,7 @@ const groupedEvents: Array<GroupedEventDto> = [
                 time: '14:30'
             },
             {
-                id: '66',
+                id: '66a',
                 name: 'Defensa TFT Francisco Santana',
                 participants: [
                     {
