@@ -155,7 +155,7 @@ export function EventsGrid(props: any) {
     const selectedRow = useSelector(selectSelectedRowInformation);
     const onSelectionChanged = () => {
         if(gridApi) {
-            dispatch(setSelectedRowInformation(gridApi.getSelectedRows()[0]))
+            dispatch(setSelectedRowInformation(gridApi.getSelectedRows()[0].id))
         }
     }
 
@@ -210,21 +210,21 @@ export function EventsGrid(props: any) {
                     <Typography  color={'textSecondary'} variant={'subtitle2'} className={'GroupTitle'}>Tribunal Titular</Typography>
                     <div className={'ParticipantList'}>
                         {selectedRow.participants.slice(0,3).map((participant: ParticipantDto) => {
-                            return <>
+                            return (
                                 <div className={'Participant'} key={participant.email}>
                                     <ParticipantInfo participant={participant}/>
                                 </div>
-                            </>
+                            )
                         })}
                     </div><br/>
                     <Typography color={'textSecondary'} variant={'subtitle2'} className={'GroupTitle'}>Tribunal Suplente</Typography>
                     <div className={'ParticipantList'}>
                         {selectedRow.participants.slice(3,6).map((participant: ParticipantDto) => {
-                            return <>
+                            return (
                                 <div className={'Participant'} key={participant.email}>
                                     <ParticipantInfo participant={participant}/>
                                 </div>
-                            </>
+                            )
                         })}
                     </div>
                 </div>
