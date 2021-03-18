@@ -35,10 +35,10 @@ export const slice = createSlice({
     name: 'uiState',
     initialState: {
         isBusy: false,
-        currentViewPlanner: ViewPlanner.BUSY_DATES,
+        currentViewPlanner: ViewPlanner.EVENTS,
         drawerSelector: false,
         showCalendar: true,
-        calendarView: 'timeGridWeek',
+        calendarView: 'dayGridMonth',
         selectedOptionsStatusFilter: [],
         availableOptionsStatusFilter: [],
         forgotPasswordDialog: {

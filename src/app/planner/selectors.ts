@@ -68,7 +68,8 @@ export const selectEventsFiltered = (state: RootState) => {
             eventMap.set(ev.eventId, eventWithProperties);
         }
     });
-    return Array.from(eventMap.values());
+    const selectedEvents = state.planner.selectedEvents.slice().flatMap((event) => event);
+    return Array.from(eventMap.values()).filter(event => selectedEvents.includes(event.eventId));
 };
 
 export const selectNameByEmail = (state: RootState, email: string): string => {
