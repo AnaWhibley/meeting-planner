@@ -3,7 +3,7 @@ import {
     selectCurrentViewPlanner,
     selectShowCalendar,
     setCurrentViewPlanner, setEventsGridSelectedTab,
-    setSelectedRowInformation, showGrid, toggleShowCalendar
+    setSelectedRowInformation, showGrid, toggleShowCalendar, ViewPlanner
 } from '../../../app/uiStateSlice';
 import React from 'react';
 import {setSelectedEvents, setSelectedParticipants, toggleAllEventsSelected} from '../../../app/planner/slice';
@@ -41,12 +41,13 @@ export function DrawerContent() {
 
     const dispatch = useDispatch();
     const currentViewPlanner = useSelector(selectCurrentViewPlanner);
-    const handleChangeView = (event: React.ChangeEvent<HTMLInputElement>) => {
-        dispatch(setCurrentViewPlanner((event.target as HTMLInputElement).value));
+    const handleChangeView = () => {
+        const newView = currentViewPlanner === ViewPlanner.EVENTS ? ViewPlanner.BUSY_DATES : ViewPlanner.EVENTS;
+        dispatch(setCurrentViewPlanner(newView));
     };
 
     const handleToggle = (value: string, index?: number) => () => {
-        if(currentViewPlanner === 'busyDates') {
+        if(currentViewPlanner === ViewPlanner.BUSY_DATES) {
             dispatch(setSelectedParticipants(value));
         }else{
             dispatch(setSelectedEvents({eventId: value, groupId: index}));
@@ -147,7 +148,7 @@ export function DrawerContent() {
 
     return (
         <>
-            {currentViewPlanner === 'busyDates' ?
+            {currentViewPlanner === ViewPlanner.BUSY_DATES ?
                 <AccordionList title={'Participantes'} list={participantList} className={'ParticipantsList'}/>
                 :
                 <AccordionList title={'Defensas'} list={groupedEventList} className={'GroupedEventList'}/>
