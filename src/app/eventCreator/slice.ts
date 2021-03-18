@@ -53,6 +53,7 @@ export interface EventState {
     status: string;
     date: string;
     time: string;
+    color?: string;
 }
 
 export interface EventCreatorSlice {

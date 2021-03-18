@@ -24,6 +24,7 @@ export interface BusyState {
     start: string;
     end: string;
     allDay: boolean;
+    eventId?: string;
 }
 
 export const slice = createSlice({

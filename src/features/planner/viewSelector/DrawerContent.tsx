@@ -125,7 +125,7 @@ export function DrawerContent() {
                                             edge="start"
                                             checked={selectedEvents[index].indexOf(event.id) !== -1}
                                             tabIndex={-1}
-                                            color={'primary'}
+                                            style={{color: event.color}}
                                             disableRipple
                                         />
                                     </ListItemIcon>
