@@ -30,9 +30,10 @@
   }
 
   .TextInfoContainer {
-    margin: 1em 1em;
+    margin: 1em;
     font-family: Nunito, serif;
     font-weight: bold;
+    width: 300px;
     hr{
       border-top: thin solid $textPrimaryLight;
     }
