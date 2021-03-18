@@ -26,11 +26,16 @@ interface uiStateSlice {
     eventsGridSelectedTab: number;
 }
 
+export enum ViewPlanner {
+    EVENTS = 'events',
+    BUSY_DATES = 'busyDates'
+}
+
 export const slice = createSlice({
     name: 'uiState',
     initialState: {
         isBusy: false,
-        currentViewPlanner: 'busyDates',
+        currentViewPlanner: ViewPlanner.BUSY_DATES,
         drawerSelector: false,
         showCalendar: true,
         calendarView: 'timeGridWeek',
