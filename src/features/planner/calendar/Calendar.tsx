@@ -7,7 +7,11 @@ import esLocale from '@fullcalendar/core/locales/es';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import './Calendar.scss';
 import {useDispatch, useSelector} from 'react-redux';
-import {selectBusyDatesCurrentUser, selectBusyDatesOtherUsers} from '../../../app/planner/selectors';
+import {
+    selectBusyDatesCurrentUser,
+    selectBusyDatesOtherUsers,
+    selectEventsFiltered
+} from '../../../app/planner/selectors';
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar} from '@material-ui/core';
 import '../../../styles/common.scss'
 import {DATE_TIME_FORMAT} from '../../../app/eventCreator/slice';
@@ -15,10 +19,16 @@ import {addBusy, getEvents} from '../../../app/planner/slice';
 import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
 import {Color} from '../../../styles/theme';
 import {EventContent} from './EventContent';
-import {selectCalendarView, setForgotPasswordDialogProperty} from '../../../app/uiStateSlice';
+import {
+    selectCalendarView,
+    selectCurrentViewPlanner,
+    setForgotPasswordDialogProperty,
+    ViewPlanner
+} from '../../../app/uiStateSlice';
 import {selectLoggedInUser} from '../../../app/login/selectors';
 import {Role} from '../../../services/userService';
 import {Alert} from '../../../components/alert/Alert';
+import {BusyDateContent} from './BusyDateContent';
 
 export function Calendar() {
 
@@ -29,7 +39,11 @@ export function Calendar() {
 
     const busyDatesCU: any = useSelector(selectBusyDatesCurrentUser);
     const busyDatesOU: any = useSelector(selectBusyDatesOtherUsers);
-    const dates = [...busyDatesCU, ...busyDatesOU];
+    const busyDates = [...busyDatesCU, ...busyDatesOU];
+
+    const events = useSelector(selectEventsFiltered);
+
+    console.log(busyDates, events)
 
     const currentUser = useSelector(selectLoggedInUser);
 
@@ -50,6 +64,7 @@ export function Calendar() {
     };
 
     const calendarView = useSelector(selectCalendarView);
+    const currentViewPlanner = useSelector(selectCurrentViewPlanner)
 
     const handleAcceptDialog = () => {
         if(selectInfo) {
@@ -94,9 +109,9 @@ export function Calendar() {
                 height={'auto'}
                 slotMinTime={'08:00:00'}
                 slotMaxTime={'20:00:00'}
-                events={dates}
+                events={currentViewPlanner === ViewPlanner.BUSY_DATES ? busyDates : events}
                 select={currentUser?.role !== Role.ADMIN ? (event: DateSelectArg) => handleOpenDialog(event) : () => setOpenSnackbarAdmin(true)}
-                eventContent={(props: EventContentArg) =><EventContent {...props}/>}
+                eventContent={currentViewPlanner === ViewPlanner.BUSY_DATES ? (props: EventContentArg) => <BusyDateContent {...props}/> : (props: EventContentArg) => <EventContent {...props}/>}
                 selectOverlap={(event: EventApi) => event.groupId !== 'currentUser'}
             />
 
