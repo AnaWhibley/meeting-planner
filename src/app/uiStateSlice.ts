@@ -3,6 +3,7 @@ import {LoginResponse} from '../services/userService';
 import {RootState} from './store';
 import {GroupedEventDto} from '../services/eventService';
 import {getUserService} from "../services/utils";
+
 const incrementByAmount = createAction<number>('counter/incrementByAmount');
 const setUser = createAction<LoginResponse>('login/setUser');
 const showErrorMessage = createAction<boolean>('login/showErrorMessage');
@@ -24,6 +25,7 @@ interface uiStateSlice {
         emailSentError: boolean;
     };
     eventsGridSelectedTab: number;
+    expandedGroupedEventsDrawer: Array<string>;
 }
 
 export enum ViewPlanner {
@@ -48,6 +50,7 @@ export const slice = createSlice({
             emailSentError: false
         },
         eventsGridSelectedTab: 0,
+        expandedGroupedEventsDrawer: []
     } as uiStateSlice,
     reducers: {
         requesting: state => {
@@ -89,6 +92,18 @@ export const slice = createSlice({
         setEventsGridSelectedTab: (state, action) => {
             state.eventsGridSelectedTab = action.payload;
         },
+        setExpandedGroupedEvent: (state, action) => {
+            const currentIndex = state.expandedGroupedEventsDrawer.indexOf(action.payload);
+            const newExpandedGroupedEvents = [...state.expandedGroupedEventsDrawer];
+
+            if (currentIndex === -1) {
+                newExpandedGroupedEvents.push(action.payload);
+            } else {
+                newExpandedGroupedEvents.splice(currentIndex, 1);
+            }
+
+            state.expandedGroupedEventsDrawer = newExpandedGroupedEvents;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -106,12 +121,15 @@ export const slice = createSlice({
                 action.payload.forEach(ev => ev.events.forEach(e => availableStatus.add(e.status)));
                 state.selectedOptionsStatusFilter = Array.from(availableStatus);
                 state.availableOptionsStatusFilter = Array.from(availableStatus);
+
+                state.expandedGroupedEventsDrawer = action.payload.map(groupedEvent => groupedEvent.groupName);
             })
             .addDefaultCase((state, action) => {})
     },
 });
 export const { requesting, setCurrentViewPlanner, setDrawerSelector, toggleShowCalendar, setSelectedOptionsStatusFilter,
-    resetStatusFilter, setSelectedRowInformation, setForgotPasswordDialogProperty, showGrid, setEventsGridSelectedTab } = slice.actions;
+    resetStatusFilter, setSelectedRowInformation, setForgotPasswordDialogProperty, showGrid, setEventsGridSelectedTab,
+    setExpandedGroupedEvent } = slice.actions;
 
 export const selectIsBusy = (state: RootState) => state.uiState.isBusy;
 export const selectEventsGridSelectedTab = (state: RootState) => state.uiState.eventsGridSelectedTab;
@@ -120,6 +138,7 @@ export const selectDrawerSelector = (state: RootState) => state.uiState.drawerSe
 export const selectShowCalendar = (state: RootState) => state.uiState.showCalendar;
 export const selectCalendarView = (state: RootState) => state.uiState.calendarView;
 export const selectSelectedOptionsStatusFilter = (state: RootState) => state.uiState.selectedOptionsStatusFilter;
+export const selectExpandedGroupedEventsDrawer = (state: RootState) => state.uiState.expandedGroupedEventsDrawer;
 export const selectSelectedRowInformation = (state: RootState) => {
     const info = state.uiState.selectedRowInformation;
     const groupedEvents = state.planner.events.slice();
