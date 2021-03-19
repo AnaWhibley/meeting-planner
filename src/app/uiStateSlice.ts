@@ -68,7 +68,7 @@ export const slice = createSlice({
         showGrid: (state) => {
             state.showCalendar = false;
         },
-        setSelectedOptionsStatusFilter: ((state, action) => {
+        setSelectedOptionsStatusFilter: (state, action) => {
             const currentIndex = state.selectedOptionsStatusFilter.indexOf(action.payload);
             const newSelectedOptionsStatusFilter = [...state.selectedOptionsStatusFilter];
 
@@ -79,7 +79,7 @@ export const slice = createSlice({
             }
 
             state.selectedOptionsStatusFilter = newSelectedOptionsStatusFilter;
-        }),
+        },
         resetStatusFilter: (state) => {
             state.selectedOptionsStatusFilter = state.availableOptionsStatusFilter;
         },
