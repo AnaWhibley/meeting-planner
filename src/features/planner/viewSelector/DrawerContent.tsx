@@ -37,7 +37,6 @@ import ActionButton, {ButtonVariant} from '../../../components/actionButton/Acti
 import {Color} from '../../../styles/theme';
 import '../../../styles/common.scss';
 import './ViewSelector.scss';
-import {selectLoggedInUser} from '../../../app/login/selectors';
 
 export function DrawerContent() {
 
@@ -48,13 +47,12 @@ export function DrawerContent() {
         dispatch(setCurrentViewPlanner(newView));
     };
 
-    const handleToggle = (value: string, index?: number) => () => {
+    const handleToggle = (value: string, index?: number) => {
         if(currentViewPlanner === ViewPlanner.BUSY_DATES) {
             dispatch(setSelectedParticipants(value));
         }else{
             dispatch(setSelectedEvents({eventId: value, groupId: index}));
         }
-
     };
 
     const showCalendar = useSelector(selectShowCalendar);
@@ -80,14 +78,14 @@ export function DrawerContent() {
 
     const participantList = <List dense>
         {/*Selected participants array includes the current user, that's why we need to check with -1*/}
-        <FormControlLabel control={<Checkbox checked={(selectedParticipants.length - 1) === participants.length}
+        {participants.length > 0 ? <FormControlLabel control={<Checkbox checked={(selectedParticipants.length - 1) === participants.length}
                                              onChange={() => dispatch(toggleSelectAllParticipants())}/>}
                           label={<Typography color={'textPrimary'} variant={'body1'} className={'SelectAllParticipantsLabel'}>Seleccionar todos</Typography>}
                           className={'SelectAll'}
-        />
+        /> : null}
         {participants.map((value) => {
             return (
-                <ListItem key={value.id} button onClick={handleToggle(value.id)}>
+                <ListItem key={value.id} button onClick={() => handleToggle(value.id)}>
                     <ListItemAvatar className={'ParticipantAvatar'}>
                         <AvatarInitials text={value.name} color={value.color}/>
                     </ListItemAvatar>
@@ -96,8 +94,8 @@ export function DrawerContent() {
                         <Checkbox
                             edge="end"
                             style={{color: value.color}}
-                            onChange={handleToggle(value.id)}
                             checked={selectedParticipants.indexOf(value.id) !== -1}
+                            onChange={() => handleToggle(value.id)}
                         />
                     </ListItemSecondaryAction>
                 </ListItem>
@@ -117,7 +115,7 @@ export function DrawerContent() {
         return (
             <Accordion expanded={expandedGroupedEvents.includes(groupedEvent.groupName)}
                        key={groupedEvent.groupName}
-                       onClick={() => dispatch(setExpandedGroupedEvent(groupedEvent.groupName))}
+                       onChange={() => dispatch(setExpandedGroupedEvent(groupedEvent.groupName))}
             >
                 <AccordionSummary
                     expandIcon={<CirclePlusIcon className={'FillTextSecondary'}/>}
@@ -132,7 +130,7 @@ export function DrawerContent() {
                         />
                         {groupedEvent.events.map(event => {
                             return (
-                                <ListItem key={event.id} dense button onClick={handleToggle(event.id, index)}>
+                                <ListItem key={event.id} dense button onClick={() => handleToggle(event.id, index)}>
                                     <ListItemIcon className={'Checkbox'}>
                                         <Checkbox
                                             edge="start"
@@ -140,6 +138,7 @@ export function DrawerContent() {
                                             tabIndex={-1}
                                             style={{color: event.color}}
                                             disableRipple
+                                            onChange={() => handleToggle(event.id, index)}
                                         />
                                     </ListItemIcon>
                                     <ListItemText
