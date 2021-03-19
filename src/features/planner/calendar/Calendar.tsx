@@ -43,8 +43,6 @@ export function Calendar() {
 
     const events = useSelector(selectEventsFiltered);
 
-    console.log(busyDates, events)
-
     const currentUser = useSelector(selectLoggedInUser);
 
     const calendarRef: React.RefObject<any> = useRef();
