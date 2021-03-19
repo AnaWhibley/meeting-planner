@@ -6,8 +6,8 @@ import {
     setExpandedGroupedEvent,
     setSelectedRowInformation, showGrid, toggleShowCalendar, ViewPlanner
 } from '../../../app/uiStateSlice';
-import React, {useState} from 'react';
-import {setSelectedEvents, setSelectedParticipants, toggleAllEventsSelected} from '../../../app/planner/slice';
+import React from 'react';
+import {setSelectedEvents, setSelectedParticipants, toggleSelectAllEvents, toggleSelectAllParticipants} from '../../../app/planner/slice';
 import {
     selectEvents,
     selectParticipants,
@@ -37,6 +37,7 @@ import ActionButton, {ButtonVariant} from '../../../components/actionButton/Acti
 import {Color} from '../../../styles/theme';
 import '../../../styles/common.scss';
 import './ViewSelector.scss';
+import {selectLoggedInUser} from '../../../app/login/selectors';
 
 export function DrawerContent() {
 
@@ -78,9 +79,15 @@ export function DrawerContent() {
     }
 
     const participantList = <List dense>
+        {/*Selected participants array includes the current user, that's why we need to check with -1*/}
+        <FormControlLabel control={<Checkbox checked={(selectedParticipants.length - 1) === participants.length}
+                                             onChange={() => dispatch(toggleSelectAllParticipants())}/>}
+                          label={<Typography color={'textPrimary'} variant={'body1'} className={'SelectAllParticipantsLabel'}>Seleccionar todos</Typography>}
+                          className={'SelectAll'}
+        />
         {participants.map((value) => {
             return (
-                <ListItem key={value.id} button>
+                <ListItem key={value.id} button onClick={handleToggle(value.id)}>
                     <ListItemAvatar className={'ParticipantAvatar'}>
                         <AvatarInitials text={value.name} color={value.color}/>
                     </ListItemAvatar>
@@ -119,7 +126,7 @@ export function DrawerContent() {
                 </AccordionSummary>
                 <AccordionDetails>
                     <List dense>
-                        <FormControlLabel control={<Checkbox checked={selectedEvents[index].length === groupedEvent.events.length} onChange={() => dispatch(toggleAllEventsSelected({groupIndex: index}))}/>}
+                        <FormControlLabel control={<Checkbox checked={selectedEvents[index].length === groupedEvent.events.length} onChange={() => dispatch(toggleSelectAllEvents({groupIndex: index}))}/>}
                                           label={<Typography color={'textPrimary'} variant={'body1'}>Seleccionar todos</Typography>}
                                           className={'SelectAll'}
                         />
