@@ -74,7 +74,7 @@ export const slice = createSlice({
 
             state.selectedEvents = newSelectedEvents;
         }),
-        toggleAllEventsSelected: ((state, action) => {
+        toggleSelectAllEvents: ((state, action) => {
             const groupedEvents = state.events.slice();
             const isAllSelected = groupedEvents[action.payload.groupIndex].events.length === state.selectedEvents[action.payload.groupIndex].length;
             if(isAllSelected) {
@@ -83,10 +83,20 @@ export const slice = createSlice({
                 state.selectedEvents[action.payload.groupIndex] = groupedEvents[action.payload.groupIndex].events.map(event => event.id);
             }
         }),
+        toggleSelectAllParticipants: ((state) => {
+            const participants = state.participants.slice().map(user => user.id);
+            const isAllSelected = participants.length === state.selectedParticipants.length;
+            if(isAllSelected) {
+                state.selectedParticipants = [];
+            }else{
+                state.selectedParticipants = participants;
+            }
+        }),
     },
 });
 
-export const { populateBusyDates, populateEvents, populateParticipants, setSelectedParticipants, setSelectedEvents, toggleAllEventsSelected } = slice.actions;
+export const { populateBusyDates, populateEvents, populateParticipants, setSelectedParticipants, setSelectedEvents,
+    toggleSelectAllEvents, toggleSelectAllParticipants } = slice.actions;
 
 export const getEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     const { login } = getState();
