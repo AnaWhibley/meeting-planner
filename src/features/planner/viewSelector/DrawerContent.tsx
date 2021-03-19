@@ -1,11 +1,12 @@
 import {useDispatch, useSelector} from 'react-redux';
 import {
-    selectCurrentViewPlanner,
+    selectCurrentViewPlanner, selectExpandedGroupedEventsDrawer,
     selectShowCalendar,
     setCurrentViewPlanner, setEventsGridSelectedTab,
+    setExpandedGroupedEvent,
     setSelectedRowInformation, showGrid, toggleShowCalendar, ViewPlanner
 } from '../../../app/uiStateSlice';
-import React from 'react';
+import React, {useState} from 'react';
 import {setSelectedEvents, setSelectedParticipants, toggleAllEventsSelected} from '../../../app/planner/slice';
 import {
     selectEvents,
@@ -103,9 +104,14 @@ export function DrawerContent() {
         dispatch(showGrid());
     };
 
+    const expandedGroupedEvents = useSelector(selectExpandedGroupedEventsDrawer);
+
     const groupedEventList = groupedEvents.map((groupedEvent: GroupedEventDto, index: number) => {
         return (
-            <Accordion defaultExpanded key={groupedEvent.groupName}>
+            <Accordion expanded={expandedGroupedEvents.includes(groupedEvent.groupName)}
+                       key={groupedEvent.groupName}
+                       onClick={() => dispatch(setExpandedGroupedEvent(groupedEvent.groupName))}
+            >
                 <AccordionSummary
                     expandIcon={<CirclePlusIcon className={'FillTextSecondary'}/>}
                 >
