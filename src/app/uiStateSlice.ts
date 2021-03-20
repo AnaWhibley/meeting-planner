@@ -4,9 +4,7 @@ import {RootState} from './store';
 import {GroupedEventDto} from '../services/eventService';
 import {getUserService} from "../services/utils";
 
-const incrementByAmount = createAction<number>('counter/incrementByAmount');
 const setUser = createAction<LoginResponse>('login/setUser');
-const showErrorMessage = createAction<boolean>('login/showErrorMessage');
 const populateEvents = createAction<Array<GroupedEventDto>>('planner/populateEvents');
 
 interface uiStateSlice {
@@ -107,13 +105,7 @@ export const slice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(incrementByAmount, (state) => {
-                state.isBusy = false;
-            })
             .addCase(setUser, (state) => {
-                state.isBusy = false;
-            })
-            .addCase(showErrorMessage, (state) => {
                 state.isBusy = false;
             })
             .addCase(populateEvents, (state, action) => {
@@ -123,6 +115,8 @@ export const slice = createSlice({
                 state.availableOptionsStatusFilter = Array.from(availableStatus);
 
                 state.expandedGroupedEventsDrawer = action.payload.map(groupedEvent => groupedEvent.groupName);
+
+                state.isBusy = false;
             })
             .addDefaultCase((state, action) => {})
     },
@@ -155,7 +149,7 @@ export const toggleDrawerSelectorTransition = () => (dispatch: Dispatch<any>, ge
 }
 
 export const forgotPassword = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
-    dispatch(requesting());
+    //dispatch(requesting());
     const { login } = getState();
 
     if (!login.email) {
