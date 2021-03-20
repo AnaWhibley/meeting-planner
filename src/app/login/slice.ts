@@ -4,6 +4,7 @@ import {LoginResponse, Role} from '../../services/userService';
 import { Dispatch } from '@reduxjs/toolkit';
 import {RootState} from '../store';
 import {getUserService} from "../../services/utils";
+import {getEvents} from '../planner/slice';
 
 export interface LoginSlice {
     email: string;
@@ -61,7 +62,8 @@ export const login = () => (dispatch: Dispatch<any>, getState: () => RootState) 
     const { login } = getState();
     getUserService().login(login.email, login.password).subscribe((response: LoginResponse) => {
         if(response.success){
-            dispatch(setUser(response.user))
+            dispatch(setUser(response.user));
+            dispatch(getEvents());
         } else {
             dispatch(showErrorMessage(response.error))
         }
@@ -69,7 +71,7 @@ export const login = () => (dispatch: Dispatch<any>, getState: () => RootState) 
 };
 
 export const logout = () => (dispatch: Dispatch<any>) => {
-    dispatch(requesting());
+    //dispatch(requesting());
     getUserService().logout().subscribe((success: boolean) => {
         if(success){
             dispatch(setUser(undefined));

@@ -4,6 +4,7 @@ import EventService, {BusyDateDto, GroupedEventDto} from '../../services/eventSe
 import {Role} from '../../services/userService';
 import {User} from '../login/slice';
 import {getUserService} from "../../services/utils";
+import {requesting} from '../uiStateSlice';
 
 export interface PlannerSlice {
     busyDatesCurrentUser: Array<BusyState>;
@@ -38,14 +39,14 @@ export const slice = createSlice({
         selectedEvents: []
     } as PlannerSlice,
     reducers: {
-        populateBusyDates:((state, action) => {
+        populateBusyDates:(state, action) => {
             state.busyDatesCurrentUser = action.payload.busyDatesCU;
             state.busyDatesOtherUsers = action.payload.busyDatesOU;
-        }),
-        populateEvents: ((state, action) => {
+        },
+        populateEvents: (state, action) => {
             state.events = action.payload;
             state.selectedEvents = action.payload.map((groupedEvent: GroupedEventDto) => groupedEvent.events.map(event => event.id));
-        }),
+        },
         populateParticipants: ((state, action) => {
             state.participants = action.payload;
             state.selectedParticipants = action.payload.map((u: User) => u.id);
@@ -99,6 +100,7 @@ export const { populateBusyDates, populateEvents, populateParticipants, setSelec
     toggleSelectAllEvents, toggleSelectAllParticipants } = slice.actions;
 
 export const getEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
+    dispatch(requesting());
     const { login } = getState();
     const currentUser = login.loggedInUser;
     if (currentUser) {

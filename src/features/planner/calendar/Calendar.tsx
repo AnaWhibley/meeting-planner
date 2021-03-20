@@ -33,9 +33,6 @@ import {BusyDateContent} from './BusyDateContent';
 export function Calendar() {
 
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(getEvents())
-    }, [dispatch]);
 
     const busyDatesCU: any = useSelector(selectBusyDatesCurrentUser);
     const busyDatesOU: any = useSelector(selectBusyDatesOtherUsers);

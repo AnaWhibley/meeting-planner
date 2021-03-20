@@ -36,7 +36,7 @@ import {ReactComponent as InfoIcon} from '../../../assets/icons/evericons/info.s
 import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
 import {Color} from '../../../styles/theme';
 import '../../../styles/common.scss';
-import './ViewSelector.scss';
+import './Drawer.scss';
 
 export function DrawerContent() {
 
@@ -49,8 +49,10 @@ export function DrawerContent() {
 
     const handleToggle = (value: string, index?: number) => {
         if(currentViewPlanner === ViewPlanner.BUSY_DATES) {
+            console.log('click 1')
             dispatch(setSelectedParticipants(value));
         }else{
+            console.log('click 2')
             dispatch(setSelectedEvents({eventId: value, groupId: index}));
         }
     };
@@ -85,11 +87,15 @@ export function DrawerContent() {
         /> : null}
         {participants.map((value) => {
             return (
-                <ListItem key={value.id} button onClick={() => handleToggle(value.id)}>
+                <ListItem key={value.id} button >
                     <ListItemAvatar className={'ParticipantAvatar'}>
                         <AvatarInitials text={value.name} color={value.color}/>
                     </ListItemAvatar>
-                    <ListItemText primary={<Typography color={'textPrimary'} variant={'body1'}>{value.name}</Typography>}/>
+                    <ListItemText onClick={() => handleToggle(value.id)}
+                                  primary={
+                                      <Typography color={'textPrimary'} variant={'body1'}>{value.name}</Typography>
+                                  }
+                    />
                     <ListItemSecondaryAction>
                         <Checkbox
                             edge="end"
@@ -130,18 +136,19 @@ export function DrawerContent() {
                         />
                         {groupedEvent.events.map(event => {
                             return (
-                                <ListItem key={event.id} dense button onClick={() => handleToggle(event.id, index)}>
+                                <ListItem key={event.id} dense button>
                                     <ListItemIcon className={'Checkbox'}>
                                         <Checkbox
                                             edge="start"
+                                            onChange={() => handleToggle(event.id, index)}
                                             checked={selectedEvents[index].indexOf(event.id) !== -1}
                                             tabIndex={-1}
                                             style={{color: event.color}}
                                             disableRipple
-                                            onChange={() => handleToggle(event.id, index)}
                                         />
                                     </ListItemIcon>
                                     <ListItemText
+                                        onClick={() => handleToggle(event.id, index)}
                                         primary={<Typography color={'textPrimary'} variant={'body1'}>{event.name}</Typography>}
                                     />
                                     <ListItemSecondaryAction>

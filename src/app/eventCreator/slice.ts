@@ -153,7 +153,7 @@ export const slice = createSlice({
 export const { next, previous, setFrom, setTo, setName, createNew, complete, setParticipants, addTutor, removeTutor, setImportedData, setGroupName, setDuration, editEvent, setInitialState } = slice.actions;
 
 export const createEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
-    dispatch(requesting());
+    //dispatch(requesting());
     const { eventCreator } = getState();
     EventService.create(mapToCreateEventRequest(eventCreator)).subscribe((response: CreateResponse) => {
         if(response.success){
