@@ -147,8 +147,37 @@
     margin-left: 15px;
   }
 
-  .DateRangeContainer {
-    margin-left: 1em;
+  .AccordionDetailsGroupedEvent {
+    display: flex;
+    justify-content: space-between;
+    .Dates {
+      display: flex;
+      flex-direction: column;
+      .DateRangeContainer {
+        margin-left: 1em;
+      }
+    }
+    .Actions {
+      margin-right: 1em;
+      .TrashIconContainer {
+        display: inline;
+        button {
+          fill: $textSecondary;
+        }
+        button:hover{
+          fill: #F44336 !important;
+        }
+      }
+      .OptionsIconContainer {
+        display: inline;
+        button {
+          fill: $textSecondary;
+        }
+        button:hover{
+          fill: #2196f3 !important;
+        }
+      }
+    }
   }
 
   .MuiAppBar-root {
