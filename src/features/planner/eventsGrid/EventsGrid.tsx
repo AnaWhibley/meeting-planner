@@ -33,6 +33,10 @@ import {DateTime} from 'luxon';
 import { ParticipantInfo } from '../../../components/participantInformation/ParticipantInfo';
 import {ParticipantDto} from '../../../services/eventService';
 import {DATE_FORMAT} from '../../../app/eventCreator/slice';
+import {ReactComponent as TrashIcon} from "../../../assets/icons/evericons/trash-empty.svg";
+import {ReactComponent as OptionsIcon} from "../../../assets/icons/evericons/options.svg";
+import {selectLoggedInUser} from "../../../app/login/selectors";
+import {Role} from "../../../services/userService";
 
 export const statusMapper = (status: string) => {
     if(status === 'confirmed') {
@@ -167,6 +171,8 @@ export function EventsGrid(props: any) {
         }
     }
 
+    const loggedInUser = useSelector(selectLoggedInUser);
+
     return (
         <>
             {groupedEvents.length > 0 ? <div className={'EventsGridContainer'}>
@@ -179,15 +185,47 @@ export function EventsGrid(props: any) {
                     <AccordionSummary expandIcon={<ExpandMore/>}>
                         <Typography  color={'textSecondary'} variant={'body1'} className={'Bold'}>Información de la convocatoria</Typography>
                     </AccordionSummary>
-                    <AccordionDetails>
-                        <div className={'DateRangeContainer'}>
-                            <Tooltip icon={<InfoIcon className={'FillPrimary'}/>}
-                                     text={'Rango de fecha oficial en el que se celebra la convocatoria. Esta fecha está definida por la universidad.'}
-                                     placement={'bottom'}/>
-                            <Typography color={'primary'}  display={'inline'} variant={'body1'}  className={'Bold'}>Rango de fecha: </Typography>
-                            <Typography color={'textSecondary'} variant={'body1'} display={'inline'}> 10/02/2021 - </Typography>
-                            <Typography color={'textSecondary'} variant={'body1'} display={'inline'}> 10/03/2021</Typography>
+                    <AccordionDetails className={'AccordionDetailsGroupedEvent'}>
+                        <div className={'Dates'}>
+                            <div className={'DateRangeContainer'}>
+                                <Tooltip icon={<InfoIcon className={'FillPrimary'}/>}
+                                         text={'Rango oficial en el que se celebra la convocatoria. Esta fecha está definida por la universidad.'}
+                                         placement={'bottom'}/>
+                                <Typography color={'primary'}  display={'inline'} variant={'body1'} className={'Bold'}>Rango de convocatoria: </Typography>
+                                <Typography color={'textSecondary'} variant={'body1'} display={'inline'}> {groupedEvents[currentTab].from} - </Typography>
+                                <Typography color={'textSecondary'} variant={'body1'} display={'inline'}>{groupedEvents[currentTab].to}</Typography>
+                            </div>
+                            <div className={'DateRangeContainer'}>
+                                <Tooltip icon={<InfoIcon className={'FillPrimary'}/>}
+                                         text={'Rango de fecha para confirmar asistencia a las defensas e introducir últimas indisponibilidades si fuera necesario.'}
+                                         placement={'bottom'}/>
+                                <Typography color={'primary'}  display={'inline'} variant={'body1'} className={'Bold'}>Rango de confirmación: </Typography>
+                                <Typography color={'textSecondary'} variant={'body1'} display={'inline'}> {groupedEvents[currentTab].from} - </Typography>
+                                <Typography color={'textSecondary'} variant={'body1'} display={'inline'}>{groupedEvents[currentTab].to}</Typography>
+                            </div>
+                            <div className={'DateRangeContainer'}>
+                                <Tooltip icon={<InfoIcon className={'FillPrimary'}/>}
+                                         text={'Fecha a partir de la cual todos los eventos de la convocatoria quedan confirmados.'}
+                                         placement={'bottom'}/>
+                                <Typography color={'primary'}  display={'inline'} variant={'body1'} className={'Bold'}>Establecimiento de fecha: </Typography>
+                                <Typography color={'textSecondary'} variant={'body1'} display={'inline'}> {groupedEvents[currentTab].from}</Typography>
+                            </div>
                         </div>
+                        {loggedInUser && loggedInUser.role === Role.ADMIN ?
+                            <div className={'Actions'}>
+                                <Typography color={'secondary'} align={'center'} variant={'body1'} className={'Bold'}>Acciones</Typography>
+                                <div className={'OptionsIconContainer'}>
+                                    <Tooltip icon={<OptionsIcon/>}
+                                             text={'Editar'}
+                                             placement={'bottom'}/>
+                                </div>
+                                <div className={'TrashIconContainer'}>
+                                    <Tooltip icon={<TrashIcon/>}
+                                             text={'Eliminar'}
+                                             placement={'bottom'}/>
+                                </div>
+                            </div>
+                        : null}
                     </AccordionDetails>
                 </Accordion>
                 <Typography  color={'textSecondary'} variant={'body1'} className={'Bold GridTitle'}>Defensas programadas</Typography>
