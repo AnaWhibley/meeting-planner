@@ -9,6 +9,7 @@ import {EventsGrid} from '../eventsGrid/EventsGrid';
 import React from 'react';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import {DrawerContent} from './DrawerContent';
+import './Drawer.scss';
 
 const drawerWidth = 260;
 
@@ -76,6 +77,7 @@ export default function Drawer() {
     const showCalendar = useSelector(selectShowCalendar);
 
     return (
+        <div className={'ViewSelectorContainer'}>
         <div className={classes.root}>
             <div className={classes.openButton}>
                 <IconButton
@@ -109,6 +111,7 @@ export default function Drawer() {
                 })}>
                 {showCalendar ? <Calendar/> : <EventsGrid/>}
             </main>
+        </div>
         </div>
     );
 }
