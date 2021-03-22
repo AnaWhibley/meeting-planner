@@ -4,6 +4,14 @@
  font-family: Nunito, serif;
 }
 
+.EventOverlaps {
+  color: #de3f00;
+  svg {
+    vertical-align: middle;
+    fill: #ff6022;
+  }
+}
+
 .EventContent {
   height: 100%;
   display: inline-block;

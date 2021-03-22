@@ -3,16 +3,18 @@ import {BusyState} from './slice';
 import {DateTime} from 'luxon';
 import {DATE_TIME_FORMAT} from '../eventCreator/slice';
 import {Role} from '../../services/userService';
+import {EventDto, GroupedEventDto} from '../../services/eventService';
 
 export const selectBusyDatesCurrentUser = (state: RootState) => state.planner.busyDatesCurrentUser.map((date: BusyState) => {
 
-    const event = state.planner.events.slice().flatMap(groupedEvent => groupedEvent.events.find(event => event.id === date.eventId))[0];
+    const event = findEventById(state, date.eventId);
+
     return {
         ...date,
-        start: DateTime.fromFormat(date.start, DATE_TIME_FORMAT).toJSDate(),
-        end: DateTime.fromFormat(date.end, DATE_TIME_FORMAT).toJSDate(),
+        start: getJSDateFromString(date.start),
+        end: getJSDateFromString(date.end),
         title: date.eventId ? event?.name + ' está programado' : 'Estás ocupado/a',
-        color: '#3788D8',
+        color: date.eventId ? '#8fbdef' : '#2896ff',
         textColor: 'black',
         canDelete: !date.eventId,
         groupId: 'currentUser'
@@ -23,12 +25,12 @@ export const selectBusyDatesOtherUsers = (state: RootState) => state.planner.bus
     const u = state.planner.participants.find(participant => participant.id === user.userId);
 
     return user.busy.map((date: BusyState) => {
-        const event = state.planner.events.slice().flatMap(groupedEvent => groupedEvent.events.find(event => event.id === date.eventId))[0];
+        const event = findEventById(state, date.eventId);
 
         return {
             ...date,
-            start: DateTime.fromFormat(date.start, DATE_TIME_FORMAT).toJSDate(),
-            end: DateTime.fromFormat(date.end, DATE_TIME_FORMAT).toJSDate(),
+            start: getJSDateFromString(date.start),
+            end: getJSDateFromString(date.end),
             textColor: 'black',
             color: u?.color,
             title: date.eventId ? u?.name + ' tiene programado el evento ' + event?.name : u?.name + ' está ocupado/a',
@@ -55,11 +57,11 @@ export const selectEventsFiltered = (state: RootState) => {
     const eventMap = new Map();
     busyDates.forEach(ev => {
         if(!eventMap.has(ev.eventId)) {
-            const eventDetails = state.planner.events.slice().flatMap(groupedEvent => groupedEvent.events.find(event => event.id === ev.eventId))[0];
+            const eventDetails = findEventById(state, ev.eventId);
             const eventWithProperties = {
                 ...ev,
-                start: DateTime.fromFormat(ev.start, DATE_TIME_FORMAT).toJSDate(),
-                end: DateTime.fromFormat(ev.end, DATE_TIME_FORMAT).toJSDate(),
+                start: getJSDateFromString(ev.start),
+                end: getJSDateFromString(ev.end),
                 textColor: 'black',
                 color: eventDetails?.color,
                 canDelete: false,
@@ -71,6 +73,12 @@ export const selectEventsFiltered = (state: RootState) => {
     const selectedEvents = state.planner.selectedEvents.slice().flatMap((event) => event);
     return Array.from(eventMap.values()).filter(event => selectedEvents.includes(event.eventId));
 };
+
+const getJSDateFromString = (date: string): Date => DateTime.fromFormat(date, DATE_TIME_FORMAT, {zone: 'UTC'}).toJSDate();
+
+const findEventById = (state: RootState, id?: string): EventDto | undefined => {
+    return id ? state.planner.events.slice().flatMap((groupedEvent: GroupedEventDto) => groupedEvent.events.find((event) => event.id === id)).filter(x => !!x)[0] : undefined;
+}
 
 export const selectNameByEmail = (state: RootState, email: string): string => {
     const participant = state.planner.participants.find((p) => p.id === email);
