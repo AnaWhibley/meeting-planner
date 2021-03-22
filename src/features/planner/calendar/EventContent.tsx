@@ -10,11 +10,11 @@ import {ReactComponent as InfoIcon} from '../../../assets/icons/evericons/info.s
 import {Tooltip} from '../../../components/tooltip/Tooltip';
 import {ReactComponent as TrashIcon} from '../../../assets/icons/evericons/trash-empty.svg';
 import './Calendar.scss';
+import {statusMapper} from '../eventsGrid/EventsGrid';
 export function EventContent(eventInfo: EventContentArg) {
 
-    const hidePopover = true;
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-    const handleClick = () => { if(hidePopover) setAnchorEl(divRef.current) };
+    const handleClick = () => setAnchorEl(divRef.current);
     const handleClose = () => setAnchorEl(null);
     const openPopover = Boolean(anchorEl);
 
@@ -39,11 +39,12 @@ export function EventContent(eventInfo: EventContentArg) {
     };
 
     const divRef: React.RefObject<any> = React.useRef();
+
+    const status = statusMapper(eventInfo.event.extendedProps.status);
     return (
         <div style={style} ref={divRef} className={'EventContainer'} title={eventInfo.event.title}>
-                   <span onClick={handleClick} className={cn('EventContent',
+                   <span onClick={handleClick} className={cn('EventContent CursorPointer',
                        {
-                           'CursorPointer': hidePopover,
                            'Dots': diff.minutes <= 30 || eventInfo.view.type === 'dayGridMonth' || eventInfo.event.allDay,
                            'MonthEventPaddingTop': eventInfo.view.type === 'dayGridMonth'
                        })}
@@ -67,9 +68,9 @@ export function EventContent(eventInfo: EventContentArg) {
                 }}
             >
                 <div className={'PopoverContent'}>
-                    <div className={'InfoIconContainer'}><InfoIcon className={'FillWhite'}/></div>
+                    <div className={cn('InfoIconContainer', status.style)}>{status.icon}</div>
                     <div className={'TextInfoContainer'}>
-                        {eventInfo.event.allDay ? 'Todo el día' : <>{eventInfo.timeText}</>}
+                        {eventInfo.event.allDay ? 'Todo el día' : <>{start?.toFormat('HH:mm')} - {end?.toFormat('HH:mm')}</>}
                         <hr/>
                         <span>{eventInfo.event.title}</span><br/>
                     </div>
