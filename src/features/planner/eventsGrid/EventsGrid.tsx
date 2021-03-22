@@ -42,26 +42,32 @@ export const statusMapper = (status: string) => {
     if(status === 'confirmed') {
         const value = 'Confirmado';
         const style = 'StatusVerified';
+        const icon = <VerifiedIcon/>;
         return {
             value,
             style,
-            element: <span className={style}><VerifiedIcon/>{value}</span>
+            icon,
+            element: <span className={style}>{icon}{value}</span>
         };
     }else if(status === 'pending'){
         const value = 'Pendiente';
         const style = 'StatusPending';
+        const icon = <PendingIcon/>;
         return {
             value,
             style,
-            element: <span className={style}><PendingIcon/>{value}</span>
+            icon,
+            element: <span className={style}>{icon}{value}</span>
         };
     }else{
         const value = 'Necesita intervención';
         const style = 'StatusError';
+        const icon = <ErrorIcon/>;
         return {
             value,
             style,
-            element: <span className={style}><ErrorIcon/>{value}</span>
+            icon,
+            element: <span className={style}>{icon}{value}</span>
         }
     }
 };

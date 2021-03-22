@@ -28,12 +28,39 @@
   text-align: center;
 
   .InfoIconContainer {
-    background-color: $primary;
     display: flex;
     padding: 0 0.25em;
     svg {
       margin: 1em 0.5em;
       align-self: center;
+    }
+  }
+
+  .InfoBackground {
+    background-color: $primary;
+  }
+
+  .StatusVerified {
+    background-color: #17AE57;
+    svg {
+      fill: white;
+      vertical-align: middle;
+    }
+  }
+
+  .StatusPending {
+    background-color: #FF8A00;
+    svg {
+      fill: white;
+      vertical-align: middle;
+    }
+  }
+
+  .StatusError {
+    background-color: #DA0000;
+    svg {
+      fill: white;
+      vertical-align: middle;
     }
   }
 

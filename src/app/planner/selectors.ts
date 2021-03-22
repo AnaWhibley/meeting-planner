@@ -65,7 +65,8 @@ export const selectEventsFiltered = (state: RootState) => {
                 textColor: 'black',
                 color: eventDetails?.color,
                 canDelete: false,
-                title: eventDetails?.name
+                title: eventDetails?.name,
+                status: eventDetails?.status
             };
             eventMap.set(ev.eventId, eventWithProperties);
         }
