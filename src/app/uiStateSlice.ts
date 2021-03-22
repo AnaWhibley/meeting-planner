@@ -5,6 +5,7 @@ import {GroupedEventDto} from '../services/eventService';
 import {getUserService} from "../services/utils";
 
 const setUser = createAction<LoginResponse>('login/setUser');
+const showErrorMessage = createAction<LoginResponse>('login/showErrorMessage');
 const populateEvents = createAction<Array<GroupedEventDto>>('planner/populateEvents');
 
 interface uiStateSlice {
@@ -106,6 +107,9 @@ export const slice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(setUser, (state) => {
+                state.isBusy = false;
+            })
+            .addCase(showErrorMessage, (state) => {
                 state.isBusy = false;
             })
             .addCase(populateEvents, (state, action) => {

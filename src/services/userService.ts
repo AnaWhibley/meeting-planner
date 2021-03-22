@@ -88,7 +88,7 @@ export class UserService {
                     if(email) {
                         this.getUserById(email).subscribe((user) => {
                             subscriber.next({
-                                user: {id: email, name: user.name, role: user.role === 'admin' ? Role.ADMIN : Role.USER},
+                                user,
                                 success: true
                             })
                         });
@@ -155,27 +155,36 @@ export class UserService {
         });
     }
 
-    public static getUserById(id: string): Observable<any> {
+    public static getUserById(id: string): Observable<User> {
         return new Observable(subscriber => {
             firebase.firestore().collection('users').doc(id).get().then((document) => {
                 if (!document.exists) return;
-                subscriber.next(document.data());
+                subscriber.next({
+                    id,
+                    name: document.data()?.name,
+                    role: document.data()?.role === 'admin' ? Role.ADMIN : Role.USER
+                });
                 subscriber.complete();
             });
         });
     }
 
-    public static getNameOfParticipants(userIds?: Array<string>): Observable<Array<User>> {
-        if(!userIds){
-            return of(users).pipe(delay(500),
-                map((dto: Array<UserDto>) => dto.map((u, i) => ({...u, color: colors[i % colors.length]}))));
-        }
+    public static getParticipants(userIds?: Array<string>): Observable<Array<User> | boolean> {
 
-        return of(users)
-            .pipe(
-                delay(500),
-                map((dto: Array<UserDto>) => dto.filter(u => userIds.includes(u.id)).map((u, i) => ({...u, color: colors[i % colors.length]}))),
-            );
+        return new Observable((subscriber) => {
+            firebase.firestore().collection('users').onSnapshot((snapshot) => {
+                const users = snapshot.docs.map((doc, index) => ({
+                    id: doc.id,
+                    color: colors[index % colors.length],
+                    name: doc.data().name
+                }));
+                userIds ? subscriber.next(users.filter(u => userIds.includes(u.id))) : subscriber.next(users);
+            }, (error) => {
+                console.error('Error collecting users: ', error);
+                subscriber.next(false);
+                subscriber.complete();
+            });
+        });
     }
 
     public static editUserName(userId: string, newName: string): Observable<boolean>{
@@ -216,7 +225,7 @@ export class MockUserService {
         return of(true).pipe(delay(1000));
     }
 
-    public static getNameOfParticipants(userIds?: Array<string>): Observable<Array<User>> {
+    public static getParticipants(userIds?: Array<string>): Observable<Array<User> | boolean> {
         if(!userIds){
             return of(users).pipe(delay(500),
                 map((dto: Array<UserDto>) => dto.map((u, i) => ({...u, color: colors[i % colors.length]}))));
