@@ -132,13 +132,15 @@ const getBusyDates = (userIds: Array<string>) => (dispatch: Dispatch<any>, getSt
         console.log('there are not busy dates to show');
     }else{
         EventService.getBusyDates(userIds).subscribe((busyDates) => {
-            getUserService().getNameOfParticipants(userIds).subscribe((participants) => {
-                dispatch(populateParticipants(participants));
+            getUserService().getParticipants(userIds).subscribe((response) => {
+                if(response) {
+                    dispatch(populateParticipants(response));
 
-                const { login } = getState();
-                const currentUser = login.loggedInUser;
-                if(currentUser) {
-                    dispatch(populateBusyDates(filterBusyDatesByCurrentUser(busyDates, currentUser.id)));
+                    const { login } = getState();
+                    const currentUser = login.loggedInUser;
+                    if(currentUser) {
+                        dispatch(populateBusyDates(filterBusyDatesByCurrentUser(busyDates, currentUser.id)));
+                    }
                 }
             })
         })
@@ -159,10 +161,12 @@ const filterBusyDatesByCurrentUser = (busyDates: Array<BusyDateDto>, currentUser
 
 const getBusyDatesAdmin = () => (dispatch: Dispatch<any>) => {
     EventService.getBusyDates().subscribe(busyDates => {
-        getUserService().getNameOfParticipants().subscribe(participants => {
-            dispatch(populateParticipants(participants));
-            const bd = {busyDatesCU: [], busyDatesOU: busyDates};
-            dispatch(populateBusyDates(bd));
+        getUserService().getParticipants().subscribe(response => {
+            if(response){
+                dispatch(populateParticipants(response));
+                const bd = {busyDatesCU: [], busyDatesOU: busyDates};
+                dispatch(populateBusyDates(bd));
+            }
         })
     })
 };
