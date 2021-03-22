@@ -65,7 +65,7 @@ export function BusyDateContent(eventInfo: EventContentArg) {
                 }}
             >
                 <div className={'PopoverContent'}>
-                    <div className={'InfoIconContainer'}><InfoIcon className={'FillWhite'}/></div>
+                    <div className={'InfoIconContainer InfoBackground'}><InfoIcon className={'FillWhite'}/></div>
                     <div className={'TextInfoContainer'}>
                         {eventInfo.event.allDay ? 'Todo el día' : <>{start?.toFormat('HH:mm')} - {end?.toFormat('HH:mm')}</>}
                         <hr/>
