@@ -14,7 +14,7 @@ export const selectBusyDatesCurrentUser = (state: RootState) => state.planner.bu
         start: getJSDateFromString(date.start),
         end: getJSDateFromString(date.end),
         title: date.eventId ? event?.name + ' está programado' : 'Estás ocupado/a',
-        color: date.eventId ? '#8fbdef' : '#2896ff',
+        color: date.eventId ? '#8fbdef' : '#2896FF',
         textColor: 'black',
         canDelete: !date.eventId,
         groupId: 'currentUser'
