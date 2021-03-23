@@ -40,6 +40,7 @@ export const slice = createSlice({
     } as PlannerSlice,
     reducers: {
         populateBusyDates:(state, action) => {
+            console.log(action.payload.busyDatesCU);
             state.busyDatesCurrentUser = action.payload.busyDatesCU;
             state.busyDatesOtherUsers = action.payload.busyDatesOU;
         },
@@ -132,6 +133,7 @@ const getBusyDates = (userIds: Array<string>) => (dispatch: Dispatch<any>, getSt
         console.log('there are not busy dates to show');
     }else{
         EventService.getBusyDates(userIds).subscribe((busyDates) => {
+            console.log("getBusyDates...", busyDates);
             getUserService().getParticipants(userIds).subscribe((response) => {
                 if(response) {
                     dispatch(populateParticipants(response));
@@ -183,6 +185,25 @@ export const addBusy = (busyDate: BusyState) => (dispatch: Dispatch<any>, getSta
 export const deleteBusy = (busyDateId: string) => (dispatch: Dispatch<any>, getState: () => RootState) => {
     EventService.deleteBusyDate(busyDateId).subscribe(events => {
     });
+};
+
+export const deleteBusyDateForEvents = (overlappingEvents: Array<string>) => (dispatch: Dispatch<any>, getState: () => RootState) => {
+    const { planner, login } = getState();
+
+    const newBusyDatesCurrentUser =  planner.busyDatesCurrentUser.filter(x => x.eventId ? !overlappingEvents.includes(x.eventId) : x);
+    const newBusyDatesOtherUsers = planner.busyDatesOtherUsers.map((busyDate) => ({
+        ...busyDate,
+        busy: busyDate.busy.filter(x => x.eventId ? !overlappingEvents.includes(x.eventId) : x)
+    }));
+
+    const newBusyDates: any = [...newBusyDatesOtherUsers, {userId: login.loggedInUser?.id, busy: newBusyDatesCurrentUser}];
+
+    EventService.updateBusyDate(newBusyDates).subscribe(events => {
+    });
+
+    console.log("slice", overlappingEvents, newBusyDatesCurrentUser, newBusyDatesOtherUsers);
+    //dispatch(populateBusyDates({busyDatesCU: newBusyDatesCurrentUser, busyDatesOU: newBusyDatesOtherUsers}));
+
 };
 
 export default slice.reducer;

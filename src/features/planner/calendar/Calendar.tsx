@@ -16,7 +16,7 @@ import {
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar} from '@material-ui/core';
 import '../../../styles/common.scss'
 import {DATE_TIME_FORMAT, TIME_FORMAT} from '../../../app/eventCreator/slice';
-import {addBusy} from '../../../app/planner/slice';
+import {addBusy, deleteBusyDateForEvents} from '../../../app/planner/slice';
 import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
 import {Color} from '../../../styles/theme';
 import {EventContent} from './EventContent';
@@ -38,6 +38,8 @@ export function Calendar() {
     const busyDatesCU: any = useSelector(selectBusyDatesCurrentUser);
     const busyDatesOU: any = useSelector(selectBusyDatesOtherUsers);
     const busyDates = [...busyDatesCU, ...busyDatesOU];
+
+    console.log("!!!", busyDates)
 
     const events = useSelector(selectEventsFiltered);
 
@@ -79,14 +81,12 @@ export function Calendar() {
                 id: uuidv4()
             };
 
-            if(overlappedEvents.length === 0) {
-                // No solapa con ningún evento
-                dispatch(addBusy(newBusyDate));
-            }else{
-                dispatch(addBusy(newBusyDate));
-                // Hacer la búsqueda para cada uno de los eventos solapados
+            if(overlappedEvents.length !== 0) {
+                dispatch(deleteBusyDateForEvents(overlappedEvents));
             }
 
+            dispatch(addBusy(newBusyDate));
+            //search
             handleCloseDialog();
         }
     };

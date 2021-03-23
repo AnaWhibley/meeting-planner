@@ -6,7 +6,7 @@ import {Role} from '../../services/userService';
 import {EventDto, GroupedEventDto} from '../../services/eventService';
 
 export const selectBusyDatesCurrentUser = (state: RootState) => state.planner.busyDatesCurrentUser.map((date: BusyState) => {
-
+    console.log('????');
     const event = findEventById(state, date.eventId);
 
     return {
