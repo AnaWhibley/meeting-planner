@@ -1,12 +1,13 @@
 import {RootState} from '../store';
 import {BusyState} from './slice';
-import {DateTime} from 'luxon';
+import {DateTime, Interval} from 'luxon';
 import {DATE_TIME_FORMAT} from '../eventCreator/slice';
 import {Role} from '../../services/userService';
 import {EventDto, GroupedEventDto} from '../../services/eventService';
+import {toLuxonDateTime} from '@fullcalendar/luxon';
+import {useSelector} from 'react-redux';
 
 export const selectBusyDatesCurrentUser = (state: RootState) => state.planner.busyDatesCurrentUser.map((date: BusyState) => {
-    console.log('????');
     const event = findEventById(state, date.eventId);
 
     return {
