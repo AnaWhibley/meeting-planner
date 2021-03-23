@@ -28,7 +28,6 @@ import {
 import {selectLoggedInUser} from '../../../app/login/selectors';
 import {Role} from '../../../services/userService';
 import {Alert} from '../../../components/alert/Alert';
-import {BusyDateContent} from './BusyDateContent';
 import {ReactComponent as WarningIcon} from '../../../assets/icons/evericons/alert-triangle.svg';
 
 export function Calendar() {
@@ -64,7 +63,7 @@ export function Calendar() {
     };
 
     const calendarView = useSelector(selectCalendarView);
-    const currentViewPlanner = useSelector(selectCurrentViewPlanner)
+    const currentViewPlanner = useSelector(selectCurrentViewPlanner);
 
     const handleAcceptDialog = () => {
         if(selectInfo) {
@@ -116,17 +115,16 @@ export function Calendar() {
                         (event: DateSelectArg) => handleOpenDialog(event) :
                         () => setOpenSnackbarCreateBusyDates(true)
                     : () => setOpenSnackbarAdmin(true)}
-                eventContent={currentViewPlanner === ViewPlanner.BUSY_DATES ? (props: EventContentArg) => <BusyDateContent {...props}/> : (props: EventContentArg) => <EventContent {...props}/>}
+                eventContent={(props: EventContentArg) => <EventContent {...props}/>}
                 selectOverlap={(event: EventApi) => {
-                    const hasBusyDateAlready = event.groupId === 'currentUser';
                     // to-do -> Check if the selection overlaps confirmed events
-
-                    const eventOverlap = event._def.extendedProps.eventId || !hasBusyDateAlready;
+                    const hasBusyDateAlready = event.groupId === 'currentUser';
+                    const eventOverlap = event._def.extendedProps.eventId;
 
                     if(eventOverlap) setEventOverlaps(true);
                     if(hasBusyDateAlready && !eventOverlap) setOpenSnackbarHasBusyDate(true);
 
-                    return eventOverlap;
+                    return eventOverlap || !hasBusyDateAlready;
                 } }
             />
 
