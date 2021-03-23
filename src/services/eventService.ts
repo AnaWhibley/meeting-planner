@@ -1,5 +1,5 @@
 import {BehaviorSubject, Observable, of} from 'rxjs';
-import {delay, map} from 'rxjs/operators';
+import {delay, filter, map} from 'rxjs/operators';
 import {BusyState} from '../app/planner/slice';
 import { v4 as uuidv4 } from 'uuid';
 import {Role} from './userService';
@@ -549,6 +549,7 @@ const groupedEvents: Array<GroupedEventDto> = [
 
 class EventService {
     private static busyDatesSubject = new BehaviorSubject(busyDates.slice());
+    private static groupedEventsSubject = new BehaviorSubject(groupedEvents.slice());
 
     public static create(event: GroupedEventDto): Observable<CreateResponse> {
         groupedEvents.push(event);
@@ -611,7 +612,7 @@ class EventService {
     public static getEvents(user: User): Observable<Array<GroupedEventDto>> {
 
         if(user.role === Role.ADMIN) {
-            return of(groupedEvents.slice()).pipe(
+            return this.groupedEventsSubject.pipe(
                 delay(500),
                 map((dto: Array<GroupedEventDto>) => {
                     let count = 0;
@@ -628,17 +629,18 @@ class EventService {
             );
         }
 
-        const filteredEvents = groupedEvents.map((ev) => {
-            return {
-                ...ev,
-                events: ev.events.reduce((acc: Array<EventDto>, current: EventDto ) => {
-                    return current.participants.find((participant) => participant.email === user.id) ? [...acc, current] : acc;
-                }, [])
-            }
-        }).filter((grouped) => grouped.events.length > 0);
-
-        return of(filteredEvents.slice()).pipe(
+        return this.groupedEventsSubject.pipe(
             delay(500),
+            map((groupedEvents: Array<GroupedEventDto>) => {
+                return groupedEvents.map((ev) =>{
+                    return {
+                        ...ev,
+                        events: ev.events.reduce((acc: Array<EventDto>, current: EventDto ) => {
+                            return current.participants.find((participant) => participant.email === user.id) ? [...acc, current] : acc;
+                        }, [])
+                    }
+                }).filter((grouped) => grouped.events.length > 0)
+            }),
             map((dto: Array<GroupedEventDto>) => {
                 return dto.map((groupedEvent) => {
                     let count = 0;
@@ -652,6 +654,22 @@ class EventService {
                 })
             })
         );
+    }
+
+    public static updateEventsFromGroupedEvent(modified: Array<EventDto>, groupName: string): Observable<boolean> {
+
+        let index = groupedEvents.findIndex((groupedEvent) => groupedEvent.groupName === groupName);
+
+        if(index > -1) {
+            groupedEvents[index].events = groupedEvents[index].events.map((ev) => {
+                const isModified = modified.find(mod => mod.id === ev.id);
+                return isModified || ev;
+            });
+            console.log('modified groupedEvents', groupedEvents)
+        }
+
+        this.groupedEventsSubject.next(groupedEvents.slice());
+        return of(true);
     }
 }
 

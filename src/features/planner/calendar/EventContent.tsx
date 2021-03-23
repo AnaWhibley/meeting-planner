@@ -1,7 +1,7 @@
 import {EventContentArg} from '@fullcalendar/react';
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {deleteBusy} from '../../../app/planner/slice';
+import {deleteBusy, deleteBusyDateForEvents} from '../../../app/planner/slice';
 import {toLuxonDateTime} from '@fullcalendar/luxon';
 import {Duration} from 'luxon';
 import cn from 'classnames';
@@ -11,7 +11,7 @@ import {ReactComponent as TrashIcon} from '../../../assets/icons/evericons/trash
 import './Calendar.scss';
 import {statusMapper} from '../eventsGrid/EventsGrid';
 import {selectCurrentViewPlanner, ViewPlanner} from '../../../app/uiStateSlice';
-import {TIME_FORMAT} from '../../../app/eventCreator/slice';
+import {DATE_TIME_FORMAT, TIME_FORMAT} from '../../../app/eventCreator/slice';
 import {ReactComponent as InfoIcon} from '../../../assets/icons/evericons/info.svg';
 
 export function EventContent(eventInfo: EventContentArg) {
@@ -23,13 +23,23 @@ export function EventContent(eventInfo: EventContentArg) {
 
     const dispatch = useDispatch();
 
-    const handleDeleteBusyDate = () => {
-        dispatch(deleteBusy(eventInfo.event.id))
-    };
-
     const start = eventInfo.event.start ? toLuxonDateTime(eventInfo.event.start, eventInfo.view.calendar) : null;
     const end = eventInfo.event.end ? toLuxonDateTime(eventInfo.event.end, eventInfo.view.calendar) : null;
     const diff : Duration = start && end ? end.diff(start, ['minutes']) : Duration.fromMillis(0);
+
+    const handleDeleteBusyDate = () => {
+        if(start && end) {
+            const busy = {
+                id: eventInfo.event.id,
+                start: start.toFormat(DATE_TIME_FORMAT),
+                end: end.toFormat(DATE_TIME_FORMAT),
+                allDay: eventInfo.event.allDay
+            }
+            dispatch(deleteBusyDateForEvents(start,end));
+            dispatch(deleteBusy(busy))
+        }
+    };
+
 
     const divRef: React.RefObject<any> = React.useRef();
 

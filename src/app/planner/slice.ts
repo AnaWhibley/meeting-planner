@@ -1,10 +1,14 @@
 import {createSlice, Dispatch} from '@reduxjs/toolkit';
 import {RootState} from '../store';
-import EventService, {BusyDateDto, GroupedEventDto} from '../../services/eventService';
+import EventService, {BusyDateDto, BusyDto, GroupedEventDto} from '../../services/eventService';
 import {Role} from '../../services/userService';
 import {User} from '../login/slice';
 import {getUserService} from "../../services/utils";
 import {requesting} from '../uiStateSlice';
+import {search} from '../../search';
+import {DateTime, Interval} from 'luxon';
+import {DATE_FORMAT, DATE_TIME_FORMAT} from '../eventCreator/slice';
+import {delay} from 'rxjs/operators';
 
 export interface PlannerSlice {
     busyDatesCurrentUser: Array<BusyState>;
@@ -177,32 +181,72 @@ export const addBusy = (busyDate: BusyState) => (dispatch: Dispatch<any>, getSta
     const { login } = getState();
     const currentUser = login.loggedInUser;
     if (currentUser) {
-        EventService.addBusyDate(busyDate, currentUser.id).subscribe(events => {
+        EventService.addBusyDate(busyDate, currentUser.id).pipe(delay(1000)).subscribe(events => {
+            searchSlotsEvents(getState(), busyDate);
         });
     }
 };
 
-export const deleteBusy = (busyDateId: string) => (dispatch: Dispatch<any>, getState: () => RootState) => {
-    EventService.deleteBusyDate(busyDateId).subscribe(events => {
-    });
+export const deleteBusy = (busyDate: BusyDto) => (dispatch: Dispatch<any>, getState: () => RootState) => {
+    if (busyDate.id){
+        EventService.deleteBusyDate(busyDate.id).pipe(delay(1000)).subscribe(events => {
+            console.log('2 !!!', getState());
+            searchSlotsEvents(getState(), busyDate);
+        });
+    }
 };
 
-export const deleteBusyDateForEvents = (overlappingEvents: Array<string>) => (dispatch: Dispatch<any>, getState: () => RootState) => {
-    const { planner, login } = getState();
+const searchSlotsEvents = (state: RootState, busyDate: BusyState) => {
+    const start = DateTime.fromFormat(busyDate.start, DATE_TIME_FORMAT);
+    const end = DateTime.fromFormat(busyDate.end, DATE_TIME_FORMAT);
+    const interval = Interval.fromDateTimes(start, end);
 
-    const newBusyDatesCurrentUser =  planner.busyDatesCurrentUser.filter(x => x.eventId ? !overlappingEvents.includes(x.eventId) : x);
+    state.planner.events.forEach(ev => {
+        const groupedEvStart = DateTime.fromFormat(ev.from, DATE_FORMAT);
+        const groupedEvEnd = DateTime.fromFormat(ev.to, DATE_FORMAT);
+        const evInterval = Interval.fromDateTimes(groupedEvStart, groupedEvEnd);
+        if(interval.overlaps(evInterval)) {
+            const busyDates: any = [...state.planner.busyDatesOtherUsers, {userId: state.login.loggedInUser?.id, busy: state.planner.busyDatesCurrentUser}];
+            const newData = search(ev, busyDates, undefined, state.login.loggedInUser?.id);
+            EventService.updateBusyDate(newData.busyDates).subscribe(events => {
+                EventService.updateEventsFromGroupedEvent(newData.events, ev.groupName).subscribe((data) => {
+
+                });
+            });
+        }
+    })
+};
+
+const isOverlappingWith = (state: RootState, start: DateTime, end: DateTime) => {
+    const newInterval = Interval.fromDateTimes(start, end);
+
+    const filteredBusyDatesCurrentUser = state.planner.busyDatesCurrentUser.filter(busyDate => busyDate.eventId !== undefined);
+    const filteredBusyDatesOtherUsers = state.planner.busyDatesOtherUsers.flatMap(busyDate => busyDate.busy.filter(busy => busy.eventId !== undefined));
+    const filteredBusyDates = filteredBusyDatesCurrentUser.concat(filteredBusyDatesOtherUsers)
+    const overlappedEvents: any = [];
+    filteredBusyDates.forEach(bd => {
+        const bdInterval = Interval.fromDateTimes(DateTime.fromFormat(bd.start, DATE_TIME_FORMAT), DateTime.fromFormat(bd.end, DATE_TIME_FORMAT));
+        if(bdInterval.overlaps(newInterval)) {
+            overlappedEvents.push(bd.eventId);
+        }
+    });
+    return overlappedEvents;
+}
+
+export const deleteBusyDateForEvents = (start: DateTime, end: DateTime) => (dispatch: Dispatch<any>, getState: () => RootState) => {
+
+    const { planner, login } = getState();
+    const newBusyDatesCurrentUser =  planner.busyDatesCurrentUser.filter(x => !x.eventId);
     const newBusyDatesOtherUsers = planner.busyDatesOtherUsers.map((busyDate) => ({
         ...busyDate,
-        busy: busyDate.busy.filter(x => x.eventId ? !overlappingEvents.includes(x.eventId) : x)
+        busy: busyDate.busy.filter(x => !x.eventId)
     }));
 
     const newBusyDates: any = [...newBusyDatesOtherUsers, {userId: login.loggedInUser?.id, busy: newBusyDatesCurrentUser}];
 
     EventService.updateBusyDate(newBusyDates).subscribe(events => {
-    });
 
-    console.log("slice", overlappingEvents, newBusyDatesCurrentUser, newBusyDatesOtherUsers);
-    //dispatch(populateBusyDates({busyDatesCU: newBusyDatesCurrentUser, busyDatesOU: newBusyDatesOtherUsers}));
+    });
 
 };
 
