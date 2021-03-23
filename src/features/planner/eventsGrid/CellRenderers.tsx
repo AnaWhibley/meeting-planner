@@ -1,6 +1,5 @@
 import React from 'react';
 import {ICellRendererParams} from 'ag-grid-community';
-import {DateTime} from 'luxon';
 import {statusMapper} from './EventsGrid';
 import {ValueFormatterParams} from 'ag-grid-community/dist/lib/entities/colDef';
 import {useDispatch, useSelector} from 'react-redux';
@@ -14,7 +13,6 @@ import '../../../styles/common.scss'
 import {Tooltip} from '../../../components/tooltip/Tooltip';
 import './EventsGrid.scss';
 import {selectEventsGridSelectedTab, setSelectedRowInformation} from '../../../app/uiStateSlice';
-import {DATE_FORMAT} from '../../../app/eventCreator/slice';
 
 export function StatusRenderer (props: ICellRendererParams) {
     return statusMapper(props.value).element;
