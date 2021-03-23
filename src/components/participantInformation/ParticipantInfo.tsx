@@ -10,7 +10,6 @@ import {useSelector} from 'react-redux';
 import {selectBusyByEmail, selectNameByEmail} from '../../app/planner/selectors';
 import {RootState} from '../../app/store';
 import {ParticipantDto} from '../../services/eventService';
-import {setForgotPasswordDialogProperty} from "../../app/uiStateSlice";
 import {Alert} from "../alert/Alert";
 
 export function ParticipantInfo(props: { participant: ParticipantDto }) {
