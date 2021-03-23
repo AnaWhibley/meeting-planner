@@ -582,6 +582,20 @@ class EventService {
         return of(true);
     }
 
+    public static updateBusyDate(modified: Array<BusyDateDto>): Observable<boolean> {
+        modified.forEach((m) => {
+            let index = busyDates.findIndex((busy) => busy.userId ===  m.userId);
+
+            if(index > -1) {
+                busyDates.splice(index, 1);
+                busyDates.splice(index, 0, m);
+            }
+        });
+
+        this.busyDatesSubject.next(busyDates.slice());
+        return of(true);
+    }
+
     public static getBusyDates(userIds?: Array<string>): Observable<Array<BusyDateDto>> {
 
         if(!userIds) {
