@@ -10,6 +10,7 @@ export interface SearchResult {
 
 export function search(groupedEvent: GroupedEventDto, busyDates: Array<BusyDateDto>, idFn: () => string = uuidv4, user?: string): SearchResult  {
     const events: Array<EventDto> = groupedEvent.events.slice();
+    console.log("!!!! events search", events);
     let newBusyDates = busyDates.slice();
     const from: DateTime = DateTime.fromFormat(groupedEvent.from, DATE_FORMAT);
     const to: DateTime = DateTime.fromFormat(groupedEvent.to, DATE_FORMAT);
@@ -62,9 +63,16 @@ export function search(groupedEvent: GroupedEventDto, busyDates: Array<BusyDateD
                     busyIntervals.set(id, arrayBusyDatesMap);
                 });
 
-                events[i].date = event.start.toFormat(DATE_FORMAT);
+                events[i] = {
+                    ...events[i],
+                    status: 'pending',
+                    date: event.start.toFormat(DATE_FORMAT),
+                    time: event.start.toFormat(TIME_FORMAT)
+                };
+
+                /*events[i].date = event.start.toFormat(DATE_FORMAT);
                 events[i].time = event.start.toFormat(TIME_FORMAT);
-                events[i].status = 'pending';
+                events[i].status = 'pending';*/
 
                 newBusyDates = mapBusyDatesFromIntervals(busyIntervals);
 
@@ -79,6 +87,8 @@ export function search(groupedEvent: GroupedEventDto, busyDates: Array<BusyDateD
         }
 
     }
+
+    console.log("!!! search", events, busyDates)
 
     return {events, busyDates: newBusyDates}
 }

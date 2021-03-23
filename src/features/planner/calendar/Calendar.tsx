@@ -29,7 +29,6 @@ import {selectLoggedInUser} from '../../../app/login/selectors';
 import {Role} from '../../../services/userService';
 import {Alert} from '../../../components/alert/Alert';
 import {ReactComponent as WarningIcon} from '../../../assets/icons/evericons/alert-triangle.svg';
-import {DateTime, Interval} from 'luxon';
 
 export function Calendar() {
 
@@ -38,8 +37,6 @@ export function Calendar() {
     const busyDatesCU: any = useSelector(selectBusyDatesCurrentUser);
     const busyDatesOU: any = useSelector(selectBusyDatesOtherUsers);
     const busyDates = [...busyDatesCU, ...busyDatesOU];
-
-    console.log("!!!", busyDates)
 
     const events = useSelector(selectEventsFiltered);
 
@@ -72,7 +69,6 @@ export function Calendar() {
         if(selectInfo) {
             const start = toLuxonDateTime(selectInfo.start, calendarRef.current.getApi());
             const end = toLuxonDateTime(selectInfo.end, calendarRef.current.getApi());
-            const overlappedEvents = isOverlappingWith(start, end);
 
             const newBusyDate = {
                 start: start.toFormat(DATE_TIME_FORMAT),
@@ -81,28 +77,12 @@ export function Calendar() {
                 id: uuidv4()
             };
 
-            if(overlappedEvents.length !== 0) {
-                dispatch(deleteBusyDateForEvents(overlappedEvents));
-            }
-
+            dispatch(deleteBusyDateForEvents(start,end));
             dispatch(addBusy(newBusyDate));
             //search
             handleCloseDialog();
         }
     };
-
-    const isOverlappingWith = (start: DateTime, end: DateTime) => {
-        const newInterval = Interval.fromDateTimes(start, end);
-        const filteredBusyDates = busyDates.filter(busyDate => busyDate.groupId === 'currentUser' && busyDate.eventId !== undefined);
-        const overlappedEvents: any = [];
-        filteredBusyDates.forEach(bd => {
-            const bdInterval = Interval.fromDateTimes(toLuxonDateTime(bd.start, calendarRef.current.getApi()), toLuxonDateTime(bd.end, calendarRef.current.getApi()));
-            if(bdInterval.overlaps(newInterval)) {
-                overlappedEvents.push(bd.eventId);
-            }
-        });
-        return overlappedEvents;
-    }
 
     return (
         <>
