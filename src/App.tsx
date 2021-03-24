@@ -20,7 +20,7 @@ import {selectIsBusy} from './app/uiStateSlice';
 function App() {
 
     const PrivateRoute = (props: {path: string, component: JSX.Element, admin?: boolean}) => {
-        const loggedInUser: User | undefined = useSelector(selectLoggedInUser);
+        const loggedInUser: User = useSelector(selectLoggedInUser);
         return (
             <Route exact path={props.path}>
                 {!loggedInUser ?

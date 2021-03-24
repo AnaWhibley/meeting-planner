@@ -37,7 +37,7 @@ export function NavBar(props: {view?: string}) {
         }
     }];
 
-    if(loggedInUser && loggedInUser.role === Role.ADMIN) {
+    if(loggedInUser.role === Role.ADMIN) {
         menuItems.splice(1, 0,
             {
                 label: 'Crear eventos',
@@ -55,11 +55,11 @@ export function NavBar(props: {view?: string}) {
                  onClick={() => loggedInUser && loggedInUser.role === Role.ADMIN ? history.push('/dashboard') : history.push('/')}/>
             <Menu menuItems={menuItems} className={'Menu'}/>
             {props.view === 'Planner' || props.view === 'Profile' ? <div className={'AvatarName'}>
-                <div className={'Avatar'}><AvatarInitials text={loggedInUser?.name || ''}/></div>
+                <div className={'Avatar'}><AvatarInitials text={loggedInUser.name || ''}/></div>
                 <Typography variant="subtitle1"
                             display={'inline'}
                             color='textSecondary'>
-                    {loggedInUser?.name}
+                    {loggedInUser.name}
                 </Typography>
             </div> : null}
 

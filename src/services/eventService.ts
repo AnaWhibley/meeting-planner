@@ -1,6 +1,6 @@
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {delay, filter, map} from 'rxjs/operators';
-import {BusyState} from '../app/planner/slice';
+import {BusyDateState, BusyState} from '../app/planner/slice';
 import { v4 as uuidv4 } from 'uuid';
 import {Role} from './userService';
 import {User} from '../app/login/slice';
@@ -583,7 +583,7 @@ class EventService {
         return of(true);
     }
 
-    public static updateBusyDate(modified: Array<BusyDateDto>): Observable<boolean> {
+    public static updateBusyDate(modified: Array<BusyDateState>): Observable<boolean> {
         modified.forEach((m) => {
             let index = busyDates.findIndex((busy) => busy.userId ===  m.userId);
 
@@ -665,7 +665,6 @@ class EventService {
                 const isModified = modified.find(mod => mod.id === ev.id);
                 return isModified || ev;
             });
-            console.log('modified groupedEvents', groupedEvents)
         }
 
         this.groupedEventsSubject.next(groupedEvents.slice());

@@ -34,7 +34,7 @@ export function Login() {
     const email = useSelector(selectEmail);
     const password = useSelector(selectPassword);
     const errorMessage = useSelector(selectErrorMessage);
-    const loggedInUser: User | undefined = useSelector(selectLoggedInUser);
+    const loggedInUser: User = useSelector(selectLoggedInUser);
     const forgotPasswordError = useSelector(selectForgotPasswordDialogInfo).inputErrorMessage;
     const forgotPasswordEmailSent = useSelector(selectForgotPasswordDialogInfo).emailSent;
     const forgotPasswordDialog = useSelector(selectForgotPasswordDialogInfo).show;

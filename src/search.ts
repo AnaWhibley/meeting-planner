@@ -2,15 +2,15 @@ import {BusyDateDto, BusyDto, EventDto, GroupedEventDto} from './services/eventS
 import {DateTime, Interval} from 'luxon';
 import {DATE_FORMAT, DATE_TIME_FORMAT, TIME_FORMAT} from './app/eventCreator/slice';
 import {v4 as uuidv4} from 'uuid';
+import {BusyDateState} from './app/planner/slice';
 
 export interface SearchResult {
     events: Array<EventDto>;
-    busyDates: Array<BusyDateDto>;
+    busyDates: Array<BusyDateState>;
 }
 
-export function search(groupedEvent: GroupedEventDto, busyDates: Array<BusyDateDto>, idFn: () => string = uuidv4, user?: string): SearchResult  {
+export function search(groupedEvent: GroupedEventDto, busyDates: Array<BusyDateState>, idFn: () => string = uuidv4): SearchResult  {
     const events: Array<EventDto> = groupedEvent.events.slice();
-    console.log("!!!! events search", events);
     let newBusyDates = busyDates.slice();
     const from: DateTime = DateTime.fromFormat(groupedEvent.from, DATE_FORMAT);
     const to: DateTime = DateTime.fromFormat(groupedEvent.to, DATE_FORMAT);
@@ -29,8 +29,6 @@ export function search(groupedEvent: GroupedEventDto, busyDates: Array<BusyDateD
         const userIds = events[i].participants.map(p => p.email);
 
         //Si el usuario que creó la indisponibilidad no está entre los participantes no tenemos que cambiar el evento
-        if(user && !userIds.find(id => id === user)) continue;
-
         for(let j = from; j < to; j = j.plus({minutes: 15})){
 
             //Último slot posible
@@ -70,10 +68,6 @@ export function search(groupedEvent: GroupedEventDto, busyDates: Array<BusyDateD
                     time: event.start.toFormat(TIME_FORMAT)
                 };
 
-                /*events[i].date = event.start.toFormat(DATE_FORMAT);
-                events[i].time = event.start.toFormat(TIME_FORMAT);
-                events[i].status = 'pending';*/
-
                 newBusyDates = mapBusyDatesFromIntervals(busyIntervals);
 
                 break;
@@ -88,8 +82,6 @@ export function search(groupedEvent: GroupedEventDto, busyDates: Array<BusyDateD
 
     }
 
-    console.log("!!! search", events, busyDates)
-
     return {events, busyDates: newBusyDates}
 }
 
@@ -100,7 +92,7 @@ interface BusyInterval {
     id: string;
 }
 
-function mapBusyDatesToIntervals(busyDates: Array<BusyDateDto>) {
+function mapBusyDatesToIntervals(busyDates: Array<BusyDateState>) {
     return busyDates.reduce(
         (acc, current) => {
             const intervals = current.busy.map(b => {
