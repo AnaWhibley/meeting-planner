@@ -35,7 +35,7 @@ export const selectBusyDatesOtherUsers = (state: RootState) => state.planner.bus
             end: getJSDateFromString(date.end),
             textColor: 'black',
             color: u?.color,
-            title: date.eventId ? u?.name + ' tiene programado el evento ' + event?.name : u?.name + ' está ocupado/a',
+            title: u?.name + (date.eventId ? (event?.name ? ' también participa en ' + event?.name : ' tiene programado un evento') : ' está ocupado/a'),
             canDelete: false,
             status: event?.status
         }
