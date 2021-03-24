@@ -67,6 +67,7 @@ export interface EventCreatorSlice {
     to: FieldState<string>;
     events: Array<EventState>;
 }
+
 const initialState = {
     stage: 0,
     currentIndex: 0,

@@ -14,7 +14,7 @@ import {ReactComponent as BellIcon} from '../../assets/icons/evericons/bell.svg'
 import TextInput from '../../components/textInput/TextInput';
 
 export function Profile() {
-    const loggedInUser: User | undefined = useSelector(selectLoggedInUser);
+    const loggedInUser: User = useSelector(selectLoggedInUser);
 
     const [showInputName, setShowInputName] = React.useState(false);
     const [name, setName] = React.useState(useSelector(selectLoggedInUser)?.name);
@@ -45,14 +45,14 @@ export function Profile() {
                                                             className={'Input'}
                                                             onChange={(value: string) => setName(value)}/>
                                     :
-                                    <Typography variant={'h3'} color={'textSecondary'} display={'inline'}>{loggedInUser?.name}</Typography>
+                                    <Typography variant={'h3'} color={'textSecondary'} display={'inline'}>{loggedInUser.name}</Typography>
                                 }
 
                             </div>
                             <br/>
                             <div>
                                 <Typography variant={'h3'} color={'primary'} display={'inline'} className={'Bold'}>Email: </Typography>
-                                <Typography variant={'h3'} color={'textSecondary'} display={'inline'}>{loggedInUser?.id}</Typography>
+                                <Typography variant={'h3'} color={'textSecondary'} display={'inline'}>{loggedInUser.id}</Typography>
                             </div>
                         </div>
                         <br/>

@@ -9,7 +9,7 @@ import {getEvents} from '../planner/slice';
 export interface LoginSlice {
     email: string;
     password: string;
-    loggedInUser?: User;
+    loggedInUser: User;
     errorMessage: {
         show: boolean;
         error: string;
