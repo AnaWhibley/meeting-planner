@@ -62,25 +62,29 @@ export function Login() {
                 <img src={logo}
                      className={'Logo'}
                      alt="Logo MeetingPlanner"/>
-                <TextInput
-                    label="Email"
-                    fullWidth={true}
-                    value={email}
-                    icon={<AtSignIcon/>}
-                    onChange={(value: string) => dispatch(setEmail(value))}
-                    containerClassName={'InputContainer'}
-                    onEnterPress={() => dispatch(login())}
-                />
-                <TextInput
-                    label="Contraseña"
-                    fullWidth={true}
-                    type="password"
-                    icon={<KeyIcon/>}
-                    value={password}
-                    onChange={value => dispatch(setPassword(value))}
-                    containerClassName={'InputContainer'}
-                    onEnterPress={() => dispatch(login())}
-                />
+                <form noValidate>
+                    <TextInput
+                        label="Email"
+                        fullWidth={true}
+                        value={email}
+                        icon={<AtSignIcon/>}
+                        onChange={(value: string) => dispatch(setEmail(value))}
+                        containerClassName={'InputContainer'}
+                        onEnterPress={() => dispatch(login())}
+                        autoComplete="email"
+                    />
+                    <TextInput
+                        label="Contraseña"
+                        fullWidth={true}
+                        type="password"
+                        icon={<KeyIcon/>}
+                        value={password}
+                        onChange={value => dispatch(setPassword(value))}
+                        containerClassName={'InputContainer'}
+                        onEnterPress={() => dispatch(login())}
+                        autoComplete="current-password"
+                    />
+                </form>
                 { errorMessage.show ?
                     <Typography variant="subtitle1"
                                 display="inline"
@@ -112,20 +116,20 @@ export function Login() {
                     <DialogContentText>
                         Introduce tu correo electrónico y te enviaremos un mail para poder re-establecerla:
                     </DialogContentText>
-                        <TextInput
-                            className={'InputForgotPassword'}
-                            label="Email"
-                            fullWidth={true}
-                            value={email}
-                            onChange={(value: string) => dispatch(setEmail(value))}
-                        />
-                        { forgotPasswordError ?
-                            <Typography variant="subtitle1"
-                                        className={"ErrorMessage ErrorMessageForgotPassword"}
-                                        color={"error"}>
-                                {forgotPasswordError}
-                            </Typography>
-                            : null}
+                    <TextInput
+                        className={'InputForgotPassword'}
+                        label="Email"
+                        fullWidth={true}
+                        value={email}
+                        onChange={(value: string) => dispatch(setEmail(value))}
+                    />
+                    { forgotPasswordError ?
+                        <Typography variant="subtitle1"
+                                    className={"ErrorMessage ErrorMessageForgotPassword"}
+                                    color={"error"}>
+                            {forgotPasswordError}
+                        </Typography>
+                        : null}
                 </DialogContent>
                 <DialogActions>
                     <ActionButton onClick={handleCloseForgotPasswordDialog} color={Color.PRIMARY} innerText={'Cancelar'} variant={ButtonVariant.TEXT}/>
