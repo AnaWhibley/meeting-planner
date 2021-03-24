@@ -17,11 +17,16 @@ interface TextInputProps {
     value?: string;
     disabled?: boolean;
     onEnterPress?: () => void;
+    autoComplete?: string;
 }
 
 export default class TextInput extends Component<TextInputProps>{
     render() {
-        const {icon, placeholder, fullWidth, value, type, onChange, label, containerClassName, className, disabled, error, errorMessage, onEnterPress} = this.props;
+        const {
+            icon, placeholder, fullWidth, value, type, onChange, label, containerClassName, className, disabled,
+            error, errorMessage, onEnterPress, autoComplete
+        } = this.props;
+
         const textField = (
             <TextField placeholder={placeholder}
                        error={error}
@@ -39,6 +44,7 @@ export default class TextInput extends Component<TextInputProps>{
                                onEnterPress()
                            }
                        }}
+                       autoComplete={autoComplete}
             />
         );
 
