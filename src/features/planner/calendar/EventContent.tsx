@@ -1,7 +1,7 @@
 import {EventContentArg} from '@fullcalendar/react';
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {deleteBusy, deleteBusyDateForEvents} from '../../../app/planner/slice';
+import {deleteBusy} from '../../../app/planner/slice';
 import {toLuxonDateTime} from '@fullcalendar/luxon';
 import {Duration} from 'luxon';
 import cn from 'classnames';
@@ -35,7 +35,6 @@ export function EventContent(eventInfo: EventContentArg) {
                 end: end.toFormat(DATE_TIME_FORMAT),
                 allDay: eventInfo.event.allDay
             }
-            dispatch(deleteBusyDateForEvents(start,end));
             dispatch(deleteBusy(busy))
         }
     };

@@ -16,7 +16,7 @@ import {
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar} from '@material-ui/core';
 import '../../../styles/common.scss'
 import {DATE_TIME_FORMAT, TIME_FORMAT} from '../../../app/eventCreator/slice';
-import {addBusy, deleteBusyDateForEvents} from '../../../app/planner/slice';
+import {addBusy} from '../../../app/planner/slice';
 import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
 import {Color} from '../../../styles/theme';
 import {EventContent} from './EventContent';
@@ -77,9 +77,7 @@ export function Calendar() {
                 id: uuidv4()
             };
 
-            dispatch(deleteBusyDateForEvents(start,end));
             dispatch(addBusy(newBusyDate));
-            //search
             handleCloseDialog();
         }
     };
@@ -106,6 +104,7 @@ export function Calendar() {
                     }
                 }}
                 timeZone={'UTC'}
+                eventColor={'#2896FF'}
                 initialView={calendarView}
                 weekends={false}
                 selectable={true}

@@ -16,7 +16,7 @@ import {User} from '../../app/login/slice';
 
 export function Dashboard() {
 
-    const loggedInUser: User | undefined = useSelector(selectLoggedInUser);
+    const loggedInUser: User = useSelector(selectLoggedInUser);
     const history = useHistory();
 
     return (
@@ -26,7 +26,7 @@ export function Dashboard() {
                 <Typography variant='subtitle1'
                             display={'block'}
                             align={'center'}>
-                    Bienvenido, {loggedInUser?.name}
+                    Bienvenido, {loggedInUser.name}
                 </Typography>
                 <Typography variant='h1'
                             color={Color.PRIMARY}

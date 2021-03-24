@@ -15,7 +15,7 @@ export const selectBusyDatesCurrentUser = (state: RootState) => state.planner.bu
         start: getJSDateFromString(date.start),
         end: getJSDateFromString(date.end),
         title: date.eventId ? event?.name + ' está programado' : 'Estás ocupado/a',
-        color: date.eventId ? '#8fbdef' : '#2896FF',
+        color: date.eventId ? '#8bc9ff' : '#2896FF',
         textColor: 'black',
         canDelete: !date.eventId,
         groupId: 'currentUser'
@@ -54,7 +54,7 @@ export const selectSelectedEvents = (state: RootState) => state.planner.selected
 export const selectEvents = (state: RootState) => state.planner.events;
 
 export const selectEventsFiltered = (state: RootState) => {
-    const busyDates = state.login.loggedInUser?.role === Role.ADMIN ? state.planner.busyDatesOtherUsers.slice().flatMap(busyDate => busyDate.busy.filter(busy => busy.eventId)) : state.planner.busyDatesCurrentUser.slice().filter(busy => busy.eventId);
+    const busyDates = state.login.loggedInUser.role === Role.ADMIN ? state.planner.busyDatesOtherUsers.slice().flatMap(busyDate => busyDate.busy.filter(busy => busy.eventId)) : state.planner.busyDatesCurrentUser.slice().filter(busy => busy.eventId);
     const eventMap = new Map();
     busyDates.forEach(ev => {
         if(!eventMap.has(ev.eventId)) {
