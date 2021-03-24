@@ -233,8 +233,11 @@ export const deleteBusyDateForEvents = (state: RootState): Array<BusyDateState> 
 
 const filterBusyDates = (state: RootState, busyDates: Array<BusyState>): Array<BusyState> => {
     return busyDates.filter(x => {
+        const events = state.planner.events.slice().flatMap((groupedEvent: GroupedEventDto) => groupedEvent.events.map(event => event.id));
         const eventDetails = state.planner.events.slice().flatMap((groupedEvent: GroupedEventDto) => groupedEvent.events.find((event) => event.id === x.eventId)).filter(x => !!x)[0];
         if(eventDetails && eventDetails.status === 'confirmed') {
+            return x;
+        }else if(x.eventId && !events.includes(x.eventId)){
             return x;
         }else{
             return !x.eventId;

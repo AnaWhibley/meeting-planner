@@ -83,6 +83,10 @@ export function Calendar() {
         }
     };
 
+    const isAdmin = currentUser?.role === Role.ADMIN ;
+    const isBusyDatesView = currentViewPlanner === ViewPlanner.BUSY_DATES;
+
+    console.log('eventOverlaps', eventOverlaps)
     return (
         <>
             <FullCalendar
@@ -115,24 +119,24 @@ export function Calendar() {
                 slotMinTime={'08:00:00'}
                 slotMaxTime={'20:00:00'}
                 events={currentViewPlanner === ViewPlanner.BUSY_DATES ? busyDates : events}
-                select={currentUser?.role !== Role.ADMIN ?
-                    currentViewPlanner === ViewPlanner.BUSY_DATES ?
+                select={!isAdmin ?
+                    isBusyDatesView ?
                         (event: DateSelectArg) => handleOpenDialog(event) :
                         () => setOpenSnackbarCreateBusyDates(true)
                     : () => setOpenSnackbarAdmin(true)}
                 eventContent={(props: EventContentArg) => <EventContent {...props}/>}
                 selectOverlap={(event: EventApi) => {
-                    // to-do -> Check if the selection overlaps confirmed events
-                    const hasBusyDateAlready = event.groupId === 'currentUser';
-                    const eventOverlap = event._def.extendedProps.eventId;
+                    setEventOverlaps(false);
 
+                    const hasBusyDateAlready = event.groupId === 'currentUser';
+                    const isEvent = event._def.extendedProps.eventId;
                     const isConfirmed = event._def.extendedProps.status === 'confirmed';
 
-                    if(eventOverlap) setEventOverlaps(true);
-                    if(hasBusyDateAlready && !eventOverlap) setOpenSnackbarHasBusyDate(true);
-                    if(eventOverlap && isConfirmed) setOpenSnackbarEventIsConfirmed(true);
+                    if(hasBusyDateAlready && !isEvent) setOpenSnackbarHasBusyDate(true);
+                    if(hasBusyDateAlready && isEvent && !isConfirmed) setEventOverlaps(true);
+                    if(hasBusyDateAlready && isEvent && isConfirmed) setOpenSnackbarEventIsConfirmed(true);
 
-                    return (eventOverlap && !isConfirmed) || !hasBusyDateAlready;
+                    return (isEvent && !isConfirmed) || !hasBusyDateAlready;
                 } }
             />
 
