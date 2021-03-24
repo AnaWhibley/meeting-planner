@@ -16,6 +16,7 @@ export interface PlannerSlice {
     participants: Array<User>;
     selectedParticipants: Array<string>;
     selectedEvents: Array<Array<string>>;
+    isSelectedParticipantsInitialized: boolean;
 }
 
 export interface BusyDateState {
@@ -39,7 +40,8 @@ export const slice = createSlice({
         events: [],
         participants: [],
         selectedParticipants: [],
-        selectedEvents: []
+        selectedEvents: [],
+        isSelectedParticipantsInitialized: false
     } as PlannerSlice,
     reducers: {
         populateBusyDates:(state, action) => {
@@ -52,7 +54,10 @@ export const slice = createSlice({
         },
         populateParticipants: (state, action) => {
             state.participants = action.payload;
-            state.selectedParticipants = action.payload.map((u: User) => u.id);
+            if(!state.isSelectedParticipantsInitialized){
+                state.selectedParticipants = action.payload.map((u: User) => u.id);
+                state.isSelectedParticipantsInitialized = true;
+            }
         },
         setSelectedParticipants: (state, action) => {
             const currentIndex = state.selectedParticipants.indexOf(action.payload);
@@ -106,18 +111,16 @@ export const getEvents = () => (dispatch: Dispatch<any>, getState: () => RootSta
     dispatch(requesting());
     const { login } = getState();
     const currentUser = login.loggedInUser;
-    if (currentUser) {
-        // Get grouped events in which user participates (for admin get all events)
-        EventService.getEvents(currentUser).subscribe((groupedEvents: Array<GroupedEventDto>) => {
-            dispatch(populateEvents(groupedEvents));
+    // Get grouped events in which user participates (for admin get all events)
+    EventService.getEvents(currentUser).subscribe((groupedEvents: Array<GroupedEventDto>) => {
+        dispatch(populateEvents(groupedEvents));
 
-                if(currentUser.role === Role.ADMIN){
-                    dispatch(getBusyDatesAdmin())
-                }else{
-                    dispatch(getBusyDates(getParticipantsId(groupedEvents)));
-                }
-        })
-    }
+        if(currentUser.role === Role.ADMIN){
+            dispatch(getBusyDatesAdmin())
+        }else{
+            dispatch(getBusyDates(getParticipantsId(groupedEvents)));
+        }
+    })
 };
 
 const getParticipantsId = (events: Array<GroupedEventDto>): Array<string> => {
@@ -128,20 +131,16 @@ const getParticipantsId = (events: Array<GroupedEventDto>): Array<string> => {
 
 const getBusyDates = (userIds: Array<string>) => (dispatch: Dispatch<any>, getState: () => RootState) => {
 
-    if(userIds.length !== 0) {
-        EventService.getBusyDates(userIds).subscribe((busyDates) => {
-            getUserService().getParticipants(userIds).subscribe((response) => {
-                if(response) {
-                    dispatch(populateParticipants(response));
+    if(userIds.length > 0) {
 
-                    const { login } = getState();
-                    const currentUser = login.loggedInUser;
-                    if(currentUser) {
-                        dispatch(populateBusyDates(filterBusyDatesByCurrentUser(busyDates, currentUser.id)));
-                    }
-                }
-            })
-        })
+        getUserService().getParticipants(userIds).subscribe((response) => {
+            if(response) dispatch(populateParticipants(response));
+        });
+
+        EventService.getBusyDates(userIds).subscribe((busyDates) => {
+            const { login } = getState();
+            dispatch(populateBusyDates(filterBusyDatesByCurrentUser(busyDates, login.loggedInUser.id)));
+        });
     }
 };
 
@@ -171,18 +170,15 @@ const getBusyDatesAdmin = () => (dispatch: Dispatch<any>) => {
 
 export const addBusy = (busyDate: BusyState) => (dispatch: Dispatch<any>, getState: () => RootState) => {
     const { login } = getState();
-    const currentUser = login.loggedInUser;
-    if (currentUser) {
-        const newBusy = deleteBusyDateForEvents(getState());
-        const index = newBusy.findIndex(busyDate => busyDate.userId === currentUser.id);
-        if(index > -1){
-            newBusy[index] = {
-                ...newBusy[index],
-                busy: [...newBusy[index].busy, busyDate]
-            }
+    const newBusy = deleteBusyDateForEvents(getState());
+    const index = newBusy.findIndex(busyDate => busyDate.userId === login.loggedInUser.id);
+    if(index > -1){
+        newBusy[index] = {
+            ...newBusy[index],
+            busy: [...newBusy[index].busy, busyDate]
         }
-        searchSlotsEvents(getState(), newBusy, busyDate);
     }
+    searchSlotsEvents(getState(), newBusy, busyDate);
 };
 
 export const deleteBusy = (busyDate: BusyState) => (dispatch: Dispatch<any>, getState: () => RootState) => {
@@ -224,14 +220,26 @@ const searchSlotsEvents = (state: RootState, busyDates: Array<BusyDateState>, bu
 export const deleteBusyDateForEvents = (state: RootState): Array<BusyDateState> => {
 
     const { planner, login } = state;
-    const newBusyDatesCurrentUser =  planner.busyDatesCurrentUser.filter(x => !x.eventId);
+    const newBusyDatesCurrentUser = filterBusyDates(state, planner.busyDatesCurrentUser);
+
     const newBusyDatesOtherUsers = planner.busyDatesOtherUsers.map((busyDate) => ({
         ...busyDate,
-        busy: busyDate.busy.filter(x => !x.eventId)
+        busy: filterBusyDates(state, busyDate.busy)
     }));
 
     return [...newBusyDatesOtherUsers, {userId: login.loggedInUser.id || '', busy: newBusyDatesCurrentUser}];
 
 };
+
+const filterBusyDates = (state: RootState, busyDates: Array<BusyState>): Array<BusyState> => {
+    return busyDates.filter(x => {
+        const eventDetails = state.planner.events.slice().flatMap((groupedEvent: GroupedEventDto) => groupedEvent.events.find((event) => event.id === x.eventId)).filter(x => !!x)[0];
+        if(eventDetails && eventDetails.status === 'confirmed') {
+            return x;
+        }else{
+            return !x.eventId;
+        }
+    });
+}
 
 export default slice.reducer;

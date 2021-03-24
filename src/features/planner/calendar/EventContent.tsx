@@ -90,9 +90,14 @@ export function EventContent(eventInfo: EventContentArg) {
                             {status?.icon}
                         </div>
                         :
-                        <div className={'InfoIconContainer InfoBackground'}>
-                            <InfoIcon className={'FillWhite'}/>
-                        </div>
+                        status ?
+                            <div className={cn('InfoIconContainer', status?.style)}>
+                                {status?.icon}
+                            </div>
+                            :
+                            <div className={'InfoIconContainer InfoBackground'}>
+                                <InfoIcon className={'FillWhite'}/>
+                            </div>
                     }
                     <div className={'TextInfoContainer'}>
                         {isAllDay ?

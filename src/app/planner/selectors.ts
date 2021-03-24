@@ -18,7 +18,8 @@ export const selectBusyDatesCurrentUser = (state: RootState) => state.planner.bu
         color: date.eventId ? '#8bc9ff' : '#2896FF',
         textColor: 'black',
         canDelete: !date.eventId,
-        groupId: 'currentUser'
+        groupId: 'currentUser',
+        status: event?.status
     }
 });
 export const selectBusyDatesOtherUsers = (state: RootState) => state.planner.busyDatesOtherUsers.filter((user) => state.planner.selectedParticipants.includes(user.userId)).flatMap((user) => {
@@ -36,6 +37,7 @@ export const selectBusyDatesOtherUsers = (state: RootState) => state.planner.bus
             color: u?.color,
             title: date.eventId ? u?.name + ' tiene programado el evento ' + event?.name : u?.name + ' está ocupado/a',
             canDelete: false,
+            status: event?.status
         }
     });
 });
@@ -78,7 +80,7 @@ export const selectEventsFiltered = (state: RootState) => {
 
 const getJSDateFromString = (date: string): Date => DateTime.fromFormat(date, DATE_TIME_FORMAT, {zone: 'UTC'}).toJSDate();
 
-const findEventById = (state: RootState, id?: string): EventDto | undefined => {
+export const findEventById = (state: RootState, id?: string): EventDto | undefined => {
     return id ? state.planner.events.slice().flatMap((groupedEvent: GroupedEventDto) => groupedEvent.events.find((event) => event.id === id)).filter(x => !!x)[0] : undefined;
 }
 
