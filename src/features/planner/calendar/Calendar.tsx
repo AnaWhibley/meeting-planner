@@ -51,6 +51,7 @@ export function Calendar() {
     const [openSnackbarAdmin, setOpenSnackbarAdmin] = React.useState(false);
     const [openSnackbarCreateBusyDates, setOpenSnackbarCreateBusyDates] = React.useState(false);
     const [openSnackbarHasBusyDate, setOpenSnackbarHasBusyDate] = React.useState(false);
+    const [openSnackbarEventIsConfirmed, setOpenSnackbarEventIsConfirmed] = React.useState(false);
 
     const handleOpenDialog = (event: DateSelectArg) => {
         setOpenDialog(true);
@@ -125,10 +126,13 @@ export function Calendar() {
                     const hasBusyDateAlready = event.groupId === 'currentUser';
                     const eventOverlap = event._def.extendedProps.eventId;
 
+                    const isConfirmed = event._def.extendedProps.status === 'confirmed';
+
                     if(eventOverlap) setEventOverlaps(true);
                     if(hasBusyDateAlready && !eventOverlap) setOpenSnackbarHasBusyDate(true);
+                    if(eventOverlap && isConfirmed) setOpenSnackbarEventIsConfirmed(true);
 
-                    return eventOverlap || !hasBusyDateAlready;
+                    return (eventOverlap && !isConfirmed) || !hasBusyDateAlready;
                 } }
             />
 
@@ -147,6 +151,12 @@ export function Calendar() {
             <Snackbar open={openSnackbarHasBusyDate} autoHideDuration={6000} onClose={() => setOpenSnackbarHasBusyDate(false)}>
                 <Alert severity="warning" onClose={() => setOpenSnackbarHasBusyDate(false)}>
                     Ya existe una indisponibilidad para el horario seleccionado.
+                </Alert>
+            </Snackbar>
+
+            <Snackbar open={openSnackbarEventIsConfirmed} autoHideDuration={6000} onClose={() => setOpenSnackbarEventIsConfirmed(false)}>
+                <Alert severity="error" onClose={() => setOpenSnackbarEventIsConfirmed(false)}>
+                    Existe un evento confirmado en el rango que intentas crear la indisponibilidad.
                 </Alert>
             </Snackbar>
 
