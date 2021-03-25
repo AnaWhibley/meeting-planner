@@ -81,5 +81,13 @@ export function ActionsRenderer (props: ICellRendererParams) {
 }
 
 export const durationFormatter = (params: ValueFormatterParams) => {
-        return params.value + ' minutos';
-    };
+    return params.value + ' minutos';
+};
+
+export function ColorRenderer (props: ICellRendererParams) {
+    return (
+        <>
+            <div style={{backgroundColor: props.value}} className={'DotColorRenderer'}/>
+        </>
+    )
+}
