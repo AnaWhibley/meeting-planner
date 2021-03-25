@@ -21,7 +21,14 @@ import {ReactComponent as XIcon} from '../../../assets/icons/evericons/x.svg';
 import {ReactComponent as VerifiedIcon} from '../../../assets/icons/evericons/verified.svg';
 import {ReactComponent as ErrorIcon} from '../../../assets/icons/evericons/x-octagon.svg';
 import {ReactComponent as PendingIcon} from '../../../assets/icons/evericons/question-circle.svg';
-import {ActionsRenderer, DateRenderer, durationFormatter, HourRenderer, StatusRenderer} from './CellRenderers';
+import {
+    ActionsRenderer,
+    ColorRenderer,
+    DateRenderer,
+    durationFormatter,
+    HourRenderer,
+    StatusRenderer
+} from './CellRenderers';
 import {ConnectedStatusFilter} from './StatusFilter';
 import {AG_GRID_LOCALE_ES} from './locale.es';
 import {Accordion, AccordionDetails, AccordionSummary, AppBar, Tab, Tabs, Typography} from '@material-ui/core';
@@ -72,7 +79,7 @@ export const statusMapper = (status: string) => {
     }
 };
 
-export function EventsGrid(props: any) {
+export function EventsGrid() {
 
     const [gridApi, setGridApi] = useState<GridApi | null>(null);
     const [gridColumnApi, setGridColumnApi] = useState<ColumnApi | null>(null);
@@ -81,6 +88,12 @@ export function EventsGrid(props: any) {
 
     const columnDefs: Array<ColDef> = [
         {
+            cellRenderer: 'colorRenderer',
+            headerName: '',
+            field: 'color',
+            lockPosition: true,
+            width: 20
+        }, {
             field: 'name',
             headerName: 'Nombre',
             lockPosition: true,
@@ -133,6 +146,7 @@ export function EventsGrid(props: any) {
     ];
 
     const frameworkComponents = {
+        colorRenderer: ColorRenderer,
         statusRenderer: StatusRenderer,
         statusFilter: ConnectedStatusFilter,
         dateRenderer: DateRenderer,
