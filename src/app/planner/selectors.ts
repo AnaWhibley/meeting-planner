@@ -29,13 +29,30 @@ export const selectBusyDatesOtherUsers = (state: RootState) => state.planner.bus
     return user.busy.map((date: BusyState) => {
         const event = findEventById(state, date.eventId);
 
+        const isEvent = date.eventId;
+        const userName = u?.name;
+        const eventName = event?.name;
+
+        const currentUser = state.login.loggedInUser;
+
+        const title =
+            currentUser?.role === Role.ADMIN ? userName +
+                (isEvent ? ' tiene programado el evento ' + event?.name : ' está ocupado')
+                :
+                userName + (
+                    isEvent ?
+                        (eventName ?
+                            ' también participa en ' + eventName
+                            : ' tiene programado un evento'
+                        ) : ' está ocupado/a');
+
         return {
             ...date,
             start: getJSDateFromString(date.start),
             end: getJSDateFromString(date.end),
             textColor: 'black',
             color: u?.color,
-            title: u?.name + (date.eventId ? (event?.name ? ' también participa en ' + event?.name : ' tiene programado un evento') : ' está ocupado/a'),
+            title,
             canDelete: false,
             status: event?.status
         }
