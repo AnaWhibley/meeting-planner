@@ -1,10 +1,11 @@
 import {createSlice, Dispatch, PayloadAction} from '@reduxjs/toolkit';
 import {DateTime} from 'luxon';
 import {RootState} from '../store';
-import {requesting} from '../uiStateSlice';
-import EventService, {CreateResponse} from '../../services/eventService';
+import {CreateResponse} from '../../services/eventService';
 import {validateFields} from './validation';
 import {mapToCreateEventRequest, mapJSONToState, mapJSONFromState} from './mappers';
+import {getEventService} from '../../services/utils';
+import { requesting } from '../uiStateSlice';
 
 export enum ParticipantType {
     PRESIDENTE_TT = 'Presidente Tribunal Titular',
@@ -154,9 +155,9 @@ export const slice = createSlice({
 export const { next, previous, setFrom, setTo, setName, createNew, complete, setParticipants, addTutor, removeTutor, setImportedData, setGroupName, setDuration, editEvent, setInitialState } = slice.actions;
 
 export const createEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
-    //dispatch(requesting());
+    dispatch(requesting());
     const { eventCreator } = getState();
-    EventService.create(mapToCreateEventRequest(eventCreator)).subscribe((response: CreateResponse) => {
+    getEventService().create(mapToCreateEventRequest(eventCreator)).subscribe((response: CreateResponse) => {
         if(response.success){
             dispatch(complete());
         }
