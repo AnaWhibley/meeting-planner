@@ -1,9 +1,9 @@
 import {createSlice, Dispatch} from '@reduxjs/toolkit';
 import {RootState} from '../store';
-import EventService, {BusyDateDto, GroupedEventDto} from '../../services/eventService';
+import {BusyDateDto, EventResponse, GroupedEventDto} from '../../services/eventService';
 import {Role} from '../../services/userService';
 import {User} from '../login/slice';
-import {getUserService} from "../../services/utils";
+import {getEventService, getUserService} from "../../services/utils";
 import {requesting} from '../uiStateSlice';
 import {search} from '../../search';
 import {DateTime, Interval} from 'luxon';
@@ -112,7 +112,7 @@ export const getEvents = () => (dispatch: Dispatch<any>, getState: () => RootSta
     const { login } = getState();
     const currentUser = login.loggedInUser;
     // Get grouped events in which user participates (for admin get all events)
-    EventService.getEvents(currentUser).subscribe((groupedEvents: Array<GroupedEventDto>) => {
+    getEventService().getEvents(currentUser).subscribe((groupedEvents: Array<GroupedEventDto>) => {
         dispatch(populateEvents(groupedEvents));
 
         if(currentUser.role === Role.ADMIN){
@@ -137,14 +137,14 @@ const getBusyDates = (userIds: Array<string>) => (dispatch: Dispatch<any>, getSt
             if(response) dispatch(populateParticipants(response));
         });
 
-        EventService.getBusyDates(userIds).subscribe((busyDates) => {
+        getEventService().getBusyDates(userIds).subscribe((busyDates: EventResponse<Array<BusyDateDto>>) => {
             const { login } = getState();
-            dispatch(populateBusyDates(filterBusyDatesByCurrentUser(busyDates, login.loggedInUser.id)));
+            dispatch(populateBusyDates(filterBusyDatesByCurrentUser(busyDates.data, login.loggedInUser.id)));
         });
     }
 };
 
-const filterBusyDatesByCurrentUser = (busyDates: Array<BusyDateState>, currentUserId: string) => {
+const filterBusyDatesByCurrentUser = (busyDates: Array<BusyDateDto>, currentUserId: string) => {
     return busyDates.reduce((acc: any,current: any) => {
         const newAcc = {busyDatesCU: acc.busyDatesCU, busyDatesOU: acc.busyDatesOU};
         if(current.userId === currentUserId){
@@ -157,15 +157,17 @@ const filterBusyDatesByCurrentUser = (busyDates: Array<BusyDateState>, currentUs
 }
 
 const getBusyDatesAdmin = () => (dispatch: Dispatch<any>) => {
-    EventService.getBusyDates().subscribe(busyDates => {
-        getUserService().getParticipants().subscribe(response => {
-            if(response){
-                dispatch(populateParticipants(response));
-                const bd = {busyDatesCU: [], busyDatesOU: busyDates};
-                dispatch(populateBusyDates(bd));
-            }
-        })
-    })
+    getUserService().getParticipants().subscribe(response => {
+        if(response){
+            dispatch(populateParticipants(response));
+        }
+    });
+    getEventService().getBusyDates().subscribe(busyDates => {
+        if(busyDates.success) {
+            const bd = {busyDatesCU: [], busyDatesOU: busyDates.data};
+            dispatch(populateBusyDates(bd));
+        }
+    });
 };
 
 export const addBusy = (busyDate: BusyState) => (dispatch: Dispatch<any>, getState: () => RootState) => {
@@ -208,8 +210,8 @@ const searchSlotsEvents = (state: RootState, busyDates: Array<BusyDateState>, bu
         const evInterval = Interval.fromDateTimes(groupedEvStart, groupedEvEnd);
         if(interval.overlaps(evInterval)) {
             const newData = search(ev, busyDates);
-            EventService.updateBusyDate(newData.busyDates).subscribe(events => {
-                EventService.updateEventsFromGroupedEvent(newData.events, ev.groupName).subscribe((data) => {
+            getEventService().updateBusyDate(newData.busyDates).subscribe(events => {
+                getEventService().updateEventsFromGroupedEvent(newData.events, ev.groupName).subscribe((data) => {
 
                 });
             });

@@ -1,10 +1,17 @@
 import {BehaviorSubject, Observable, of} from 'rxjs';
-import {delay, filter, map} from 'rxjs/operators';
+import {delay, map} from 'rxjs/operators';
 import {BusyDateState, BusyState} from '../app/planner/slice';
 import { v4 as uuidv4 } from 'uuid';
 import {Role} from './userService';
 import {User} from '../app/login/slice';
 import {colors} from '../styles/theme';
+import firebase from '../firebase-config';
+
+export interface EventResponse<T> {
+    success: boolean;
+    data: T;
+    error?: string;
+}
 
 export interface CreateResponse {
     success: boolean;
@@ -545,9 +552,9 @@ const groupedEvents: Array<GroupedEventDto> = [
             }
         ]
     },
-]
+];
 
-class EventService {
+export class EventService {
     private static busyDatesSubject = new BehaviorSubject(busyDates.slice());
     private static groupedEventsSubject = new BehaviorSubject(groupedEvents.slice());
 
@@ -597,16 +604,36 @@ class EventService {
         return of(true);
     }
 
-    public static getBusyDates(userIds?: Array<string>): Observable<Array<BusyDateDto>> {
+    public static getBusyDates(userIds?: Array<string>): Observable<EventResponse<Array<BusyDateDto>>> {
 
-        if(!userIds) {
-            return this.busyDatesSubject.pipe(delay(100));
-        }
+        return new Observable((subscriber) => {
+            firebase.firestore().collection('busyDates').onSnapshot((snapshot) => {
+                const busyDates = snapshot.docs.map((doc) => ({
+                    userId: doc.id,
+                    busy: doc.data().busy
+                }));
 
-        return this.busyDatesSubject.pipe(
-            delay(200),
-            map((dto: Array<BusyDateDto>) => dto.filter(bd => userIds.includes(bd.userId))),
-        );
+                if(userIds){
+                    subscriber.next({
+                        success: true,
+                        data: busyDates.filter(u => userIds.includes(u.userId))
+                    });
+                }else {
+                    subscriber.next({
+                        success: true,
+                        data: busyDates
+                    });
+                }
+
+            }, (error) => {
+                subscriber.next({
+                    success: false,
+                    error: 'Error collecting users: ' + error,
+                    data: []
+                });
+                subscriber.complete();
+            });
+        });
     }
 
     public static getEvents(user: User): Observable<Array<GroupedEventDto>> {
@@ -672,4 +699,133 @@ class EventService {
     }
 }
 
-export default EventService;
+
+export class MockEventService {
+    private static busyDatesSubject = new BehaviorSubject(busyDates.slice());
+    private static groupedEventsSubject = new BehaviorSubject(groupedEvents.slice());
+
+    public static create(event: GroupedEventDto): Observable<CreateResponse> {
+        groupedEvents.push(event);
+        return of({success: true}).pipe(delay(500))
+    }
+
+    public static addBusyDate(busyDate: BusyState, userId: string): Observable<boolean> {
+        const index = busyDates.findIndex((bd) => bd.userId === userId);
+        const newBusy = { ...busyDate, id: uuidv4()};
+        if(index > -1){
+            busyDates[index].busy = [ ...busyDates[index].busy, newBusy];
+        }else{
+            busyDates.push({userId, busy: [newBusy]})
+        }
+
+        this.busyDatesSubject.next(busyDates.slice());
+        return of(true);
+    }
+
+    public static deleteBusyDate(busyDateId: string): Observable<boolean> {
+        busyDates.forEach((busyDate) => {
+            let index = busyDate.busy.findIndex((busy) => busy.id === busyDateId);
+            if(index > -1) {
+                const copy = busyDate.busy.slice();
+                copy.splice(index, 1);
+                busyDate.busy = copy;
+            }
+        });
+
+        this.busyDatesSubject.next(busyDates.slice());
+        return of(true);
+    }
+
+    public static updateBusyDate(modified: Array<BusyDateState>): Observable<boolean> {
+        modified.forEach((m) => {
+            let index = busyDates.findIndex((busy) => busy.userId ===  m.userId);
+
+            if(index > -1) {
+                busyDates.splice(index, 1);
+                busyDates.splice(index, 0, m);
+            }
+        });
+
+        this.busyDatesSubject.next(busyDates.slice());
+        return of(true);
+    }
+
+
+    public static getBusyDates(userIds?: Array<string>): Observable<EventResponse<Array<BusyDateDto>>> {
+
+        if(!userIds) {
+            return this.busyDatesSubject.pipe(
+                delay(100),
+                map(dto => ({success: true, data: dto}))
+            );
+        }
+
+        return this.busyDatesSubject.pipe(
+            delay(200),
+            map((dto: Array<BusyDateDto>) => dto.filter(bd => userIds.includes(bd.userId))),
+            map(dto => ({success: true, data: dto}))
+        );
+    }
+
+    public static getEvents(user: User): Observable<Array<GroupedEventDto>> {
+
+        if(user.role === Role.ADMIN) {
+            return this.groupedEventsSubject.pipe(
+                delay(500),
+                map((dto: Array<GroupedEventDto>) => {
+                    let count = 0;
+                    return dto.map((groupedEvent) => {
+                        const events = groupedEvent.events.map((e) => {
+                            return {...e, color: colors[count++ % colors.length]}
+                        });
+                        return {
+                            ...groupedEvent,
+                            events
+                        }
+                    })
+                })
+            );
+        }
+
+        return this.groupedEventsSubject.pipe(
+            delay(500),
+            map((groupedEvents: Array<GroupedEventDto>) => {
+                return groupedEvents.map((ev) =>{
+                    return {
+                        ...ev,
+                        events: ev.events.reduce((acc: Array<EventDto>, current: EventDto ) => {
+                            return current.participants.find((participant) => participant.email === user.id) ? [...acc, current] : acc;
+                        }, [])
+                    }
+                }).filter((grouped) => grouped.events.length > 0)
+            }),
+            map((dto: Array<GroupedEventDto>) => {
+                return dto.map((groupedEvent) => {
+                    let count = 0;
+                    const events = groupedEvent.events.map((e) => {
+                        return {...e, color: colors[count++ % colors.length]}
+                    });
+                    return {
+                        ...groupedEvent,
+                        events
+                    }
+                })
+            })
+        );
+    }
+
+    public static updateEventsFromGroupedEvent(modified: Array<EventDto>, groupName: string): Observable<boolean> {
+
+        let index = groupedEvents.findIndex((groupedEvent) => groupedEvent.groupName === groupName);
+
+        if(index > -1) {
+            groupedEvents[index].events = groupedEvents[index].events.map((ev) => {
+                const isModified = modified.find(mod => mod.id === ev.id);
+                return isModified || ev;
+            });
+        }
+
+        this.groupedEventsSubject.next(groupedEvents.slice());
+        return of(true);
+    }
+}
