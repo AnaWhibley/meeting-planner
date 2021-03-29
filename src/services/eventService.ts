@@ -584,16 +584,23 @@ export class EventService {
     }
 
     public static addBusyDate(busyDate: BusyState, userId: string): Observable<boolean> {
-        const index = busyDates.findIndex((bd) => bd.userId === userId);
-        const newBusy = { ...busyDate, id: uuidv4()};
-        if(index > -1){
-            busyDates[index].busy = [ ...busyDates[index].busy, newBusy];
-        }else{
-            busyDates.push({userId, busy: [newBusy]})
-        }
-
-        this.busyDatesSubject.next(busyDates.slice());
-        return of(true);
+        return new Observable((subscriber) => {
+            const docRef = firebase.firestore().collection('busyDates').doc(userId);
+            firebase.firestore().runTransaction((transaction) => {
+                return transaction.get(docRef).then((doc) => {
+                    if (!doc.exists) {
+                        subscriber.next(false);
+                    }else{
+                        const newBusy = {...busyDate, id: uuidv4()};
+                        transaction.set(docRef, {busy: firebase.firestore.FieldValue.arrayUnion(newBusy)}, {merge: true});
+                    }
+                });
+            }).then((response) => {
+                subscriber.next(true);
+            }).catch((err) => {
+                subscriber.error(false);
+            });
+        });
     }
 
     public static deleteBusyDate(busyDateId: string): Observable<boolean> {
@@ -610,18 +617,24 @@ export class EventService {
         return of(true);
     }
 
-    public static updateBusyDate(modified: Array<BusyDateState>): Observable<boolean> {
-        modified.forEach((m) => {
-            let index = busyDates.findIndex((busy) => busy.userId ===  m.userId);
+    public static updateBusyDates(newBusyDates: Array<BusyDateState>): Observable<boolean> {
 
-            if(index > -1) {
-                busyDates.splice(index, 1);
-                busyDates.splice(index, 0, m);
-            }
+        return new Observable((subscriber) => {
+
+            firebase.firestore().runTransaction((transaction) => {
+                const results = newBusyDates.map(busyDate => {
+                    const docRef = firebase.firestore().collection('busyDates').doc(busyDate.userId);
+                    return transaction.get(docRef).then((doc) => {
+                        transaction.set(docRef, {busy: busyDate.busy}, {merge: true});
+                    });
+                });
+                return Promise.all(results);
+            }).then((response) => {
+                subscriber.next(true);
+            }).catch((err) => {
+                subscriber.error(false);
+            });
         });
-
-        this.busyDatesSubject.next(busyDates.slice());
-        return of(true);
     }
 
     public static getBusyDates(userIds?: Array<string>): Observable<ServiceResponse<Array<BusyDateDto>>> {
@@ -661,7 +674,7 @@ export class EventService {
         return new Observable((subscriber) => {
             firebase.firestore().collection('events').onSnapshot((snapshot) => {
 
-                let groupedEvents = snapshot.docs.map((doc) => ({
+                let groupedEvents: Array<GroupedEventDto> = snapshot.docs.map((doc) => ({
                     events: doc.data().events,
                     from: doc.data().from,
                     to: doc.data().to,
@@ -691,19 +704,30 @@ export class EventService {
         });
     }
 
-    public static updateEventsFromGroupedEvent(modified: Array<EventDto>, groupName: string): Observable<boolean> {
+    public static updateEventsFromGroupedEvent(newEvents: Array<EventDto>, groupName: string): Observable<boolean> {
 
-        let index = groupedEvents.findIndex((groupedEvent) => groupedEvent.groupName === groupName);
+        return new Observable((subscriber) => {
 
-        if(index > -1) {
-            groupedEvents[index].events = groupedEvents[index].events.map((ev) => {
-                const isModified = modified.find(mod => mod.id === ev.id);
-                return isModified || ev;
+            const docRef = firebase.firestore().collection('events').doc(groupName);
+
+            firebase.firestore().runTransaction((transaction) => {
+                return transaction.get(docRef).then((doc) => {
+                    if (!doc.exists) {
+                        subscriber.next(false);
+                    }else{
+                        const events = doc.data()?.events.map((event: EventDto) => {
+                            const modifiedEvent = newEvents.find(modified => modified.id === event.id);
+                            return modifiedEvent || event;
+                        });
+                        transaction.set(docRef, {events}, {merge: true});
+                    }
+                });
+            }).then((response) => {
+                subscriber.next(true);
+            }).catch((err) => {
+                subscriber.error(false);
             });
-        }
-
-        this.groupedEventsSubject.next(groupedEvents.slice());
-        return of(true);
+        });
     }
 }
 
@@ -744,7 +768,7 @@ export class MockEventService {
         return of(true);
     }
 
-    public static updateBusyDate(modified: Array<BusyDateState>): Observable<boolean> {
+    public static updateBusyDates(modified: Array<BusyDateState>): Observable<boolean> {
         modified.forEach((m) => {
             let index = busyDates.findIndex((busy) => busy.userId ===  m.userId);
 
@@ -757,7 +781,6 @@ export class MockEventService {
         this.busyDatesSubject.next(busyDates.slice());
         return of(true);
     }
-
 
     public static getBusyDates(userIds?: Array<string>): Observable<ServiceResponse<Array<BusyDateDto>>> {
 
