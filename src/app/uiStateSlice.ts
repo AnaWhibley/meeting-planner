@@ -1,11 +1,11 @@
 import {createAction, createSlice, Dispatch} from '@reduxjs/toolkit';
-import {LoginResponse} from '../services/userService';
 import {RootState} from './store';
 import {GroupedEventDto} from '../services/eventService';
-import {getUserService} from "../services/utils";
+import {getUserService, ServiceResponse} from "../services/utils";
+import {User} from './login/slice';
 
-const setUser = createAction<LoginResponse>('login/setUser');
-const showErrorMessage = createAction<LoginResponse>('login/showErrorMessage');
+const setUser = createAction<ServiceResponse<User>>('login/setUser');
+const showErrorMessage = createAction<ServiceResponse<User>>('login/showErrorMessage');
 const populateEvents = createAction<Array<GroupedEventDto>>('planner/populateEvents');
 
 interface uiStateSlice {

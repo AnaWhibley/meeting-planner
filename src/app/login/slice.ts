@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { requesting } from '../uiStateSlice';
-import {LoginResponse, Role} from '../../services/userService';
+import {Role} from '../../services/userService';
 import { Dispatch } from '@reduxjs/toolkit';
 import {RootState} from '../store';
-import {getUserService} from "../../services/utils";
+import {getUserService, ServiceResponse} from "../../services/utils";
 import {getEvents} from '../planner/slice';
 
 export interface LoginSlice {
@@ -60,9 +60,9 @@ export const { setEmail, setPassword, showErrorMessage, setUser, editName } = sl
 export const login = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     dispatch(requesting());
     const { login } = getState();
-    getUserService().login(login.email, login.password).subscribe((response: LoginResponse) => {
+    getUserService().login(login.email, login.password).subscribe((response: ServiceResponse<User>) => {
         if(response.success){
-            dispatch(setUser(response.user));
+            dispatch(setUser(response.data));
             dispatch(getEvents());
         } else {
             dispatch(showErrorMessage(response.error))

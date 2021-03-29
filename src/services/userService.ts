@@ -3,22 +3,17 @@ import {delay, map} from 'rxjs/operators';
 import {User} from '../app/login/slice';
 import {colors} from '../styles/theme';
 import firebase from '../firebase-config';
+import {ServiceResponse} from './utils';
 
 interface UserDto {
-   name: string;
-   role?: Role;
-   id: string;
+    name: string;
+    role?: Role;
+    id: string;
 }
 
 export enum Role {
     ADMIN = 'ADMIN',
     USER = 'USER'
-}
-
-export interface LoginResponse {
-    user?: User;
-    error?: string;
-    success: boolean;
 }
 
 const users: Array<UserDto> = [
@@ -79,27 +74,24 @@ const users: Array<UserDto> = [
 
 export class UserService {
 
-    public static login(email: string, password: string): Observable<LoginResponse> {
+    public static login(email: string, password: string): Observable<ServiceResponse<User>> {
 
         return new Observable((subscriber) => {
             firebase.auth().signInWithEmailAndPassword(email, password)
                 .then((data) => {
                     const email = data.user?.email;
                     if(email) {
-                        this.getUserById(email).subscribe((user) => {
-                            subscriber.next({
-                                user,
-                                success: true
-                            })
+                        this.getUserById(email).subscribe((response) => {
+                            subscriber.next(response);
                         });
                     }
                 }).catch(function (error) {
-                    const errorMessage = email.length === 0 || password.length === 0 ? getErrorMessage('auth/empty_login') : getErrorMessage(error.code);
-                    subscriber.next({
-                        error: errorMessage,
-                        success: false
-                    });
-                    subscriber.complete();
+                const errorMessage = email.length === 0 || password.length === 0 ? getErrorMessage('auth/empty_login') : getErrorMessage(error.code);
+                subscriber.next({
+                    data: {name: '', id: ''},
+                    error: errorMessage,
+                    success: false
+                });
             });
         })
 
@@ -135,9 +127,7 @@ export class UserService {
         return new Observable((subscriber) => {
             firebase.auth().signOut().then(() => {
                 subscriber.next(true);
-                subscriber.complete();
             }).catch(function (error) {
-                console.log('Error on logout - ', error);
                 subscriber.next(false);
             });
         });
@@ -147,29 +137,37 @@ export class UserService {
         return new Observable((subscriber) => {
             firebase.auth().sendPasswordResetEmail(email).then(() => {
                 subscriber.next(true);
-                subscriber.complete();
             }).catch((error) => {
-                console.log('Error on forgotPassword - ', error);
                 subscriber.next(false);
             });
         });
     }
 
-    public static getUserById(id: string): Observable<User> {
+    public static getUserById(id: string): Observable<ServiceResponse<User>> {
         return new Observable(subscriber => {
             firebase.firestore().collection('users').doc(id).get().then((document) => {
-                if (!document.exists) return;
-                subscriber.next({
-                    id,
-                    name: document.data()?.name,
-                    role: document.data()?.role === 'admin' ? Role.ADMIN : Role.USER
-                });
-                subscriber.complete();
+                if (!document.exists) {
+                    subscriber.next({
+                        success: false,
+                        error: 'User does not exist',
+                        data: {name: '', id: ''}
+                    });
+                }else{
+                    const user = {
+                        id,
+                        name: document.data()?.name,
+                        role: document.data()?.role === 'admin' ? Role.ADMIN : Role.USER
+                    };
+                    subscriber.next({
+                        success: true,
+                        data: user
+                    });
+                }
             });
         });
     }
 
-    public static getParticipants(userIds?: Array<string>): Observable<Array<User> | boolean> {
+    public static getParticipants(userIds?: Array<string>): Observable<ServiceResponse<Array<User>>> {
 
         return new Observable((subscriber) => {
             firebase.firestore().collection('users').onSnapshot((snapshot) => {
@@ -178,44 +176,53 @@ export class UserService {
                     color: colors[index % colors.length],
                     name: doc.data().name
                 }));
-                userIds ? subscriber.next(users.filter(u => userIds.includes(u.id))) : subscriber.next(users);
+                if(userIds){
+                    const data = users.filter(u => userIds.includes(u.id));
+                    subscriber.next({
+                        success: true,
+                        data
+                    });
+                }else{
+                    subscriber.next({
+                        success: true,
+                        data: users
+                    });
+                }
             }, (error) => {
-                console.error('Error collecting users: ', error);
-                subscriber.next(false);
-                subscriber.complete();
+                subscriber.next({
+                    success: false,
+                    error: 'Error collecting users: ' + error,
+                    data: []
+                });
             });
         });
     }
 
     public static editUserName(userId: string, newName: string): Observable<boolean>{
         return new Observable((subscriber) => {
-            firebase.firestore().collection('users').doc(userId).update({name: newName})
-                .then(() => {
-                    subscriber.next(true);
-                    subscriber.complete();
-                })
-                .catch((error) => {
-                    console.error('Error updating user name: ', error);
-                    subscriber.next(false);
-                    subscriber.complete();
-                });
-
+            firebase.firestore().collection('users').doc(userId).update({
+                name: newName
+            }).then(() => {
+                subscriber.next(true);
+            }).catch((error) => {
+                subscriber.next(false);
+            });
         });
     }
 }
 
 export class MockUserService {
 
-    public static login(email: string, password: string): Observable<LoginResponse> {
+    public static login(email: string, password: string): Observable<ServiceResponse<User>> {
         if(email === 'u' && password === 'u') {
             return of({
-                user: {name: 'José Daniel Hernández Sosa', role: Role.USER, id: 'daniel.hernandez@ulpgc.es'},
+                data: {name: 'José Daniel Hernández Sosa', role: Role.USER, id: 'daniel.hernandez@ulpgc.es'},
                 success: true
             }).pipe(delay(1000))
         }else{
             return of(
                 {
-                    user: {name: 'Administración Meeting Planner', role: Role.ADMIN, id: 'meetingplannertfg@gmail.com'},
+                    data: {name: 'Administración Meeting Planner', role: Role.ADMIN, id: 'meetingplannertfg@gmail.com'},
                     success: true
                 }).pipe(delay(1000))
         }
@@ -225,16 +232,20 @@ export class MockUserService {
         return of(true).pipe(delay(1000));
     }
 
-    public static getParticipants(userIds?: Array<string>): Observable<Array<User> | boolean> {
+    public static getParticipants(userIds?: Array<string>): Observable<ServiceResponse<Array<User>>> {
         if(!userIds){
-            return of(users).pipe(delay(500),
-                map((dto: Array<UserDto>) => dto.map((u, i) => ({...u, color: colors[i % colors.length]}))));
+            return of(users).pipe(
+                delay(500),
+                map((dto: Array<UserDto>) => dto.map((u, i) => ({...u, color: colors[i % colors.length]}))),
+                map(dto => ({success: true, data: dto}))
+            );
         }
 
         return of(users)
             .pipe(
                 delay(500),
                 map((dto: Array<UserDto>) => dto.filter(u => userIds.includes(u.id)).map((u, i) => ({...u, color: colors[i % colors.length]}))),
+                map(dto => ({success: true, data: dto}))
             );
     }
 

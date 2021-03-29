@@ -1,11 +1,9 @@
 import {RootState} from '../store';
 import {BusyState} from './slice';
-import {DateTime, Interval} from 'luxon';
+import {DateTime} from 'luxon';
 import {DATE_TIME_FORMAT} from '../eventCreator/slice';
 import {Role} from '../../services/userService';
 import {EventDto, GroupedEventDto} from '../../services/eventService';
-import {toLuxonDateTime} from '@fullcalendar/luxon';
-import {useSelector} from 'react-redux';
 
 export const selectBusyDatesCurrentUser = (state: RootState) => state.planner.busyDatesCurrentUser.map((date: BusyState) => {
     const event = findEventById(state, date.eventId);
@@ -73,7 +71,9 @@ export const selectSelectedEvents = (state: RootState) => state.planner.selected
 export const selectEvents = (state: RootState) => state.planner.events;
 
 export const selectEventsFiltered = (state: RootState) => {
-    const busyDates = state.login.loggedInUser.role === Role.ADMIN ? state.planner.busyDatesOtherUsers.slice().flatMap(busyDate => busyDate.busy.filter(busy => busy.eventId)) : state.planner.busyDatesCurrentUser.slice().filter(busy => busy.eventId);
+    const busyDates = state.login.loggedInUser.role === Role.ADMIN ?
+        state.planner.busyDatesOtherUsers.flatMap(busyDate => busyDate.busy.filter(busy => busy.eventId)) :
+        state.planner.busyDatesCurrentUser.filter(busy => busy.eventId);
     const eventMap = new Map();
     busyDates.forEach(ev => {
         if(!eventMap.has(ev.eventId)) {
@@ -91,7 +91,7 @@ export const selectEventsFiltered = (state: RootState) => {
             eventMap.set(ev.eventId, eventWithProperties);
         }
     });
-    const selectedEvents = state.planner.selectedEvents.slice().flatMap((event) => event);
+    const selectedEvents = state.planner.selectedEvents.flatMap((event) => event);
     return Array.from(eventMap.values()).filter(event => selectedEvents.includes(event.eventId));
 };
 

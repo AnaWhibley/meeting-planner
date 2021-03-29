@@ -86,7 +86,6 @@ export function Calendar() {
     const isAdmin = currentUser?.role === Role.ADMIN ;
     const isBusyDatesView = currentViewPlanner === ViewPlanner.BUSY_DATES;
 
-    console.log('eventOverlaps', eventOverlaps)
     return (
         <>
             <FullCalendar
