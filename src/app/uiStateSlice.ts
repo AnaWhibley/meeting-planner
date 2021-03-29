@@ -4,7 +4,7 @@ import {GroupedEventDto} from '../services/eventService';
 import {getUserService, ServiceResponse} from "../services/utils";
 import {User} from './login/slice';
 
-const setUser = createAction<ServiceResponse<User>>('login/setUser');
+const populateBusyDates = createAction<ServiceResponse<User>>('planner/populateBusyDates');
 const showErrorMessage = createAction<ServiceResponse<User>>('login/showErrorMessage');
 const populateEvents = createAction<Array<GroupedEventDto>>('planner/populateEvents');
 
@@ -106,7 +106,7 @@ export const slice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(setUser, (state) => {
+            .addCase(populateBusyDates, (state) => {
                 state.isBusy = false;
             })
             .addCase(showErrorMessage, (state) => {
