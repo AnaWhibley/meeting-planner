@@ -1,9 +1,9 @@
 import {createSlice, Dispatch} from '@reduxjs/toolkit';
 import {RootState} from '../store';
-import {BusyDateDto, EventResponse, GroupedEventDto} from '../../services/eventService';
+import {BusyDateDto, GroupedEventDto} from '../../services/eventService';
 import {Role} from '../../services/userService';
 import {User} from '../login/slice';
-import {getEventService, getUserService} from "../../services/utils";
+import {getEventService, getUserService, ServiceResponse} from "../../services/utils";
 import {requesting} from '../uiStateSlice';
 import {search} from '../../search';
 import {DateTime, Interval} from 'luxon';
@@ -112,13 +112,15 @@ export const getEvents = () => (dispatch: Dispatch<any>, getState: () => RootSta
     const { login } = getState();
     const currentUser = login.loggedInUser;
     // Get grouped events in which user participates (for admin get all events)
-    getEventService().getEvents(currentUser).subscribe((groupedEvents: Array<GroupedEventDto>) => {
-        dispatch(populateEvents(groupedEvents));
+    getEventService().getEvents(currentUser).subscribe((response: ServiceResponse<Array<GroupedEventDto>>) => {
+        if(response.success){
+            dispatch(populateEvents(response.data));
 
-        if(currentUser.role === Role.ADMIN){
-            dispatch(getBusyDatesAdmin())
-        }else{
-            dispatch(getBusyDates(getParticipantsId(groupedEvents)));
+            if(currentUser.role === Role.ADMIN){
+                dispatch(getBusyDatesAdmin())
+            }else{
+                dispatch(getBusyDates(getParticipantsId(response.data)));
+            }
         }
     })
 };
@@ -133,13 +135,15 @@ const getBusyDates = (userIds: Array<string>) => (dispatch: Dispatch<any>, getSt
 
     if(userIds.length > 0) {
 
-        getUserService().getParticipants(userIds).subscribe((response) => {
-            if(response) dispatch(populateParticipants(response));
+        getUserService().getParticipants(userIds).subscribe((response: ServiceResponse<Array<User>>) => {
+            if(response.success) dispatch(populateParticipants(response.data));
         });
 
-        getEventService().getBusyDates(userIds).subscribe((busyDates: EventResponse<Array<BusyDateDto>>) => {
-            const { login } = getState();
-            dispatch(populateBusyDates(filterBusyDatesByCurrentUser(busyDates.data, login.loggedInUser.id)));
+        getEventService().getBusyDates(userIds).subscribe((response: ServiceResponse<Array<BusyDateDto>>) => {
+            if(response.success) {
+                const { login } = getState();
+                dispatch(populateBusyDates(filterBusyDatesByCurrentUser(response.data, login.loggedInUser.id)));
+            }
         });
     }
 };

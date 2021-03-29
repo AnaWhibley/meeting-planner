@@ -49,10 +49,8 @@ export function DrawerContent() {
 
     const handleToggle = (value: string, index?: number) => {
         if(currentViewPlanner === ViewPlanner.BUSY_DATES) {
-            console.log('click 1')
             dispatch(setSelectedParticipants(value));
         }else{
-            console.log('click 2')
             dispatch(setSelectedEvents({eventId: value, groupId: index}));
         }
     };
