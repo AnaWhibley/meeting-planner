@@ -4,7 +4,6 @@ import {BusyDateDto, GroupedEventDto} from '../../services/eventService';
 import {Role} from '../../services/userService';
 import {User} from '../login/slice';
 import {getEventService, getUserService, ServiceResponse} from "../../services/utils";
-import {requesting} from '../uiStateSlice';
 import {search} from '../../search';
 import {DateTime, Interval} from 'luxon';
 import {DATE_FORMAT, DATE_TIME_FORMAT} from '../eventCreator/slice';
@@ -108,7 +107,7 @@ export const { populateBusyDates, populateEvents, populateParticipants, setSelec
     toggleSelectAllEvents, toggleSelectAllParticipants } = slice.actions;
 
 export const getEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
-    dispatch(requesting());
+    //dispatch(requesting());
     const { login } = getState();
     const currentUser = login.loggedInUser;
     // Get grouped events in which user participates (for admin get all events)
@@ -142,6 +141,7 @@ const getBusyDates = (userIds: Array<string>) => (dispatch: Dispatch<any>, getSt
         getEventService().getBusyDates(userIds).subscribe((response: ServiceResponse<Array<BusyDateDto>>) => {
             if(response.success) {
                 const { login } = getState();
+                console.log('!! getBusyDates slice', response.data)
                 dispatch(populateBusyDates(filterBusyDatesByCurrentUser(response.data, login.loggedInUser.id)));
             }
         });
@@ -214,11 +214,8 @@ const searchSlotsEvents = (state: RootState, busyDates: Array<BusyDateState>, bu
         const evInterval = Interval.fromDateTimes(groupedEvStart, groupedEvEnd);
         if(interval.overlaps(evInterval)) {
             const newData = search(ev, busyDates);
-            getEventService().updateBusyDate(newData.busyDates).subscribe(events => {
-                getEventService().updateEventsFromGroupedEvent(newData.events, ev.groupName).subscribe((data) => {
-
-                });
-            });
+            getEventService().updateBusyDates(newData.busyDates).subscribe((response) => {});
+            getEventService().updateEventsFromGroupedEvent(newData.events, ev.groupName).subscribe((response) => {});
         }
     })
 };

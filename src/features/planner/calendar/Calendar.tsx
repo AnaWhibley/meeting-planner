@@ -29,8 +29,11 @@ import {selectLoggedInUser} from '../../../app/login/selectors';
 import {Role} from '../../../services/userService';
 import {Alert} from '../../../components/alert/Alert';
 import {ReactComponent as WarningIcon} from '../../../assets/icons/evericons/alert-triangle.svg';
+import {EventService} from '../../../services/eventService';
 
 export function Calendar() {
+
+    //setTimeout(()=> EventService.addBusyDate(null as any, 'daniel.hernandez@ulpgc.es').subscribe(),5000)
 
     const dispatch = useDispatch();
 
@@ -39,6 +42,8 @@ export function Calendar() {
     const busyDates = [...busyDatesCU, ...busyDatesOU];
 
     const events = useSelector(selectEventsFiltered);
+
+    console.log(busyDates, events);
 
     const currentUser = useSelector(selectLoggedInUser);
 
