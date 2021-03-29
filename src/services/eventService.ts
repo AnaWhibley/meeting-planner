@@ -6,12 +6,7 @@ import {Role} from './userService';
 import {User} from '../app/login/slice';
 import {colors} from '../styles/theme';
 import firebase from '../firebase-config';
-
-export interface EventResponse<T> {
-    success: boolean;
-    data: T;
-    error?: string;
-}
+import {ServiceResponse} from './utils';
 
 export interface CreateResponse {
     success: boolean;
@@ -68,7 +63,8 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '23',
             allDay: false,
         }]
-    }, {
+    },
+    {
         userId: 'daniel.hernandez@ulpgc.es',
         busy: [{
             start: '09/03/2021 08:00',
@@ -106,8 +102,7 @@ const busyDates: Array<BusyDateDto> = [
             allDay: false,
         }]
     },
-    {
-        userId: 'alexis.quesada@ulpgc.es',
+    {userId: 'alexis.quesada@ulpgc.es',
         busy: [{
             start: '15/03/2021 08:00',
             end: '15/03/2021 15:30',
@@ -143,8 +138,8 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '23',
             allDay: false,
         }]
-    }, {
-        userId: 'antonio.ocon@ulpgc.es',
+    },
+    {userId: 'antonio.ocon@ulpgc.es',
         busy: [ {
             start: '03/03/2021 08:30',
             end: '03/03/2021 09:30',
@@ -158,8 +153,8 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '21',
             allDay: false,
         }]
-    }, {
-        userId: 'carmelo.cuenca@ulpgc.es',
+    },
+    {userId: 'carmelo.cuenca@ulpgc.es',
         busy: [ {
             start: '03/03/2021 08:30',
             end: '03/03/2021 09:30',
@@ -173,8 +168,8 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '21',
             allDay: false,
         }]
-    }, {
-        userId: 'octavio.mayor@ulpgc.es',
+    },
+    {userId: 'octavio.mayor@ulpgc.es',
         busy: [ {
             start: '01/03/2021 08:30',
             end: '01/03/2021 09:30',
@@ -200,8 +195,8 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '23',
             allDay: false,
         }]
-    }, {
-        userId: 'francisco.alayon@ulpgc.es',
+    },
+    {userId: 'francisco.alayon@ulpgc.es',
         busy: [{
             start: '01/03/2021 08:30',
             end: '01/03/2021 09:30',
@@ -227,8 +222,8 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '23',
             allDay: false,
         }]
-    }, {
-        userId: 'francisca.quintana@ulpgc.es',
+    },
+    {userId: 'francisca.quintana@ulpgc.es',
         busy: [ {
             start: '01/03/2021 08:30',
             end: '01/03/2021 09:30',
@@ -254,8 +249,8 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '23',
             allDay: false,
         }]
-    }, {
-        userId: 'domingo.benitez@ulpgc.es',
+    },
+    {userId: 'domingo.benitez@ulpgc.es',
         busy: [ {
             start: '01/03/2021 08:30',
             end: '01/03/2021 09:30',
@@ -269,8 +264,8 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '22',
             allDay: false,
         }]
-    }, {
-        userId: 'david.freire@ulpgc.es',
+    },
+    {userId: 'david.freire@ulpgc.es',
         busy: [ {
             start: '01/03/2021 08:30',
             end: '01/03/2021 09:30',
@@ -284,8 +279,8 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '22',
             allDay: false,
         }]
-    }, {
-        userId: 'jc.rodriguezdelpino@ulpgc.es',
+    },
+    {userId: 'jc.rodriguezdelpino@ulpgc.es',
         busy: [ {
             start: '01/03/2021 08:30',
             end: '01/03/2021 09:30',
@@ -299,8 +294,8 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '22',
             allDay: false,
         }]
-    }, {
-        userId: 'eduardo.rodriguez@ulpgc.es',
+    },
+    {userId: 'eduardo.rodriguez@ulpgc.es',
         busy: [{
             start: '03/03/2021 08:30',
             end: '03/03/2021 09:30',
@@ -446,7 +441,8 @@ const groupedEvents: Array<GroupedEventDto> = [
                 time: '09:30'
             }
         ]
-    },{
+    },
+    {
         groupName: 'Extraordinaria 20/21',
         from: '03/05/2021',
         to: '31/05/2021',
@@ -551,8 +547,32 @@ const groupedEvents: Array<GroupedEventDto> = [
                 time: '09:30'
             }
         ]
-    },
+    }
 ];
+
+function assignColor(groupedEvents: Array<GroupedEventDto>) {
+    return groupedEvents.map((groupedEvent) => {
+        let count = 0;
+        const events = groupedEvent.events.map((e) => {
+            return {...e, color: colors[count++ % colors.length]}
+        });
+        return {
+            ...groupedEvent,
+            events
+        }
+    })
+}
+
+function filterEventsByUser(groupedEvents: Array<GroupedEventDto>, user: User) {
+    return groupedEvents.map((ev) =>{
+        return {
+            ...ev,
+            events: ev.events.reduce((acc: Array<EventDto>, current: EventDto ) => {
+                return current.participants.find((participant) => participant.email === user.id) ? [...acc, current] : acc;
+            }, [])
+        }
+    }).filter((grouped) => grouped.events.length > 0);
+}
 
 export class EventService {
     private static busyDatesSubject = new BehaviorSubject(busyDates.slice());
@@ -604,10 +624,11 @@ export class EventService {
         return of(true);
     }
 
-    public static getBusyDates(userIds?: Array<string>): Observable<EventResponse<Array<BusyDateDto>>> {
+    public static getBusyDates(userIds?: Array<string>): Observable<ServiceResponse<Array<BusyDateDto>>> {
 
         return new Observable((subscriber) => {
             firebase.firestore().collection('busyDates').onSnapshot((snapshot) => {
+
                 const busyDates = snapshot.docs.map((doc) => ({
                     userId: doc.id,
                     busy: doc.data().busy
@@ -618,7 +639,7 @@ export class EventService {
                         success: true,
                         data: busyDates.filter(u => userIds.includes(u.userId))
                     });
-                }else {
+                } else {
                     subscriber.next({
                         success: true,
                         data: busyDates
@@ -628,59 +649,46 @@ export class EventService {
             }, (error) => {
                 subscriber.next({
                     success: false,
-                    error: 'Error collecting users: ' + error,
+                    error: 'Error collecting busy dates: ' + error,
                     data: []
                 });
-                subscriber.complete();
             });
         });
     }
 
-    public static getEvents(user: User): Observable<Array<GroupedEventDto>> {
+    public static getEvents(user: User): Observable<ServiceResponse<Array<GroupedEventDto>>> {
 
-        if(user.role === Role.ADMIN) {
-            return this.groupedEventsSubject.pipe(
-                delay(500),
-                map((dto: Array<GroupedEventDto>) => {
-                    let count = 0;
-                    return dto.map((groupedEvent) => {
-                        const events = groupedEvent.events.map((e) => {
-                            return {...e, color: colors[count++ % colors.length]}
-                        });
-                        return {
-                            ...groupedEvent,
-                            events
-                        }
-                    })
-                })
-            );
-        }
+        return new Observable((subscriber) => {
+            firebase.firestore().collection('events').onSnapshot((snapshot) => {
 
-        return this.groupedEventsSubject.pipe(
-            delay(500),
-            map((groupedEvents: Array<GroupedEventDto>) => {
-                return groupedEvents.map((ev) =>{
-                    return {
-                        ...ev,
-                        events: ev.events.reduce((acc: Array<EventDto>, current: EventDto ) => {
-                            return current.participants.find((participant) => participant.email === user.id) ? [...acc, current] : acc;
-                        }, [])
-                    }
-                }).filter((grouped) => grouped.events.length > 0)
-            }),
-            map((dto: Array<GroupedEventDto>) => {
-                return dto.map((groupedEvent) => {
-                    let count = 0;
-                    const events = groupedEvent.events.map((e) => {
-                        return {...e, color: colors[count++ % colors.length]}
+                let groupedEvents = snapshot.docs.map((doc) => ({
+                    events: doc.data().events,
+                    from: doc.data().from,
+                    to: doc.data().to,
+                    groupName: doc.data().groupName
+                }));
+
+                groupedEvents = assignColor(groupedEvents);
+
+                if(user.role === Role.ADMIN){
+                    subscriber.next({
+                        success: true,
+                        data: groupedEvents
                     });
-                    return {
-                        ...groupedEvent,
-                        events
-                    }
-                })
-            })
-        );
+                } else {
+                    subscriber.next({
+                        success: true,
+                        data: filterEventsByUser(groupedEvents, user)
+                    });
+                }
+            }, (error) => {
+                subscriber.next({
+                    success: false,
+                    error: 'Error collecting events: ' + error,
+                    data: []
+                });
+            });
+        });
     }
 
     public static updateEventsFromGroupedEvent(modified: Array<EventDto>, groupName: string): Observable<boolean> {
@@ -751,7 +759,7 @@ export class MockEventService {
     }
 
 
-    public static getBusyDates(userIds?: Array<string>): Observable<EventResponse<Array<BusyDateDto>>> {
+    public static getBusyDates(userIds?: Array<string>): Observable<ServiceResponse<Array<BusyDateDto>>> {
 
         if(!userIds) {
             return this.busyDatesSubject.pipe(
@@ -767,50 +775,21 @@ export class MockEventService {
         );
     }
 
-    public static getEvents(user: User): Observable<Array<GroupedEventDto>> {
+    public static getEvents(user: User): Observable<ServiceResponse<Array<GroupedEventDto>>> {
 
         if(user.role === Role.ADMIN) {
             return this.groupedEventsSubject.pipe(
                 delay(500),
-                map((dto: Array<GroupedEventDto>) => {
-                    let count = 0;
-                    return dto.map((groupedEvent) => {
-                        const events = groupedEvent.events.map((e) => {
-                            return {...e, color: colors[count++ % colors.length]}
-                        });
-                        return {
-                            ...groupedEvent,
-                            events
-                        }
-                    })
-                })
+                map((groupedEvents: Array<GroupedEventDto>) => assignColor(groupedEvents)),
+                map((groupedEvents: Array<GroupedEventDto>) => ({success: true, data: groupedEvents}))
             );
         }
 
         return this.groupedEventsSubject.pipe(
             delay(500),
-            map((groupedEvents: Array<GroupedEventDto>) => {
-                return groupedEvents.map((ev) =>{
-                    return {
-                        ...ev,
-                        events: ev.events.reduce((acc: Array<EventDto>, current: EventDto ) => {
-                            return current.participants.find((participant) => participant.email === user.id) ? [...acc, current] : acc;
-                        }, [])
-                    }
-                }).filter((grouped) => grouped.events.length > 0)
-            }),
-            map((dto: Array<GroupedEventDto>) => {
-                return dto.map((groupedEvent) => {
-                    let count = 0;
-                    const events = groupedEvent.events.map((e) => {
-                        return {...e, color: colors[count++ % colors.length]}
-                    });
-                    return {
-                        ...groupedEvent,
-                        events
-                    }
-                })
-            })
+            map((groupedEvents: Array<GroupedEventDto>) => filterEventsByUser(groupedEvents, user)),
+            map((groupedEvents: Array<GroupedEventDto>) => assignColor(groupedEvents)),
+            map((groupedEvents: Array<GroupedEventDto>) => ({success: true, data: groupedEvents}))
         );
     }
 
