@@ -53,7 +53,6 @@ export const slice = createSlice({
         },
         populateParticipants: (state, action) => {
             state.participants = action.payload;
-            console.log(action.payload)
             if(!state.isSelectedParticipantsInitialized){
                 state.selectedParticipants = action.payload.map((u: User) => u.id);
                 state.isSelectedParticipantsInitialized = true;
