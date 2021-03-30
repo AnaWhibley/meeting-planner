@@ -296,6 +296,16 @@ export function EventsGrid() {
                                 </div>
                             )
                         })}
+                    </div><br/>
+                    <Typography color={'textSecondary'} variant={'subtitle2'} className={'GroupTitle'}>Tutor/es</Typography>
+                    <div className={'ParticipantList'}>
+                        {selectedRow.participants.slice(6).map((participant: ParticipantDto) => {
+                            return (
+                                <div className={'Participant'} key={participant.email}>
+                                    <ParticipantInfo participant={participant}/>
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
                 }
