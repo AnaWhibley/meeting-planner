@@ -53,6 +53,7 @@ export const slice = createSlice({
         },
         populateParticipants: (state, action) => {
             state.participants = action.payload;
+            console.log(action.payload)
             if(!state.isSelectedParticipantsInitialized){
                 state.selectedParticipants = action.payload.map((u: User) => u.id);
                 state.isSelectedParticipantsInitialized = true;
@@ -161,9 +162,9 @@ const filterBusyDatesByCurrentUser = (busyDates: Array<BusyDateDto>, currentUser
 }
 
 const getBusyDatesAdmin = () => (dispatch: Dispatch<any>) => {
-    getUserService().getParticipants().subscribe(response => {
-        if(response){
-            dispatch(populateParticipants(response));
+    getUserService().getParticipants().subscribe((response) => {
+        if(response.success){
+            dispatch(populateParticipants(response.data));
         }
     });
     getEventService().getBusyDates().subscribe(busyDates => {
