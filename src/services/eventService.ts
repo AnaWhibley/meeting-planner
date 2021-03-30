@@ -1,7 +1,6 @@
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {delay, map} from 'rxjs/operators';
-import {BusyDateState, BusyState} from '../app/planner/slice';
-import { v4 as uuidv4 } from 'uuid';
+import {BusyDateState} from '../app/planner/slice';
 import {Role} from './userService';
 import {User} from '../app/login/slice';
 import {colors} from '../styles/theme';
@@ -575,99 +574,6 @@ function filterEventsByUser(groupedEvents: Array<GroupedEventDto>, user: User) {
 }
 
 export class EventService {
-    private static busyDatesSubject = new BehaviorSubject(busyDates.slice());
-    private static groupedEventsSubject = new BehaviorSubject(groupedEvents.slice());
-
-    public static create(event: GroupedEventDto): Observable<CreateResponse> {
-        groupedEvents.push(event);
-        return of({success: true}).pipe(delay(500))
-    }
-
-    public static addBusyDate(busyDate: BusyState, userId: string): Observable<boolean> {
-        return new Observable((subscriber) => {
-            const docRef = firebase.firestore().collection('busyDates').doc(userId);
-            firebase.firestore().runTransaction((transaction) => {
-                return transaction.get(docRef).then((doc) => {
-                    if (!doc.exists) {
-                        subscriber.next(false);
-                    }else{
-                        const newBusy = {...busyDate, id: uuidv4()};
-                        transaction.set(docRef, {busy: firebase.firestore.FieldValue.arrayUnion(newBusy)}, {merge: true});
-                    }
-                });
-            }).then((response) => {
-                subscriber.next(true);
-            }).catch((err) => {
-                subscriber.error(false);
-            });
-        });
-    }
-
-    public static deleteBusyDate(busyDateId: string): Observable<boolean> {
-        busyDates.forEach((busyDate) => {
-            let index = busyDate.busy.findIndex((busy) => busy.id === busyDateId);
-            if(index > -1) {
-                const copy = busyDate.busy.slice();
-                copy.splice(index, 1);
-                busyDate.busy = copy;
-            }
-        });
-
-        this.busyDatesSubject.next(busyDates.slice());
-        return of(true);
-    }
-
-    public static updateBusyDates(newBusyDates: Array<BusyDateState>): Observable<boolean> {
-
-        return new Observable((subscriber) => {
-
-            firebase.firestore().runTransaction((transaction) => {
-                const results = newBusyDates.map(busyDate => {
-                    const docRef = firebase.firestore().collection('busyDates').doc(busyDate.userId);
-                    return transaction.get(docRef).then((doc) => {
-                        transaction.set(docRef, {busy: busyDate.busy}, {merge: true});
-                    });
-                });
-                return Promise.all(results);
-            }).then((response) => {
-                subscriber.next(true);
-            }).catch((err) => {
-                subscriber.error(false);
-            });
-        });
-    }
-
-    public static getBusyDates(userIds?: Array<string>): Observable<ServiceResponse<Array<BusyDateDto>>> {
-
-        return new Observable((subscriber) => {
-            firebase.firestore().collection('busyDates').onSnapshot((snapshot) => {
-
-                const busyDates = snapshot.docs.map((doc) => ({
-                    userId: doc.id,
-                    busy: doc.data().busy
-                }));
-
-                if(userIds){
-                    subscriber.next({
-                        success: true,
-                        data: busyDates.filter(u => userIds.includes(u.userId))
-                    });
-                } else {
-                    subscriber.next({
-                        success: true,
-                        data: busyDates
-                    });
-                }
-
-            }, (error) => {
-                subscriber.next({
-                    success: false,
-                    error: 'Error collecting busy dates: ' + error,
-                    data: []
-                });
-            });
-        });
-    }
 
     public static getEvents(user: User): Observable<ServiceResponse<Array<GroupedEventDto>>> {
 
@@ -704,6 +610,81 @@ export class EventService {
         });
     }
 
+    public static getBusyDates(userIds?: Array<string>): Observable<ServiceResponse<Array<BusyDateDto>>> {
+
+        return new Observable((subscriber) => {
+            firebase.firestore().collection('busyDates').onSnapshot((snapshot) => {
+
+                const busyDates = snapshot.docs.map((doc) => ({
+                    userId: doc.id,
+                    busy: doc.data().busy
+                }));
+
+                if(userIds){
+                    subscriber.next({
+                        success: true,
+                        data: busyDates.filter(u => userIds.includes(u.userId))
+                    });
+                } else {
+                    subscriber.next({
+                        success: true,
+                        data: busyDates
+                    });
+                }
+
+            }, (error) => {
+                subscriber.next({
+                    success: false,
+                    error: 'Error collecting busy dates: ' + error,
+                    data: []
+                });
+            });
+        });
+    }
+
+    public static createGroupedEvent(groupedEvent: GroupedEventDto): Observable<boolean> {
+        return new Observable((subscriber) => {
+
+            const docRef = firebase.firestore().collection('events').doc(groupedEvent.groupName);
+
+            firebase.firestore().runTransaction((transaction) => {
+                return transaction.get(docRef).then((doc) => {
+                    const data = {
+                        events: groupedEvent.events,
+                        from: groupedEvent.from,
+                        to: groupedEvent.to,
+                        groupName: groupedEvent.groupName,
+                    }
+                    transaction.set(docRef, data, {merge: true});
+                });
+            }).then((response) => {
+                subscriber.next(true);
+            }).catch((err) => {
+                subscriber.error(false);
+            });
+        });
+    }
+
+    public static updateBusyDates(newBusyDates: Array<BusyDateState>): Observable<boolean> {
+
+        return new Observable((subscriber) => {
+
+            firebase.firestore().runTransaction((transaction) => {
+                const results = newBusyDates.map(busyDate => {
+                    const docRef = firebase.firestore().collection('busyDates').doc(busyDate.userId);
+                    return transaction.get(docRef).then((doc) => {
+                        transaction.set(docRef, {busy: busyDate.busy}, {merge: true});
+                    });
+                });
+                return Promise.all(results);
+            }).then((response) => {
+                subscriber.next(true);
+            }).catch((err) => {
+                subscriber.error(false);
+            });
+        });
+    }
+
     public static updateEventsFromGroupedEvent(newEvents: Array<EventDto>, groupName: string): Observable<boolean> {
 
         return new Observable((subscriber) => {
@@ -716,7 +697,9 @@ export class EventService {
                         subscriber.next(false);
                     }else{
                         const events = doc.data()?.events.map((event: EventDto) => {
+                            if(event.color) delete event.color;
                             const modifiedEvent = newEvents.find(modified => modified.id === event.id);
+                            if(modifiedEvent && modifiedEvent.color) delete modifiedEvent.color;
                             return modifiedEvent || event;
                         });
                         transaction.set(docRef, {events}, {merge: true});
@@ -736,50 +719,22 @@ export class MockEventService {
     private static busyDatesSubject = new BehaviorSubject(busyDates.slice());
     private static groupedEventsSubject = new BehaviorSubject(groupedEvents.slice());
 
-    public static create(event: GroupedEventDto): Observable<CreateResponse> {
-        groupedEvents.push(event);
-        return of({success: true}).pipe(delay(500))
-    }
+    public static getEvents(user: User): Observable<ServiceResponse<Array<GroupedEventDto>>> {
 
-    public static addBusyDate(busyDate: BusyState, userId: string): Observable<boolean> {
-        const index = busyDates.findIndex((bd) => bd.userId === userId);
-        const newBusy = { ...busyDate, id: uuidv4()};
-        if(index > -1){
-            busyDates[index].busy = [ ...busyDates[index].busy, newBusy];
-        }else{
-            busyDates.push({userId, busy: [newBusy]})
+        if(user.role === Role.ADMIN) {
+            return this.groupedEventsSubject.pipe(
+                delay(500),
+                map((groupedEvents: Array<GroupedEventDto>) => assignColor(groupedEvents)),
+                map((groupedEvents: Array<GroupedEventDto>) => ({success: true, data: groupedEvents}))
+            );
         }
 
-        this.busyDatesSubject.next(busyDates.slice());
-        return of(true);
-    }
-
-    public static deleteBusyDate(busyDateId: string): Observable<boolean> {
-        busyDates.forEach((busyDate) => {
-            let index = busyDate.busy.findIndex((busy) => busy.id === busyDateId);
-            if(index > -1) {
-                const copy = busyDate.busy.slice();
-                copy.splice(index, 1);
-                busyDate.busy = copy;
-            }
-        });
-
-        this.busyDatesSubject.next(busyDates.slice());
-        return of(true);
-    }
-
-    public static updateBusyDates(modified: Array<BusyDateState>): Observable<boolean> {
-        modified.forEach((m) => {
-            let index = busyDates.findIndex((busy) => busy.userId ===  m.userId);
-
-            if(index > -1) {
-                busyDates.splice(index, 1);
-                busyDates.splice(index, 0, m);
-            }
-        });
-
-        this.busyDatesSubject.next(busyDates.slice());
-        return of(true);
+        return this.groupedEventsSubject.pipe(
+            delay(500),
+            map((groupedEvents: Array<GroupedEventDto>) => filterEventsByUser(groupedEvents, user)),
+            map((groupedEvents: Array<GroupedEventDto>) => assignColor(groupedEvents)),
+            map((groupedEvents: Array<GroupedEventDto>) => ({success: true, data: groupedEvents}))
+        );
     }
 
     public static getBusyDates(userIds?: Array<string>): Observable<ServiceResponse<Array<BusyDateDto>>> {
@@ -798,22 +753,23 @@ export class MockEventService {
         );
     }
 
-    public static getEvents(user: User): Observable<ServiceResponse<Array<GroupedEventDto>>> {
+    public static createGroupedEvent(event: GroupedEventDto): Observable<boolean> {
+        groupedEvents.push(event);
+        return of(true).pipe(delay(500))
+    }
 
-        if(user.role === Role.ADMIN) {
-            return this.groupedEventsSubject.pipe(
-                delay(500),
-                map((groupedEvents: Array<GroupedEventDto>) => assignColor(groupedEvents)),
-                map((groupedEvents: Array<GroupedEventDto>) => ({success: true, data: groupedEvents}))
-            );
-        }
+    public static updateBusyDates(modified: Array<BusyDateState>): Observable<boolean> {
+        modified.forEach((m) => {
+            let index = busyDates.findIndex((busy) => busy.userId ===  m.userId);
 
-        return this.groupedEventsSubject.pipe(
-            delay(500),
-            map((groupedEvents: Array<GroupedEventDto>) => filterEventsByUser(groupedEvents, user)),
-            map((groupedEvents: Array<GroupedEventDto>) => assignColor(groupedEvents)),
-            map((groupedEvents: Array<GroupedEventDto>) => ({success: true, data: groupedEvents}))
-        );
+            if(index > -1) {
+                busyDates.splice(index, 1);
+                busyDates.splice(index, 0, m);
+            }
+        });
+
+        this.busyDatesSubject.next(busyDates.slice());
+        return of(true);
     }
 
     public static updateEventsFromGroupedEvent(modified: Array<EventDto>, groupName: string): Observable<boolean> {
