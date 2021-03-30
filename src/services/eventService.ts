@@ -649,8 +649,12 @@ export class EventService {
 
             firebase.firestore().runTransaction((transaction) => {
                 return transaction.get(docRef).then((doc) => {
+                    let events = groupedEvent.events;
+                    if(doc.exists) {
+                        events = [...groupedEvent.events, ...doc.data()?.events];
+                    }
                     const data = {
-                        events: groupedEvent.events,
+                        events,
                         from: groupedEvent.from,
                         to: groupedEvent.to,
                         groupName: groupedEvent.groupName,
