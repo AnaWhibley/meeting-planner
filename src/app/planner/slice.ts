@@ -52,9 +52,9 @@ export const slice = createSlice({
             state.selectedEvents = action.payload.map((groupedEvent: GroupedEventDto) => groupedEvent.events.map(event => event.id));
         },
         populateParticipants: (state, action) => {
-            state.participants = action.payload;
+            state.participants = action.payload.participants;
             if(!state.isSelectedParticipantsInitialized){
-                state.selectedParticipants = action.payload.map((u: User) => u.id);
+                state.selectedParticipants = action.payload.selectedParticipants.map((u: User) => u.id);
                 state.isSelectedParticipantsInitialized = true;
             }
         },
@@ -141,7 +141,6 @@ const getBusyDates = (userIds: Array<string>) => (dispatch: Dispatch<any>, getSt
         getEventService().getBusyDates(userIds).subscribe((response: ServiceResponse<Array<BusyDateDto>>) => {
             if(response.success) {
                 const { login } = getState();
-                console.log('!! getBusyDates slice', response.data)
                 dispatch(populateBusyDates(filterBusyDatesByCurrentUser(response.data, login.loggedInUser.id)));
             }
         });
@@ -161,16 +160,21 @@ const filterBusyDatesByCurrentUser = (busyDates: Array<BusyDateDto>, currentUser
 }
 
 const getBusyDatesAdmin = () => (dispatch: Dispatch<any>) => {
-    getUserService().getParticipants().subscribe((response) => {
-        if(response.success){
-            dispatch(populateParticipants(response.data));
-        }
-    });
     getEventService().getBusyDates().subscribe(busyDates => {
-        if(busyDates.success) {
-            const bd = {busyDatesCU: [], busyDatesOU: busyDates.data};
-            dispatch(populateBusyDates(bd));
-        }
+        getUserService().getParticipants().subscribe((participants) => {
+            if(participants.success && busyDates.success){
+                const busyDatesOU = busyDates.data;
+                const bd = {busyDatesCU: [], busyDatesOU};
+                dispatch(populateBusyDates(bd));
+
+                const selectedParticipants = participants.data.filter(p => {
+                    const busyDates = busyDatesOU.find(bd => bd.userId === p.id);
+                    if(busyDates) return busyDates.busy.length > 0;
+                    return false;
+                });
+                dispatch(populateParticipants({participants: participants.data, selectedParticipants}));
+            }
+        });
     });
 };
 
@@ -223,15 +227,19 @@ const searchSlotsEvents = (state: RootState, busyDates: Array<BusyDateState>, bu
 export const deleteBusyDateForEvents = (state: RootState): Array<BusyDateState> => {
 
     const { planner, login } = state;
-    const newBusyDatesCurrentUser = filterBusyDates(state, planner.busyDatesCurrentUser);
 
     const newBusyDatesOtherUsers = planner.busyDatesOtherUsers.map((busyDate) => ({
         ...busyDate,
         busy: filterBusyDates(state, busyDate.busy)
     }));
 
-    return [...newBusyDatesOtherUsers, {userId: login.loggedInUser.id || '', busy: newBusyDatesCurrentUser}];
+    if(login.loggedInUser.role === Role.ADMIN){
+        return [...newBusyDatesOtherUsers];
+    }
 
+    const newBusyDatesCurrentUser = filterBusyDates(state, planner.busyDatesCurrentUser);
+
+    return [...newBusyDatesOtherUsers, {userId: login.loggedInUser.id || '', busy: newBusyDatesCurrentUser}];
 };
 
 const filterBusyDates = (state: RootState, busyDates: Array<BusyState>): Array<BusyState> => {
