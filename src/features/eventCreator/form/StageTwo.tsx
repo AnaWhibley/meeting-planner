@@ -15,12 +15,7 @@ import {DateTime} from 'luxon';
 import {ReactComponent as InfoIcon} from '../../../assets/icons/evericons/info.svg';
 import { Tooltip } from '../../../components/tooltip/Tooltip';
 import {selectEvents, selectFrom, selectGroupName, selectTo } from '../../../app/eventCreator/selectors';
-
-const options = [
-    {label: 'First group', value: 'First group'},
-    {label: 'Second group', value: 'Second group'},
-    {label: 'Third group', value: 'Third group'}
-];
+import {selectEvents as selectGroupedEvents} from '../../../app/planner/selectors';
 
 export function StageTwo() {
     const from = DateTime.fromFormat(useSelector(selectFrom).value, DATE_FORMAT);
@@ -31,41 +26,41 @@ export function StageTwo() {
     const dispatch = useDispatch();
     const disableFields = useSelector(selectEvents).length > 1;
 
-    const [value, setValue] = React.useState('no');
+    const groupedEvents = useSelector(selectGroupedEvents);
+
+    const options = groupedEvents.map(groupedEvent => {
+        return {
+            label: groupedEvent.groupName,
+            value: groupedEvent.groupName
+        }
+    });
+
+    const [existingGroupedEvent, setExistingGroupedEvent] = React.useState(false);
 
     const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValue(event.target.value);
+        setExistingGroupedEvent(!existingGroupedEvent);
+        clearFields();
+    };
+
+    const clearFields = () => {
+        dispatch(setFrom(DateTime.utc().toFormat(DATE_FORMAT)));
+        dispatch(setTo(DateTime.utc().toFormat(DATE_FORMAT)));
+        dispatch(setGroupName({label: '', value: ''}));
+    };
+
+    const handleSelectorChange = (data: { label: string, value: string }) => {
+        dispatch(setGroupName(data));
+        if(existingGroupedEvent){
+            const groupedEventInfo = groupedEvents.find(groupedEvent => groupedEvent.groupName === data.value);
+            if(groupedEventInfo){
+                dispatch(setFrom(groupedEventInfo.from));
+                dispatch(setTo(groupedEventInfo.to));
+            }
+        }
     };
 
     return (
         <div className={'Body'}>
-            <div className={'Question'}>
-                <Typography color={'primary'}
-                            variant={'h3'}
-                            display={'block'}>
-                    ¿Entre qué fechas se podrá desarrollar el evento o el grupo de eventos?
-                    <Tooltip icon={<InfoIcon className={'InfoIcon'}/>}
-                             text={'Este valor se conservará para el resto de eventos que crees hasta que confirmes los cambios.'}
-                             placement={'right'}
-                    />
-                </Typography>
-                <DatePicker value={from}
-                            className={'Input DatePicker'}
-                            label={'Desde'}
-                            disabled={disableFields}
-                            error={!!fromError}
-                            errorMessage={fromError}
-                            onChange={(date: DateTime) => {dispatch(setFrom(date.toFormat(DATE_FORMAT)))}}
-                />
-                <DatePicker value={to}
-                            className={'Input DatePicker'}
-                            label={'Hasta'}
-                            error={!!toError}
-                            errorMessage={toError}
-                            disabled={disableFields}
-                            onChange={(date: DateTime) => {dispatch(setTo(date.toFormat(DATE_FORMAT)))}}
-                />
-            </div>
             <div className={'Question'}>
                 <Typography color={'primary'}
                             variant={'h3'}
@@ -75,15 +70,15 @@ export function StageTwo() {
                              placement={'right'}
                              text={'Este valor se conservará para el resto de eventos que crees hasta que confirmes los cambios.'}/>
                 </Typography>
-                <RadioGroup name='group' row value={value} onChange={handleRadioChange} className={'Input'} >
-                    <FormControlLabel value='yes' control={<Radio color={'primary'}/>} label='Sí' className={'RadioLabel'} disabled={disableFields}/>
-                    <FormControlLabel value='no' control={<Radio color={'primary'}/>} label='No' className={'RadioLabel'} disabled={disableFields}/>
+                <RadioGroup name='group' row value={existingGroupedEvent} onChange={handleRadioChange} className={'Input'} >
+                    <FormControlLabel value={true} control={<Radio color={'primary'}/>} label='Sí' className={'RadioLabel'} disabled={disableFields}/>
+                    <FormControlLabel value={false} control={<Radio color={'primary'}/>} label='No' className={'RadioLabel'} disabled={disableFields}/>
                 </RadioGroup>
-                {value === 'yes' ?
+                {existingGroupedEvent ?
                     <SelectorField
                         items={options}
                         isMulti={false}
-                        onChange={(data) => dispatch(setGroupName(data))}
+                        onChange={(data) => handleSelectorChange(data)}
                         value={groupName.value.label === '' ? undefined : groupName.value}
                         className={'Input'}
                         isDisabled={disableFields}
@@ -101,7 +96,33 @@ export function StageTwo() {
                     />
                 }
             </div>
-
+            <div className={'Question'}>
+                <Typography color={'primary'}
+                            variant={'h3'}
+                            display={'block'}>
+                    ¿Entre qué fechas se podrá desarrollar el evento o el grupo de eventos?
+                    <Tooltip icon={<InfoIcon className={'InfoIcon'}/>}
+                             text={'Este valor se conservará para el resto de eventos que crees hasta que confirmes los cambios.'}
+                             placement={'right'}
+                    />
+                </Typography>
+                <DatePicker value={from}
+                            className={'Input DatePicker'}
+                            label={'Desde'}
+                            disabled={existingGroupedEvent || disableFields}
+                            error={!!fromError}
+                            errorMessage={fromError}
+                            onChange={(date: DateTime) => {dispatch(setFrom(date.toFormat(DATE_FORMAT)))}}
+                />
+                <DatePicker value={to}
+                            className={'Input DatePicker'}
+                            label={'Hasta'}
+                            error={!!toError}
+                            errorMessage={toError}
+                            disabled={existingGroupedEvent || disableFields}
+                            onChange={(date: DateTime) => {dispatch(setTo(date.toFormat(DATE_FORMAT)))}}
+                />
+            </div>
         </div>
     );
 }
