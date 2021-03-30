@@ -6,6 +6,8 @@ import {validateFields} from './validation';
 import {mapToCreateEventRequest, mapJSONToState, mapJSONFromState} from './mappers';
 import {getEventService} from '../../services/utils';
 import { requesting } from '../uiStateSlice';
+import {search} from '../../search';
+import {deleteBusyDateForEvents} from '../planner/slice';
 
 export enum ParticipantType {
     PRESIDENTE_TT = 'Presidente Tribunal Titular',
@@ -155,10 +157,21 @@ export const slice = createSlice({
 export const { next, previous, setFrom, setTo, setName, createNew, complete, setParticipants, addTutor, removeTutor, setImportedData, setGroupName, setDuration, editEvent, setInitialState } = slice.actions;
 
 export const createEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
-    dispatch(requesting());
-    const { eventCreator } = getState();
-    getEventService().createGroupedEvent(mapToCreateEventRequest(eventCreator)).subscribe((response: boolean) => {
-        if(response) dispatch(complete());
+    //dispatch(requesting());
+
+    const { eventCreator, planner } = getState();
+    const groupedEvent = mapToCreateEventRequest(eventCreator);
+
+    const newData = search(groupedEvent, planner.busyDatesOtherUsers);
+
+    groupedEvent.events = newData.events;
+
+    getEventService().updateBusyDates(newData.busyDates).subscribe((busyDatesResponse) => {
+        getEventService().createGroupedEvent(groupedEvent).subscribe((groupedEventResponse) => {
+            if(busyDatesResponse && groupedEventResponse) {
+                dispatch(complete());
+            }
+        })
     });
 };
 
