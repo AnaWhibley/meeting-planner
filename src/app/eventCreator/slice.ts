@@ -157,10 +157,8 @@ export const { next, previous, setFrom, setTo, setName, createNew, complete, set
 export const createEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     dispatch(requesting());
     const { eventCreator } = getState();
-    getEventService().create(mapToCreateEventRequest(eventCreator)).subscribe((response: CreateResponse) => {
-        if(response.success){
-            dispatch(complete());
-        }
+    getEventService().createGroupedEvent(mapToCreateEventRequest(eventCreator)).subscribe((response: boolean) => {
+        if(response) dispatch(complete());
     });
 };
 
