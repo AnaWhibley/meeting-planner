@@ -26,7 +26,7 @@ export function StageOne() {
                            error={!!name.errorMessage}
                            errorMessage={name.errorMessage}
                            value={name.value}
-                           placeholder={'Nombre del evento'}
+                           placeholder={'Ejemplo: Defensa TFG Ana Santana'}
                            fullWidth={true}
                            className={'Input'}
                            onChange={(value) => dispatch(setName(value))}
