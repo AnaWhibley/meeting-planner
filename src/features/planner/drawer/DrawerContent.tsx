@@ -37,6 +37,8 @@ import ActionButton, {ButtonVariant} from '../../../components/actionButton/Acti
 import {Color} from '../../../styles/theme';
 import '../../../styles/common.scss';
 import './Drawer.scss';
+import {selectLoggedInUser} from '../../../app/login/selectors';
+import {Role} from '../../../services/userService';
 
 export function DrawerContent() {
 
@@ -54,6 +56,8 @@ export function DrawerContent() {
             dispatch(setSelectedEvents({eventId: value, groupId: index}));
         }
     };
+
+    const currentUserRole = useSelector(selectLoggedInUser).role;
 
     const showCalendar = useSelector(selectShowCalendar);
 
@@ -78,10 +82,19 @@ export function DrawerContent() {
 
     const participantList = <List dense>
         {/*Selected participants array includes the current user, that's why we need to check with -1*/}
-        {participants.length > 0 ? <FormControlLabel control={<Checkbox checked={(selectedParticipants.length - 1) === participants.length}
-                                             onChange={() => dispatch(toggleSelectAllParticipants())}/>}
-                          label={<Typography color={'textPrimary'} variant={'body1'} className={'SelectAllParticipantsLabel'}>Seleccionar todos</Typography>}
-                          className={'SelectAll'}
+        {participants.length > 1 ? <FormControlLabel
+            control={
+                <Checkbox checked={currentUserRole === Role.ADMIN ?
+                    selectedParticipants.length === participants.length :
+                    (selectedParticipants.length - 1) === participants.length}
+                          onChange={() => dispatch(toggleSelectAllParticipants())}/>
+            }
+            label={
+                <Typography color={'textPrimary'}
+                            variant={'body1'}
+                            className={'SelectAllParticipantsLabel'}>Seleccionar todos</Typography>
+            }
+            className={'SelectAll'}
         /> : null}
         {participants.map((value) => {
             return (
@@ -128,10 +141,13 @@ export function DrawerContent() {
                 </AccordionSummary>
                 <AccordionDetails>
                     <List dense>
-                        <FormControlLabel control={<Checkbox checked={selectedEvents[index].length === groupedEvent.events.length} onChange={() => dispatch(toggleSelectAllEvents({groupIndex: index}))}/>}
-                                          label={<Typography color={'textPrimary'} variant={'body1'}>Seleccionar todos</Typography>}
-                                          className={'SelectAll'}
-                        />
+                        {groupedEvent.events.length > 1 ?
+                            <FormControlLabel control={
+                                <Checkbox checked={selectedEvents[index].length === groupedEvent.events.length}
+                                          onChange={() => dispatch(toggleSelectAllEvents({groupIndex: index}))}/>}
+                                              label={<Typography color={'textPrimary'} variant={'body1'}>Seleccionar todos</Typography>}
+                                              className={'SelectAll'}
+                            /> : null}
                         {groupedEvent.events.map(event => {
                             return (
                                 <ListItem key={event.id} dense button>

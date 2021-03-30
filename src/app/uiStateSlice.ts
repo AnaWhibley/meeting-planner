@@ -7,6 +7,7 @@ import {User} from './login/slice';
 const populateBusyDates = createAction<ServiceResponse<User>>('planner/populateBusyDates');
 const showErrorMessage = createAction<ServiceResponse<User>>('login/showErrorMessage');
 const populateEvents = createAction<Array<GroupedEventDto>>('planner/populateEvents');
+const complete = createAction<Array<GroupedEventDto>>('eventCreator/complete');
 
 interface uiStateSlice {
     isBusy: boolean;
@@ -107,6 +108,9 @@ export const slice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(populateBusyDates, (state) => {
+                state.isBusy = false;
+            })
+            .addCase(complete, (state) => {
                 state.isBusy = false;
             })
             .addCase(showErrorMessage, (state) => {

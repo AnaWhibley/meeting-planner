@@ -33,8 +33,6 @@ import {EventService} from '../../../services/eventService';
 
 export function Calendar() {
 
-    //setTimeout(()=> EventService.addBusyDate(null as any, 'daniel.hernandez@ulpgc.es').subscribe(),5000)
-
     const dispatch = useDispatch();
 
     const busyDatesCU: any = useSelector(selectBusyDatesCurrentUser);
@@ -42,8 +40,6 @@ export function Calendar() {
     const busyDates = [...busyDatesCU, ...busyDatesOU];
 
     const events = useSelector(selectEventsFiltered);
-
-    console.log(busyDates, events);
 
     const currentUser = useSelector(selectLoggedInUser);
 
