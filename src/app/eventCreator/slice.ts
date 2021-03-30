@@ -1,13 +1,11 @@
 import {createSlice, Dispatch, PayloadAction} from '@reduxjs/toolkit';
 import {DateTime} from 'luxon';
 import {RootState} from '../store';
-import {CreateResponse} from '../../services/eventService';
 import {validateFields} from './validation';
 import {mapToCreateEventRequest, mapJSONToState, mapJSONFromState} from './mappers';
 import {getEventService} from '../../services/utils';
-import { requesting } from '../uiStateSlice';
 import {search} from '../../search';
-import {deleteBusyDateForEvents} from '../planner/slice';
+import { v4 as uuidv4 } from 'uuid';
 
 export enum ParticipantType {
     PRESIDENTE_TT = 'Presidente Tribunal Titular',
@@ -25,7 +23,7 @@ export const TIME_FORMAT = 'HH:mm';
 
 const createDefaultEvent = (): EventState => {
     return {
-        id: Math.random().toString(),
+        id: uuidv4(),
         name: createFieldState(''),
         participants: Object.keys(ParticipantType).map((k: string) => ( { email: createFieldState(''), tag: (ParticipantType as any)[k] })),
         duration: createFieldState(60),
@@ -85,7 +83,6 @@ export const slice = createSlice({
     initialState: initialState as EventCreatorSlice,
     reducers: {
         next: state => {
-
             const validationHasErrors = validateFields(state);
             if(validationHasErrors) return;
 
