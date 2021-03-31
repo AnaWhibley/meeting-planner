@@ -159,6 +159,9 @@
     }
     .Actions {
       margin-right: 1em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       .TrashIconContainer {
         display: inline;
         button {
@@ -168,7 +171,7 @@
           fill: #F44336 !important;
         }
       }
-      .OptionsIconContainer {
+      /*.OptionsIconContainer {
         display: inline;
         button {
           fill: $textSecondary;
@@ -176,7 +179,7 @@
         button:hover{
           fill: #2196f3 !important;
         }
-      }
+      }*/
     }
   }
 
@@ -243,7 +246,10 @@
   }
 }
 
-
+.SvgDialogDeleteGroup {
+  vertical-align: sub;
+  padding-right: 5px ;
+}
 
 
 

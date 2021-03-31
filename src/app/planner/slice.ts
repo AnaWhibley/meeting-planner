@@ -7,6 +7,7 @@ import {getEventService, getUserService, ServiceResponse} from "../../services/u
 import {search} from '../../search';
 import {DateTime, Interval} from 'luxon';
 import {DATE_FORMAT, DATE_TIME_FORMAT} from '../eventCreator/slice';
+import {deleteGroupedEventCompleted, requesting } from '../uiStateSlice';
 
 export interface PlannerSlice {
     busyDatesCurrentUser: Array<BusyState>;
@@ -255,5 +256,12 @@ const filterBusyDates = (state: RootState, busyDates: Array<BusyState>): Array<B
         }
     });
 }
+
+export const deleteGroupedEvent = (groupName: string) => (dispatch: Dispatch<any>, getState: () => RootState) => {
+    dispatch(requesting());
+    getEventService().deleteGroupedEvent(groupName).subscribe((response) => {
+        dispatch(deleteGroupedEventCompleted());
+    });
+};
 
 export default slice.reducer;
