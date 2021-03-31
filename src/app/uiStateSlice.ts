@@ -26,6 +26,7 @@ interface uiStateSlice {
     };
     eventsGridSelectedTab: number;
     expandedGroupedEventsDrawer: Array<string>;
+    goToDate: string;
 }
 
 export enum ViewPlanner {
@@ -50,7 +51,8 @@ export const slice = createSlice({
             emailSentError: false
         },
         eventsGridSelectedTab: 0,
-        expandedGroupedEventsDrawer: []
+        expandedGroupedEventsDrawer: [],
+        goToDate: ''
     } as uiStateSlice,
     reducers: {
         requesting: state => {
@@ -67,6 +69,9 @@ export const slice = createSlice({
         },
         showGrid: (state) => {
             state.showCalendar = false;
+        },
+        setGoToDate: (state, action) => {
+            state.goToDate = action.payload;
         },
         setSelectedOptionsStatusFilter: (state, action) => {
             const currentIndex = state.selectedOptionsStatusFilter.indexOf(action.payload);
@@ -131,9 +136,10 @@ export const slice = createSlice({
 });
 export const { requesting, setCurrentViewPlanner, setDrawerSelector, toggleShowCalendar, setSelectedOptionsStatusFilter,
     resetStatusFilter, setSelectedRowInformation, setForgotPasswordDialogProperty, showGrid, setEventsGridSelectedTab,
-    setExpandedGroupedEvent } = slice.actions;
+    setExpandedGroupedEvent, setGoToDate } = slice.actions;
 
 export const selectIsBusy = (state: RootState) => state.uiState.isBusy;
+export const selectGoToDate = (state: RootState) => state.uiState.goToDate;
 export const selectEventsGridSelectedTab = (state: RootState) => state.uiState.eventsGridSelectedTab;
 export const selectCurrentViewPlanner = (state: RootState) => state.uiState.currentViewPlanner;
 export const selectDrawerSelector = (state: RootState) => state.uiState.drawerSelector;
