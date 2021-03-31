@@ -32,7 +32,8 @@ export function HourRenderer (props: ICellRendererParams) {
     return <>{props.value}</>;
 }
 
-export function ActionsRenderer (props: ICellRendererParams) {
+type ActionRendererProps = ICellRendererParams & {onDeleteEvent: () => void};
+export function ActionsRenderer (props: ActionRendererProps) {
     const user = useSelector(selectLoggedInUser);
     const currentTab = useSelector(selectEventsGridSelectedTab);
 
@@ -67,6 +68,9 @@ export function ActionsRenderer (props: ICellRendererParams) {
                         <div className={'TrashIconContainer'}>
                             <Tooltip icon={<TrashIcon/>}
                                      text={'Eliminar'}
+                                     onClick={() => {
+                                         props.onDeleteEvent();
+                                     }}
                                      placement={'bottom'}/>
                         </div>
                     </>
