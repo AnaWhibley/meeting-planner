@@ -59,11 +59,11 @@ export function ActionsRenderer (props: ICellRendererParams) {
                                      text={'Enviar recordatorio'}
                                      placement={'bottom'}/>
                         </div>
-                        <div className={'OptionsIconContainer'}>
+                        {/*<div className={'OptionsIconContainer'}>
                             <Tooltip icon={<OptionsIcon/>}
                                      text={'Editar'}
                                      placement={'bottom'}/>
-                        </div>
+                        </div>*/}
                         <div className={'TrashIconContainer'}>
                             <Tooltip icon={<TrashIcon/>}
                                      text={'Eliminar'}
