@@ -8,6 +8,7 @@ const populateBusyDates = createAction<ServiceResponse<User>>('planner/populateB
 const showErrorMessage = createAction<ServiceResponse<User>>('login/showErrorMessage');
 const populateEvents = createAction<Array<GroupedEventDto>>('planner/populateEvents');
 const complete = createAction<Array<GroupedEventDto>>('eventCreator/complete');
+const deleteGroupedEvent = createAction<boolean>('planner/deleteGroupedEvent');
 
 interface uiStateSlice {
     isBusy: boolean;
@@ -27,6 +28,7 @@ interface uiStateSlice {
     eventsGridSelectedTab: number;
     expandedGroupedEventsDrawer: Array<string>;
     goToDate: string;
+    deleteGroupedEventCompleted: boolean;
 }
 
 export enum ViewPlanner {
@@ -52,7 +54,8 @@ export const slice = createSlice({
         },
         eventsGridSelectedTab: 0,
         expandedGroupedEventsDrawer: [],
-        goToDate: ''
+        goToDate: '',
+        deleteGroupedEventCompleted: false
     } as uiStateSlice,
     reducers: {
         requesting: state => {
@@ -109,6 +112,11 @@ export const slice = createSlice({
 
             state.expandedGroupedEventsDrawer = newExpandedGroupedEvents;
         },
+        deleteGroupedEventCompleted: (state) => {
+            state.deleteGroupedEventCompleted = true;
+            state.eventsGridSelectedTab = 0;
+            state.isBusy = false;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -120,6 +128,9 @@ export const slice = createSlice({
             })
             .addCase(showErrorMessage, (state) => {
                 state.isBusy = false;
+            })
+            .addCase(deleteGroupedEvent, (state) => {
+                state.deleteGroupedEventCompleted = false;
             })
             .addCase(populateEvents, (state, action) => {
                 const availableStatus: Set<string> = new Set();
@@ -136,7 +147,7 @@ export const slice = createSlice({
 });
 export const { requesting, setCurrentViewPlanner, setDrawerSelector, toggleShowCalendar, setSelectedOptionsStatusFilter,
     resetStatusFilter, setSelectedRowInformation, setForgotPasswordDialogProperty, showGrid, setEventsGridSelectedTab,
-    setExpandedGroupedEvent, setGoToDate } = slice.actions;
+    setExpandedGroupedEvent, setGoToDate, deleteGroupedEventCompleted } = slice.actions;
 
 export const selectIsBusy = (state: RootState) => state.uiState.isBusy;
 export const selectGoToDate = (state: RootState) => state.uiState.goToDate;
