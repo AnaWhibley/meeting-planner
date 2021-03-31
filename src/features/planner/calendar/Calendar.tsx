@@ -22,8 +22,8 @@ import {Color} from '../../../styles/theme';
 import {EventContent} from './EventContent';
 import {
     selectCalendarView,
-    selectCurrentViewPlanner, selectGoToDate,
-    setGoToDate,
+    selectCurrentViewPlanner, selectGoToDate, selectShowCalendar,
+    setGoToDate, toggleShowCalendar,
     ViewPlanner
 } from '../../../app/uiStateSlice';
 import {selectLoggedInUser} from '../../../app/login/selectors';
@@ -92,13 +92,15 @@ export function Calendar() {
 
     const goToDate = (date: Date) => {
         const calendarApi: CalendarApi = calendarRef.current.getApi();
-        calendarApi.gotoDate(date);
+        if(calendarApi) calendarApi.gotoDate(date);
     }
 
     if(drawerClickedDate){
         const date = DateTime.fromFormat(drawerClickedDate, DATE_FORMAT).toJSDate();
-        goToDate(date);
-        dispatch(setGoToDate(''));
+        requestAnimationFrame(() => {
+            goToDate(date);
+            dispatch(setGoToDate(''));
+        })
     }
 
     return (
