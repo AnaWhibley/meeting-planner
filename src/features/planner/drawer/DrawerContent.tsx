@@ -4,6 +4,7 @@ import {
     selectShowCalendar,
     setCurrentViewPlanner, setEventsGridSelectedTab,
     setExpandedGroupedEvent,
+    setGoToDate,
     setSelectedRowInformation, showGrid, toggleShowCalendar, ViewPlanner
 } from '../../../app/uiStateSlice';
 import React from 'react';
@@ -39,6 +40,8 @@ import '../../../styles/common.scss';
 import './Drawer.scss';
 import {selectLoggedInUser} from '../../../app/login/selectors';
 import {Role} from '../../../services/userService';
+import {DateTime} from 'luxon';
+import {DATE_FORMAT} from '../../../app/eventCreator/slice';
 
 export function DrawerContent() {
 
@@ -49,7 +52,7 @@ export function DrawerContent() {
         dispatch(setCurrentViewPlanner(newView));
     };
 
-    const handleToggle = (value: string, index?: number) => {
+    const handleToggleCheckbox = (value: string, index?: number) => {
         if(currentViewPlanner === ViewPlanner.BUSY_DATES) {
             dispatch(setSelectedParticipants(value));
         }else{
@@ -66,6 +69,11 @@ export function DrawerContent() {
 
     const groupedEvents = useSelector(selectEvents);
     const selectedEvents = useSelector(selectSelectedEvents);
+
+    const goToDateOnCalendar = (date: string) => {
+        if(!showCalendar) dispatch(toggleShowCalendar());
+        dispatch(setGoToDate(date));
+    }
 
     const AccordionList = (props: {title: string, list: any, className?: string}) => {
         return (<Accordion defaultExpanded className={props.className}>
@@ -102,7 +110,7 @@ export function DrawerContent() {
                     <ListItemAvatar className={'ParticipantAvatar'}>
                         <AvatarInitials text={value.name} color={value.color}/>
                     </ListItemAvatar>
-                    <ListItemText onClick={() => handleToggle(value.id)}
+                    <ListItemText onClick={() => handleToggleCheckbox(value.id)}
                                   primary={
                                       <Typography color={'textPrimary'} variant={'body1'}>{value.name}</Typography>
                                   }
@@ -112,7 +120,7 @@ export function DrawerContent() {
                             edge="end"
                             style={{color: value.color}}
                             checked={selectedParticipants.indexOf(value.id) !== -1}
-                            onChange={() => handleToggle(value.id)}
+                            onChange={() => handleToggleCheckbox(value.id)}
                         />
                     </ListItemSecondaryAction>
                 </ListItem>
@@ -154,7 +162,7 @@ export function DrawerContent() {
                                     <ListItemIcon className={'Checkbox'}>
                                         <Checkbox
                                             edge="start"
-                                            onChange={() => handleToggle(event.id, index)}
+                                            onChange={() => handleToggleCheckbox(event.id, index)}
                                             checked={selectedEvents[index].indexOf(event.id) !== -1}
                                             tabIndex={-1}
                                             style={{color: event.color}}
@@ -162,7 +170,7 @@ export function DrawerContent() {
                                         />
                                     </ListItemIcon>
                                     <ListItemText
-                                        onClick={() => handleToggle(event.id, index)}
+                                        onClick={() => goToDateOnCalendar(event.date)}
                                         primary={<Typography color={'textPrimary'} variant={'body1'}>{event.name}</Typography>}
                                     />
                                     <ListItemSecondaryAction>

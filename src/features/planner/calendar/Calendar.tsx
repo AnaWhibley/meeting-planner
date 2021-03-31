@@ -1,5 +1,5 @@
 import React, {useRef} from 'react';
-import FullCalendar, {DateSelectArg, EventApi, EventContentArg} from '@fullcalendar/react';
+import FullCalendar, {CalendarApi, DateSelectArg, EventApi, EventContentArg} from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import luxonPlugin, {toLuxonDateTime} from '@fullcalendar/luxon';
@@ -15,20 +15,22 @@ import {
 } from '../../../app/planner/selectors';
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar} from '@material-ui/core';
 import '../../../styles/common.scss'
-import {DATE_TIME_FORMAT, TIME_FORMAT} from '../../../app/eventCreator/slice';
+import {DATE_FORMAT, DATE_TIME_FORMAT, TIME_FORMAT} from '../../../app/eventCreator/slice';
 import {addBusy} from '../../../app/planner/slice';
 import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
 import {Color} from '../../../styles/theme';
 import {EventContent} from './EventContent';
 import {
     selectCalendarView,
-    selectCurrentViewPlanner,
+    selectCurrentViewPlanner, selectGoToDate,
+    setGoToDate,
     ViewPlanner
 } from '../../../app/uiStateSlice';
 import {selectLoggedInUser} from '../../../app/login/selectors';
 import {Role} from '../../../services/userService';
 import {Alert} from '../../../components/alert/Alert';
 import {ReactComponent as WarningIcon} from '../../../assets/icons/evericons/alert-triangle.svg';
+import {DateTime} from 'luxon';
 
 export function Calendar() {
 
@@ -85,6 +87,19 @@ export function Calendar() {
 
     const isAdmin = currentUser?.role === Role.ADMIN ;
     const isBusyDatesView = currentViewPlanner === ViewPlanner.BUSY_DATES;
+
+    const drawerClickedDate = useSelector(selectGoToDate);
+
+    const goToDate = (date: Date) => {
+        const calendarApi: CalendarApi = calendarRef.current.getApi();
+        calendarApi.gotoDate(date);
+    }
+
+    if(drawerClickedDate){
+        const date = DateTime.fromFormat(drawerClickedDate, DATE_FORMAT).toJSDate();
+        goToDate(date);
+        dispatch(setGoToDate(''));
+    }
 
     return (
         <>
