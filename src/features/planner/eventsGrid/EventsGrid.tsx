@@ -54,7 +54,7 @@ import {ReactComponent as TrashIcon} from "../../../assets/icons/evericons/trash
 import {ReactComponent as OptionsIcon} from "../../../assets/icons/evericons/options.svg";
 import {selectLoggedInUser} from "../../../app/login/selectors";
 import {Role} from "../../../services/userService";
-import {deleteGroupedEvent} from '../../../app/planner/slice';
+import {deleteEvent, deleteGroupedEvent} from '../../../app/planner/slice';
 import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
 import {Color} from '../../../styles/theme';
 
@@ -91,6 +91,23 @@ export const statusMapper = (status: string) => {
         }
     }
 };
+
+export const DialogDelete = (props: {title: string, handleAcceptDialog: () => void, handleCloseDialog: () => void, openDialog: boolean}) => (
+    <Dialog open={props.openDialog} onClose={props.handleCloseDialog}>
+        <DialogTitle className={'Error'}>{props.title}</DialogTitle>
+        <DialogContent>
+            <DialogContentText className={'Center'}>
+                Por favor, ten en cuenta que <u>esta acción no se puede deshacer.</u>
+            </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+            <ActionButton onClick={props.handleCloseDialog} color={Color.PRIMARY} innerText={'Cancelar'} variant={ButtonVariant.TEXT} className={'FillTextSecondary'}/>
+            <ActionButton onClick={props.handleAcceptDialog} color={Color.PRIMARY} innerText={'Eliminar'}
+                          className={'Error'}
+                          icon={<TrashIcon className={'Error SvgDialogDeleteGroup'}/>}
+                          variant={ButtonVariant.TEXT} autoFocus={true}/>
+        </DialogActions>
+    </Dialog>);
 
 export function EventsGrid() {
 
@@ -155,7 +172,10 @@ export function EventsGrid() {
         }, {
             cellRenderer: 'actionsRenderer',
             minWidth: 220,
-            sortable: false
+            sortable: false,
+            cellRendererParams: {
+                onDeleteEvent: () => setOpenDialogDeleteEvent(true)
+            }
         }
     ];
 
@@ -205,36 +225,18 @@ export function EventsGrid() {
 
     const loggedInUser = useSelector(selectLoggedInUser);
 
-    const [openDialog, setOpenDialog] = React.useState(false);
+    const [openDialogDeleteGroupedEvent, setOpenDialogDeleteGroupedEvent] = React.useState(false);
+    const [openDialogDeleteEvent, setOpenDialogDeleteEvent] = React.useState(false);
 
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
-    }
-
-    const handleOpenDialog = () => {
-        setOpenDialog(true);
-    }
-
-    const handleAcceptDialog = () => {
+    const acceptDeleteGroupedEvent = () => {
         dispatch(deleteGroupedEvent(groupedEvents[currentTab].groupName));
     }
 
-    const DialogDeleteGroupedEvent = () => (
-        <Dialog open={openDialog} onClose={handleCloseDialog}>
-            <DialogTitle className={'Error'}>{"¿Estás seguro que quieres eliminar esta convocatoria?"}</DialogTitle>
-            <DialogContent>
-                <DialogContentText className={'Center'}>
-                    Por favor, ten en cuenta que <u>esta acción no se puede deshacer.</u>
-                </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <ActionButton onClick={handleCloseDialog} color={Color.PRIMARY} innerText={'Cancelar'} variant={ButtonVariant.TEXT} className={'FillTextSecondary'}/>
-                <ActionButton onClick={handleAcceptDialog} color={Color.PRIMARY} innerText={'Eliminar'}
-                              className={'Error'}
-                              icon={<TrashIcon className={'Error SvgDialogDeleteGroup'}/>}
-                              variant={ButtonVariant.TEXT} autoFocus={true}/>
-            </DialogActions>
-        </Dialog>);
+    const acceptDeleteEvent = () => {
+        if (selectedRow) {
+            dispatch(deleteEvent(groupedEvents[currentTab].groupName, selectedRow.id));
+        }
+    }
 
     return (
         <>
@@ -285,14 +287,23 @@ export function EventsGrid() {
                                 <div className={'TrashIconContainer'}>
                                     <Tooltip icon={<TrashIcon/>}
                                              text={'Eliminar'}
-                                             onClick={handleOpenDialog}
+                                             onClick={() => setOpenDialogDeleteGroupedEvent(true)}
                                              placement={'bottom'}/>
                                 </div>
                             </div>
                             : null}
                     </AccordionDetails>
                 </Accordion>
-                <DialogDeleteGroupedEvent/>
+                <DialogDelete title={'¿Estás seguro que quieres eliminar esta convocatoria?'}
+                              handleAcceptDialog={acceptDeleteGroupedEvent}
+                              handleCloseDialog={() => setOpenDialogDeleteGroupedEvent(false)}
+                              openDialog={openDialogDeleteGroupedEvent}
+                />
+                <DialogDelete title={'¿Estás seguro que quieres eliminar este evento?'}
+                              handleAcceptDialog={acceptDeleteEvent}
+                              handleCloseDialog={() => setOpenDialogDeleteEvent(false)}
+                              openDialog={openDialogDeleteEvent}
+                />
                 <Typography  color={'textSecondary'} variant={'body1'} className={'Bold GridTitle'}>Defensas programadas</Typography>
                 <div className='ag-theme-material Grid'>
                     <AgGridReact
@@ -313,7 +324,7 @@ export function EventsGrid() {
                     >
                     </AgGridReact>
                 </div>
-                {selectedRow &&
+                {selectedRow && !openDialogDeleteEvent &&
                 <div className={'SelectedRowContainer'}>
                     <div className={'Title'}>
                         <Typography color={'textSecondary'} variant={'body1'} className={'Bold'}>Información de la defensa</Typography>
