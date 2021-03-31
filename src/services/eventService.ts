@@ -737,6 +737,34 @@ export class EventService {
             });
         });
     }
+
+    public static deleteEvent(groupEventName: string, eventId: string): Observable<boolean> {
+        return new Observable((subscriber) => {
+
+            const docRef = firebase.firestore().collection('events').doc(groupEventName);
+
+            firebase.firestore().runTransaction((transaction) => {
+                return transaction.get(docRef).then((doc) => {
+                    if (!doc.exists) {
+                        subscriber.next(false);
+                    }else{
+                        const events = doc.data()?.events;
+                        const index = events.findIndex((event: EventDto) => event.id === eventId);
+                        if(index > -1){
+                            events.splice(index, 1);
+                            transaction.update(docRef, {events});
+                        }else{
+                            subscriber.next(false);
+                        }
+                    }
+                });
+            }).then((response) => {
+                subscriber.next(true);
+            }).catch((err) => {
+                subscriber.error(false);
+            });
+        });
+    }
 }
 
 
@@ -819,7 +847,20 @@ export class MockEventService {
             groupedEvents.splice(index, 1);
         }
 
-        console.log(groupedEvents);
+        this.groupedEventsSubject.next(groupedEvents.slice());
+
+        return of(true);
+    }
+
+    public static deleteEvent(groupEventName: string, eventId: string): Observable<boolean> {
+        let index = groupedEvents.findIndex((groupedEvent) => groupedEvent.groupName === groupEventName);
+
+        if(index > -1) {
+            const eventIndex = groupedEvents[index].events.findIndex((event) => event.id === eventId);
+            if(eventIndex > -1) {
+                groupedEvents[index].events.splice(eventIndex, 1);
+            }
+        }
 
         this.groupedEventsSubject.next(groupedEvents.slice());
 
