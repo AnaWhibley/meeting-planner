@@ -8,6 +8,7 @@ import {GridReadyEvent, RowClickedEvent} from 'ag-grid-community/dist/lib/events
 import {GridApi} from 'ag-grid-community/dist/lib/gridApi';
 import {ColumnApi} from 'ag-grid-community/dist/lib/columnController/columnApi';
 import './EventsGrid.scss';
+import '../../../styles/common.scss';
 import {ColDef} from 'ag-grid-community/dist/lib/entities/colDef';
 import {
     selectDrawerSelector,
@@ -31,7 +32,16 @@ import {
 } from './CellRenderers';
 import {ConnectedStatusFilter} from './StatusFilter';
 import {AG_GRID_LOCALE_ES} from './locale.es';
-import {Accordion, AccordionDetails, AccordionSummary, AppBar, Tab, Tabs, Typography} from '@material-ui/core';
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    AppBar, Dialog, DialogActions, DialogContent, DialogContentText,
+    DialogTitle,
+    Tab,
+    Tabs,
+    Typography
+} from '@material-ui/core';
 import {ExpandMore} from '@material-ui/icons';
 import {ReactComponent as InfoIcon} from '../../../assets/icons/evericons/info.svg';
 import {Tooltip} from '../../../components/tooltip/Tooltip';
@@ -44,6 +54,9 @@ import {ReactComponent as TrashIcon} from "../../../assets/icons/evericons/trash
 import {ReactComponent as OptionsIcon} from "../../../assets/icons/evericons/options.svg";
 import {selectLoggedInUser} from "../../../app/login/selectors";
 import {Role} from "../../../services/userService";
+import {deleteGroupedEvent} from '../../../app/planner/slice';
+import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
+import {Color} from '../../../styles/theme';
 
 export const statusMapper = (status: string) => {
     if(status === 'confirmed') {
@@ -141,7 +154,8 @@ export function EventsGrid() {
             filter: 'agNumberColumnFilter',
         }, {
             cellRenderer: 'actionsRenderer',
-            minWidth: 220
+            minWidth: 220,
+            sortable: false
         }
     ];
 
@@ -191,6 +205,37 @@ export function EventsGrid() {
 
     const loggedInUser = useSelector(selectLoggedInUser);
 
+    const [openDialog, setOpenDialog] = React.useState(false);
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    }
+
+    const handleOpenDialog = () => {
+        setOpenDialog(true);
+    }
+
+    const handleAcceptDialog = () => {
+        dispatch(deleteGroupedEvent(groupedEvents[currentTab].groupName));
+    }
+
+    const DialogDeleteGroupedEvent = () => (
+        <Dialog open={openDialog} onClose={handleCloseDialog}>
+            <DialogTitle className={'Error'}>{"¿Estás seguro que quieres eliminar esta convocatoria?"}</DialogTitle>
+            <DialogContent>
+                <DialogContentText className={'Center'}>
+                    Por favor, ten en cuenta que <u>esta acción no se puede deshacer.</u>
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <ActionButton onClick={handleCloseDialog} color={Color.PRIMARY} innerText={'Cancelar'} variant={ButtonVariant.TEXT} className={'FillTextSecondary'}/>
+                <ActionButton onClick={handleAcceptDialog} color={Color.PRIMARY} innerText={'Eliminar'}
+                              className={'Error'}
+                              icon={<TrashIcon className={'Error SvgDialogDeleteGroup'}/>}
+                              variant={ButtonVariant.TEXT} autoFocus={true}/>
+            </DialogActions>
+        </Dialog>);
+
     return (
         <>
             {groupedEvents.length > 0 ? <div className={'EventsGridContainer'}>
@@ -232,20 +277,22 @@ export function EventsGrid() {
                         {loggedInUser && loggedInUser.role === Role.ADMIN ?
                             <div className={'Actions'}>
                                 <Typography color={'secondary'} align={'center'} variant={'body1'} className={'Bold'}>Acciones</Typography>
-                                <div className={'OptionsIconContainer'}>
+                                {/*<div className={'OptionsIconContainer'}>
                                     <Tooltip icon={<OptionsIcon/>}
                                              text={'Editar'}
                                              placement={'bottom'}/>
-                                </div>
+                                </div>*/}
                                 <div className={'TrashIconContainer'}>
                                     <Tooltip icon={<TrashIcon/>}
                                              text={'Eliminar'}
+                                             onClick={handleOpenDialog}
                                              placement={'bottom'}/>
                                 </div>
                             </div>
-                        : null}
+                            : null}
                     </AccordionDetails>
                 </Accordion>
+                <DialogDeleteGroupedEvent/>
                 <Typography  color={'textSecondary'} variant={'body1'} className={'Bold GridTitle'}>Defensas programadas</Typography>
                 <div className='ag-theme-material Grid'>
                     <AgGridReact
