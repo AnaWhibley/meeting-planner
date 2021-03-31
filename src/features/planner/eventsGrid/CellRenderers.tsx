@@ -37,17 +37,15 @@ export function ActionsRenderer (props: ICellRendererParams) {
     const currentTab = useSelector(selectEventsGridSelectedTab);
 
     const dispatch = useDispatch();
-    const onSelectionChanged = () => {
-        if(props.api) {
-            dispatch(setSelectedRowInformation({eventId: props.api.getSelectedRows()[0].id, groupId: currentTab}))
-        }
+    const onRowClicked = () => {
+        dispatch(setSelectedRowInformation({eventId: props.data.id, groupId: currentTab}))
     }
 
     const eye = <div className={'EyeIconContainer'}>
         <Tooltip icon={<EyeIcon/>}
                  text={'Mostrar más información'}
                  placement={'bottom'}
-                 onClick={onSelectionChanged}
+                 onClick={onRowClicked}
         />
     </div>;
     if(user && user.role === Role.ADMIN) {

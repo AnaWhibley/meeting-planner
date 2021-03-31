@@ -4,7 +4,7 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
 import {useDispatch, useSelector} from 'react-redux';
 import { selectEvents } from '../../../app/planner/selectors';
-import {GridReadyEvent} from 'ag-grid-community/dist/lib/events';
+import {GridReadyEvent, RowClickedEvent} from 'ag-grid-community/dist/lib/events';
 import {GridApi} from 'ag-grid-community/dist/lib/gridApi';
 import {ColumnApi} from 'ag-grid-community/dist/lib/columnController/columnApi';
 import './EventsGrid.scss';
@@ -184,11 +184,9 @@ export function EventsGrid() {
 
     const dispatch = useDispatch();
     const selectedRow = useSelector(selectSelectedRowInformation);
-    const onSelectionChanged = () => {
-        if(gridApi) {
-            const selectedRow = gridApi.getSelectedRows()[0];
-            dispatch(setSelectedRowInformation({eventId: selectedRow && selectedRow.id, groupId: currentTab}))
-        }
+
+    const onRowClicked = (event: RowClickedEvent) => {
+        dispatch(setSelectedRowInformation({eventId: event.data.id, groupId: currentTab}));
     }
 
     const loggedInUser = useSelector(selectLoggedInUser);
@@ -264,7 +262,7 @@ export function EventsGrid() {
                         getRowNodeId={(data) => data.id}
                         paginationPageSize={5}
                         rowSelection={'single'}
-                        onSelectionChanged={onSelectionChanged}
+                        onRowClicked={(event) => onRowClicked(event)}
                     >
                     </AgGridReact>
                 </div>
