@@ -22,6 +22,7 @@ html{
 
 .FillTextSecondary {
   fill: $textSecondary;
+  color: $textSecondary !important;
 }
 
 .CursorPointer {
@@ -40,4 +41,9 @@ html{
 
 .Center {
   text-align: center;
+}
+
+.Error {
+  color: #F44336 !important;
+  fill: #F44336 !important;
 }
