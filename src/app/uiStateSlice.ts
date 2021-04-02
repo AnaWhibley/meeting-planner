@@ -120,10 +120,16 @@ export const slice = createSlice({
             state.eventsGridSelectedTab = 0;
             state.isBusy = false;
         },
+        setDeleteGroupedEventCompleted: (state, action) => {
+            state.deleteGroupedEventCompleted = action.payload;
+        },
         deleteEventCompleted: (state) => {
             state.deleteEventCompleted = true;
             state.isBusy = false;
-        }
+        },
+        setDeleteEventCompleted: (state, action) => {
+            state.deleteEventCompleted = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -135,13 +141,13 @@ export const slice = createSlice({
             })
             .addCase(showErrorMessage, (state) => {
                 state.isBusy = false;
-            })
+            })/*
             .addCase(deleteGroupedEvent, (state) => {
                 state.deleteGroupedEventCompleted = false;
             })
             .addCase(deleteEvent, (state) => {
                 state.deleteGroupedEventCompleted = false;
-            })
+            })*/
             .addCase(populateEvents, (state, action) => {
                 const availableStatus: Set<string> = new Set();
                 action.payload.forEach(ev => ev.events.forEach(e => availableStatus.add(e.status)));
@@ -157,7 +163,7 @@ export const slice = createSlice({
 });
 export const { requesting, setCurrentViewPlanner, setDrawerSelector, toggleShowCalendar, setSelectedOptionsStatusFilter,
     resetStatusFilter, setSelectedRowInformation, setForgotPasswordDialogProperty, showGrid, setEventsGridSelectedTab,
-    setExpandedGroupedEvent, setGoToDate, deleteGroupedEventCompleted, deleteEventCompleted } = slice.actions;
+    setExpandedGroupedEvent, setGoToDate, deleteGroupedEventCompleted, deleteEventCompleted, setDeleteEventCompleted, setDeleteGroupedEventCompleted } = slice.actions;
 
 export const selectIsBusy = (state: RootState) => state.uiState.isBusy;
 export const selectGoToDate = (state: RootState) => state.uiState.goToDate;
@@ -176,6 +182,8 @@ export const selectSelectedRowInformation = (state: RootState) => {
     }
 };
 export const selectForgotPasswordDialogInfo = (state: RootState) => state.uiState.forgotPasswordDialog;
+export const selectDeleteEventCompleted = (state: RootState) => state.uiState.deleteEventCompleted;
+export const selectDeleteGroupedEventCompleted = (state: RootState) => state.uiState.deleteGroupedEventCompleted;
 
 export const toggleDrawerSelectorTransition = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     const current = getState().uiState.drawerSelector;
