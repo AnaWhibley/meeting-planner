@@ -11,10 +11,13 @@ import './EventsGrid.scss';
 import '../../../styles/common.scss';
 import {ColDef} from 'ag-grid-community/dist/lib/entities/colDef';
 import {
+    selectDeleteEventCompleted, selectDeleteGroupedEventCompleted,
     selectDrawerSelector,
     selectEventsGridSelectedTab,
     selectSelectedOptionsStatusFilter,
     selectSelectedRowInformation,
+    setDeleteEventCompleted,
+    setDeleteGroupedEventCompleted,
     setEventsGridSelectedTab,
     setSelectedRowInformation,
 } from '../../../app/uiStateSlice';
@@ -37,7 +40,7 @@ import {
     AccordionDetails,
     AccordionSummary,
     AppBar, Dialog, DialogActions, DialogContent, DialogContentText,
-    DialogTitle,
+    DialogTitle, Snackbar,
     Tab,
     Tabs,
     Typography
@@ -51,12 +54,12 @@ import { ParticipantInfo } from '../../../components/participantInformation/Part
 import {ParticipantDto} from '../../../services/eventService';
 import {DATE_FORMAT} from '../../../app/eventCreator/slice';
 import {ReactComponent as TrashIcon} from "../../../assets/icons/evericons/trash-empty.svg";
-import {ReactComponent as OptionsIcon} from "../../../assets/icons/evericons/options.svg";
 import {selectLoggedInUser} from "../../../app/login/selectors";
 import {Role} from "../../../services/userService";
 import {deleteEvent, deleteGroupedEvent} from '../../../app/planner/slice';
 import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
 import {Color} from '../../../styles/theme';
+import {Alert} from '../../../components/alert/Alert';
 
 export const statusMapper = (status: string) => {
     if(status === 'confirmed') {
@@ -238,6 +241,9 @@ export function EventsGrid() {
         }
     }
 
+    const deleteGroupedEventCompleted = useSelector(selectDeleteGroupedEventCompleted);
+    const deleteEventCompleted = useSelector(selectDeleteEventCompleted);
+
     return (
         <>
             {groupedEvents.length > 0 ? <div className={'EventsGridContainer'}>
@@ -272,7 +278,7 @@ export function EventsGrid() {
                                 <Tooltip icon={<InfoIcon className={'FillPrimary'}/>}
                                          text={'Fecha a partir de la cual todos los eventos de la convocatoria quedan confirmados.'}
                                          placement={'bottom'}/>
-                                <Typography color={'primary'}  display={'inline'} variant={'body1'} className={'Bold'}>Establecimiento de fecha: </Typography>
+                                <Typography color={'primary'}  display={'inline'} variant={'body1'} className={'Bold'}>Confirmación de fechas: </Typography>
                                 <Typography color={'textSecondary'} variant={'body1'} display={'inline'}> {groupedEvents[currentTab].from}</Typography>
                             </div>
                         </div>
@@ -304,6 +310,16 @@ export function EventsGrid() {
                               handleCloseDialog={() => setOpenDialogDeleteEvent(false)}
                               openDialog={openDialogDeleteEvent}
                 />
+                <Snackbar open={deleteGroupedEventCompleted} autoHideDuration={3000} onClose={() => dispatch(setDeleteGroupedEventCompleted(false))}>
+                    <Alert severity="success" onClose={() => dispatch(setDeleteGroupedEventCompleted(false))}>
+                        ¡Se ha eliminado la convocatoria exitosamente!
+                    </Alert>
+                </Snackbar>
+                <Snackbar open={deleteEventCompleted} autoHideDuration={3000} onClose={() => dispatch(setDeleteEventCompleted(false))}>
+                    <Alert severity="success" onClose={() => dispatch(setDeleteEventCompleted(false))}>
+                        ¡Se ha eliminado el evento exitosamente!
+                    </Alert>
+                </Snackbar>
                 <Typography  color={'textSecondary'} variant={'body1'} className={'Bold GridTitle'}>Defensas programadas</Typography>
                 <div className='ag-theme-material Grid'>
                     <AgGridReact

@@ -92,10 +92,13 @@ export function DrawerContent() {
         {/*Selected participants array includes the current user, that's why we need to check with -1*/}
         {participants.length > 1 ? <FormControlLabel
             control={
-                <Checkbox checked={currentUserRole === Role.ADMIN ?
-                    selectedParticipants.length === participants.length :
-                    (selectedParticipants.length - 1) === participants.length}
-                          onChange={() => dispatch(toggleSelectAllParticipants())}/>
+                <Checkbox
+                    checked={
+                        currentUserRole === Role.ADMIN ?
+                            selectedParticipants.length === participants.length :
+                            (selectedParticipants.length - 1) === participants.length
+                    }
+                    onChange={() => dispatch(toggleSelectAllParticipants(currentUserRole))}/>
             }
             label={
                 <Typography color={'textPrimary'}
