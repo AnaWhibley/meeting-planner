@@ -92,13 +92,24 @@ export const slice = createSlice({
                 state.selectedEvents[action.payload.groupIndex] = groupedEvents[action.payload.groupIndex].events.map(event => event.id);
             }
         },
-        toggleSelectAllParticipants: (state) => {
-            const participants = state.participants.slice().map(user => user.id);
+        toggleSelectAllParticipants: (state, action) => {
+            let participants = state.participants.slice().map(user => user.id);
+
+            if(action.payload === Role.ADMIN) {
+                const busyDatesOU = state.busyDatesOtherUsers;
+                participants = participants.filter(p => {
+                    const busyDates = busyDatesOU.find(bd => bd.userId === p);
+                    if(busyDates) return busyDates.busy.length > 0;
+                    return false;
+                });
+            }
             const isAllSelected = participants.length === state.selectedParticipants.length;
+
             if(isAllSelected) {
                 state.selectedParticipants = [];
             }else{
                 state.selectedParticipants = participants;
+                console.log(state.selectedParticipants)
             }
         },
     },
@@ -136,7 +147,7 @@ const getBusyDates = (userIds: Array<string>) => (dispatch: Dispatch<any>, getSt
     if(userIds.length > 0) {
 
         getUserService().getParticipants(userIds).subscribe((response: ServiceResponse<Array<User>>) => {
-            if(response.success) dispatch(populateParticipants(response.data));
+            if(response.success) dispatch(populateParticipants({participants: response.data, selectedParticipants: response.data}));
         });
 
         getEventService().getBusyDates(userIds).subscribe((response: ServiceResponse<Array<BusyDateDto>>) => {
