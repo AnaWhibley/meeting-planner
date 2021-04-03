@@ -5,7 +5,7 @@ import {Role} from './userService';
 import {User} from '../app/login/slice';
 import {colors} from '../styles/theme';
 import firebase from '../firebase-config';
-import {getEventService, ServiceResponse} from './utils';
+import {ServiceResponse} from './utils';
 
 export interface CreateResponse {
     success: boolean;
@@ -60,6 +60,12 @@ const busyDates: Array<BusyDateDto> = [
             end: '03/05/2021 10:30',
             id: 'mm',
             eventId: '23',
+            allDay: false,
+        }, {
+            start: '03/05/2021 08:30',
+            end: '03/05/2021 09:30',
+            id: 'll232',
+            eventId: '22',
             allDay: false,
         }]
     },
@@ -136,6 +142,12 @@ const busyDates: Array<BusyDateDto> = [
             id: 'qq',
             eventId: '23',
             allDay: false,
+        }, {
+            start: '01/03/2021 08:30',
+            end: '01/03/2021 09:30',
+            id: 'o1211',
+            eventId: '2',
+            allDay: false,
         }]
     },
     {userId: 'antonio.ocon@ulpgc.es',
@@ -150,6 +162,12 @@ const busyDates: Array<BusyDateDto> = [
             end: '03/05/2021 09:30',
             id: 'ee',
             eventId: '21',
+            allDay: false,
+        }, {
+            start: '03/03/2021 08:30',
+            end: '03/03/2021 09:30',
+            id: 'x232',
+            eventId: '1',
             allDay: false,
         }]
     },
@@ -192,6 +210,12 @@ const busyDates: Array<BusyDateDto> = [
             end: '03/05/2021 10:30',
             id: 'pp',
             eventId: '23',
+            allDay: false,
+        }, {
+            start: '03/05/2021 08:30',
+            end: '03/05/2021 09:30',
+            id: 'fsdf1f',
+            eventId: '21',
             allDay: false,
         }]
     },
@@ -292,6 +316,18 @@ const busyDates: Array<BusyDateDto> = [
             id: 'll',
             eventId: '22',
             allDay: false,
+        }, {
+            start: '03/05/2021 09:30',
+            end: '03/05/2021 10:30',
+            id: '434dsds',
+            eventId: '23',
+            allDay: false,
+        }, {
+            start: '03/03/2021 09:30',
+            end: '03/03/2021 10:30',
+            id: 'w2232',
+            eventId: '3',
+            allDay: false,
         }]
     },
     {userId: 'eduardo.rodriguez@ulpgc.es',
@@ -367,6 +403,10 @@ const groupedEvents: Array<GroupedEventDto> = [
                     {
                         email: 'eduardo.rodriguez@ulpgc.es',  //12
                         tag: 'Vocal Tribunal Suplente'
+                    },
+                    {
+                        email: 'antonio.ocon@ulpgc.es',  //5
+                        tag: 'Tutor'
                     }],
                 duration: 60,
                 status: 'pending',
@@ -400,6 +440,10 @@ const groupedEvents: Array<GroupedEventDto> = [
                     {
                         email: 'jc.rodriguezdelpino@ulpgc.es',  //6
                         tag: 'Vocal Tribunal Suplente'
+                    },
+                    {
+                        email: 'alexis.quesada@ulpgc.es',  //6
+                        tag: 'Tutor'
                     }],
                 duration: 60,
                 status: 'pending',
@@ -433,6 +477,10 @@ const groupedEvents: Array<GroupedEventDto> = [
                     {
                         email: 'francisca.quintana@ulpgc.es',    //9
                         tag: 'Vocal Tribunal Suplente'
+                    },
+                    {
+                        email: 'jc.rodriguezdelpino@ulpgc.es',  //6
+                        tag: 'Tutor'
                     }],
                 duration: 60,
                 status: 'confirmed',
@@ -473,6 +521,10 @@ const groupedEvents: Array<GroupedEventDto> = [
                     {
                         email: 'eduardo.rodriguez@ulpgc.es',  //12
                         tag: 'Vocal Tribunal Suplente'
+                    },
+                    {
+                        email: 'octavio.mayor@ulpgc.es',  //7
+                        tag: 'Tutor'
                     }],
                 duration: 60,
                 status: 'pending',
@@ -506,6 +558,10 @@ const groupedEvents: Array<GroupedEventDto> = [
                     {
                         email: 'jc.rodriguezdelpino@ulpgc.es',  //6
                         tag: 'Vocal Tribunal Suplente'
+                    },
+                    {
+                        email: 'abraham.rodriguez@ulpgc.es',    //9
+                        tag: 'Tutor'
                     }],
                 duration: 60,
                 status: 'pending',
@@ -539,6 +595,10 @@ const groupedEvents: Array<GroupedEventDto> = [
                     {
                         email: 'francisca.quintana@ulpgc.es',    //9
                         tag: 'Vocal Tribunal Suplente'
+                    },
+                    {
+                        email: 'jc.rodriguezdelpino@ulpgc.es',    //9
+                        tag: 'Tutor'
                     }],
                 duration: 60,
                 status: 'pending',
