@@ -214,7 +214,7 @@ export class UserService {
 export class MockUserService {
 
     public static login(email: string, password: string): Observable<ServiceResponse<User>> {
-        if(email === 'u' && password === 'u') {
+        if(email === 'daniel.hernandez@ulpgc.es' && password === 'anaTFG') {
             return of({
                 data: {name: 'José Daniel Hernández Sosa', role: Role.USER, id: 'daniel.hernandez@ulpgc.es'},
                 success: true
