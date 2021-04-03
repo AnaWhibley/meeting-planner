@@ -1,7 +1,7 @@
 import {MockUserService, UserService} from "./userService";
 import {EventService, MockEventService} from './eventService';
 
-const isDev = false;
+const isDev = true;
 
 export const getUserService = () => {
   return isDev ? MockUserService : UserService;
