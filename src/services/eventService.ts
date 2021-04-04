@@ -163,12 +163,6 @@ const busyDates: Array<BusyDateDto> = [
             id: 'ee',
             eventId: '21',
             allDay: false,
-        }, {
-            start: '03/03/2021 08:30',
-            end: '03/03/2021 09:30',
-            id: 'x232',
-            eventId: '1',
-            allDay: false,
         }]
     },
     {userId: 'carmelo.cuenca@ulpgc.es',
@@ -301,6 +295,12 @@ const busyDates: Array<BusyDateDto> = [
             id: 'kk',
             eventId: '22',
             allDay: false,
+        }, {
+            start: '03/03/2021 08:30',
+            end: '03/03/2021 09:30',
+            id: 'x232',
+            eventId: '1',
+            allDay: false,
         }]
     },
     {userId: 'jc.rodriguezdelpino@ulpgc.es',
@@ -405,7 +405,7 @@ const groupedEvents: Array<GroupedEventDto> = [
                         tag: 'Vocal Tribunal Suplente'
                     },
                     {
-                        email: 'antonio.ocon@ulpgc.es',  //5
+                        email: 'david.freire@ulpgc.es',  //5
                         tag: 'Tutor'
                     }],
                 duration: 60,
@@ -721,6 +721,18 @@ export class EventService {
                         to: groupedEvent.to,
                         groupName: groupedEvent.groupName,
                     }
+
+                    events.forEach((event) => {
+                        event.participants.forEach(participant => {
+                            const userRef = database.collection('users').doc(participant.email);
+                            /*transaction.get(userRef).then((doc) => {
+                                if(!doc.exists){
+                                    transaction.set(userRef, {name: participant.email});
+                                }
+                            });*/
+                            transaction.set(userRef, {name: participant.email});
+                        })
+                    });
                     transaction.set(docRef, data, {merge: true});
                 });
             }).then((response) => {
