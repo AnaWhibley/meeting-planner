@@ -218,17 +218,23 @@ export class UserService {
             const database = firebase.firestore();
 
             database.runTransaction((transaction) => {
-                const results = events.map(event => {
+                console.log('1')
+                const results = events.flatMap(event => {
+                    console.log('2')
                     const participants = event.participants;
                     return participants.map((participant) => {
+                        console.log('3')
                         const docRef = database.collection('users').doc(participant.email);
                         return transaction.get(docRef).then((doc) => {
+                            console.log('4')
                             if(!doc.exists){
+                                console.log('5')
                                 transaction.set(docRef, {name: participant.email});
                             }
                         });
                     })
                 });
+                console.log('6', results)
                 return Promise.all(results);
             }).then((response) => {
                 subscriber.next(true);
