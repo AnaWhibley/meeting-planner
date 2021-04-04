@@ -3,7 +3,7 @@ import {DateTime} from 'luxon';
 import {RootState} from '../store';
 import {validateFields} from './validation';
 import {mapToCreateEventRequest, mapJSONToState, mapJSONFromState} from './mappers';
-import {getEventService} from '../../services/utils';
+import {getEventService, getUserService} from '../../services/utils';
 import {search} from '../../search';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -165,9 +165,11 @@ export const createEvents = () => (dispatch: Dispatch<any>, getState: () => Root
 
     getEventService().updateBusyDates(newData.busyDates).subscribe((busyDatesResponse) => {
         getEventService().createGroupedEvent(groupedEvent).subscribe((groupedEventResponse) => {
-            if(busyDatesResponse && groupedEventResponse) {
-                dispatch(complete());
-            }
+            getUserService().createUsers(groupedEvent.events).subscribe((createUsersResponse) => {
+                if(busyDatesResponse && groupedEventResponse && createUsersResponse) {
+                    dispatch(complete());
+                }
+            })
         })
     });
 };

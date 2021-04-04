@@ -60,6 +60,7 @@ import {deleteEvent, deleteGroupedEvent} from '../../../app/planner/slice';
 import ActionButton, {ButtonVariant} from '../../../components/actionButton/ActionButton';
 import {Color} from '../../../styles/theme';
 import {Alert} from '../../../components/alert/Alert';
+import {NoDataPage} from '../../../components/noDataPage/NoDataPage';
 
 export const statusMapper = (status: string) => {
     if(status === 'confirmed') {
@@ -381,7 +382,7 @@ export function EventsGrid() {
                     </div>
                 </div>
                 }
-            </div> : <div>No hay eventos para mostrar</div>}
+            </div> : <NoDataPage message={'Ups, parece que no hay datos para mostrar'}/>}
         </>
     );
 }

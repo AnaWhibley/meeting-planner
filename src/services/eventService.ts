@@ -722,17 +722,6 @@ export class EventService {
                         groupName: groupedEvent.groupName,
                     }
 
-                    events.forEach((event) => {
-                        event.participants.forEach(participant => {
-                            const userRef = database.collection('users').doc(participant.email);
-                            /*transaction.get(userRef).then((doc) => {
-                                if(!doc.exists){
-                                    transaction.set(userRef, {name: participant.email});
-                                }
-                            });*/
-                            transaction.set(userRef, {name: participant.email});
-                        })
-                    });
                     transaction.set(docRef, data, {merge: true});
                 });
             }).then((response) => {
