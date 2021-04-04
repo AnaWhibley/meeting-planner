@@ -4,6 +4,7 @@ import {User} from '../app/login/slice';
 import {colors} from '../styles/theme';
 import firebase from '../firebase-config';
 import {ServiceResponse} from './utils';
+import {EventDto} from './eventService';
 
 interface UserDto {
     name: string;
@@ -149,7 +150,7 @@ export class UserService {
                 if (!document.exists) {
                     subscriber.next({
                         success: false,
-                        error: 'User does not exist',
+                        error: 'El usuario no existe',
                         data: {name: '', id: ''}
                     });
                 }else{
@@ -209,6 +210,33 @@ export class UserService {
             });
         });
     }
+
+    public static createUsers(events: Array<EventDto>): Observable<boolean> {
+
+        return new Observable((subscriber) => {
+
+            const database = firebase.firestore();
+
+            database.runTransaction((transaction) => {
+                const results = events.map(event => {
+                    const participants = event.participants;
+                    return participants.map((participant) => {
+                        const docRef = database.collection('users').doc(participant.email);
+                        return transaction.get(docRef).then((doc) => {
+                            if(!doc.exists){
+                                transaction.set(docRef, {name: participant.email});
+                            }
+                        });
+                    })
+                });
+                return Promise.all(results);
+            }).then((response) => {
+                subscriber.next(true);
+            }).catch((err) => {
+                subscriber.error(false);
+            });
+        });
+    }
 }
 
 export class MockUserService {
@@ -254,6 +282,10 @@ export class MockUserService {
     }
 
     public static forgotPassword(email: string): Observable<boolean> {
+        return of(true).pipe(delay(1000));
+    }
+
+    public static createUsers(events: Array<EventDto>): Observable<boolean> {
         return of(true).pipe(delay(1000));
     }
 }

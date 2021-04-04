@@ -1,0 +1,16 @@
+.NoDataPageContainer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 5em 0;
+
+  img {
+    width: 450px;
+  }
+
+  .Message {
+    margin: 2em 0;
+    font-size: 35px;
+    text-align: center;
+  }
+}

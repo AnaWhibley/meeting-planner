@@ -22,6 +22,11 @@
     .SelectAll {
       margin-left: 20px;
     }
+
+    .NoParticipantsMessage {
+      margin: 0 2em;
+      text-align: center;
+    }
   }
 
   .MuiPaper-elevation1 {
@@ -53,6 +58,11 @@
     .SelectAll {
       margin-left: 15px;
 
+    }
+
+    .NoEventsMessage {
+      margin: 0 1.5em;
+      text-align: center;
     }
 
     .MuiAccordionDetails-root {
