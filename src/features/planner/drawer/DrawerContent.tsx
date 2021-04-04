@@ -107,7 +107,7 @@ export function DrawerContent() {
             }
             className={'SelectAll'}
         /> : null}
-        {participants.map((value) => {
+        {participants.length > 0 ? participants.map((value) => {
             return (
                 <ListItem key={value.id} button >
                     <ListItemAvatar className={'ParticipantAvatar'}>
@@ -128,7 +128,7 @@ export function DrawerContent() {
                     </ListItemSecondaryAction>
                 </ListItem>
             );
-        })}
+        }) : <div className={'NoParticipantsMessage'}>No hay participantes para mostrar</div>}
     </List>;
 
     const showEventInfo = (id: string, index: number) => {
@@ -139,7 +139,7 @@ export function DrawerContent() {
 
     const expandedGroupedEvents = useSelector(selectExpandedGroupedEventsDrawer);
 
-    const groupedEventList = groupedEvents.map((groupedEvent: GroupedEventDto, index: number) => {
+    const groupedEventList = groupedEvents.length > 0 ? groupedEvents.map((groupedEvent: GroupedEventDto, index: number) => {
         return (
             <Accordion expanded={expandedGroupedEvents.includes(groupedEvent.groupName)}
                        key={groupedEvent.groupName}
@@ -159,7 +159,7 @@ export function DrawerContent() {
                                               label={<Typography color={'textPrimary'} variant={'body1'}>Seleccionar todos</Typography>}
                                               className={'SelectAll'}
                             /> : null}
-                        {groupedEvent.events.map(event => {
+                        {groupedEvent.events.length > 0 ? groupedEvent.events.map(event => {
                             return (
                                 <ListItem key={event.id} dense button>
                                     <ListItemIcon className={'Checkbox'}>
@@ -183,12 +183,12 @@ export function DrawerContent() {
                                     </ListItemSecondaryAction>
                                 </ListItem>
                             );
-                        })}
+                        }) : <div className={'NoEventsMessage'}>No hay eventos para mostrar</div>}
                     </List>
                 </AccordionDetails>
             </Accordion>
         )
-    });
+    }) : <div className={'NoEventsMessage'}>No hay convocatorias para mostrar</div>;
 
     return (
         <>
