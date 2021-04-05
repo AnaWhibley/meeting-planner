@@ -40,6 +40,7 @@ import '../../../styles/common.scss';
 import './Drawer.scss';
 import {selectLoggedInUser} from '../../../app/login/selectors';
 import {Role} from '../../../services/userService';
+import cn from 'classnames';
 
 export function DrawerContent() {
 
@@ -113,7 +114,7 @@ export function DrawerContent() {
                     </ListItemAvatar>
                     <ListItemText onClick={() => handleToggleCheckbox(value.id)}
                                   primary={
-                                      <Typography color={'textPrimary'} variant={'body1'} className={'Dots'} >{value.name}</Typography>
+                                      <Typography color={'textPrimary'} className={cn({'Dots': value.name.includes('@')})} variant={'body1'} >{value.name}</Typography>
                                   }
                     />
                     <ListItemSecondaryAction>
@@ -172,7 +173,7 @@ export function DrawerContent() {
                                     </ListItemIcon>
                                     <ListItemText
                                         onClick={() => goToDateOnCalendar(event.date)}
-                                        primary={<Typography color={'textPrimary'} className={'Dots'} variant={'body1'}>{event.name}</Typography>}
+                                        primary={<Typography color={'textPrimary'} variant={'body1'}>{event.name}</Typography>}
                                     />
                                     <ListItemSecondaryAction>
                                         <IconButton edge="end" onClick={() => showEventInfo(event.id, index)}>
