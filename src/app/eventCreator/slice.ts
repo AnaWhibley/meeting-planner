@@ -136,9 +136,9 @@ export const slice = createSlice({
         },
         setImportedData: (state,action) => {
             state.events = action.payload.events;
-            state.groupName = action.payload.groupName;
-            state.from = action.payload.from;
-            state.to = action.payload.to;
+            state.groupName = createFieldState(action.payload.groupName);
+            state.from = createFieldState(action.payload.from);
+            state.to = createFieldState(action.payload.to);
             state.stage = 3;
         },
         editEvent: (state,action: PayloadAction<{stage?: number, currentIndex: number}>) => {
