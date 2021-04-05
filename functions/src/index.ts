@@ -86,6 +86,7 @@ exports.sendEmailNewUsers = functions.firestore
     });
 
 exports.sendReminder = functions.runWith(options).pubsub.topic('sendReminder').onPublish(() => {
+    // Leer si hay groupedEvent y comparamos el start del groupedEvent
     return admin.firestore().collection('users').where('role', '!=', 'admin').get()
         .then((snapshot: QuerySnapshot<DocumentData>) => {
             const sendEmailTo = new Set();
