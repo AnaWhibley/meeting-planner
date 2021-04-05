@@ -87,7 +87,7 @@ export function SummaryStage() {
         <div className={'Body'}>
             <List className={'SummaryContainer'}>
                 <ListItem>
-                    <ListItemText primaryTypographyProps={{variant: 'h3', color: 'primary'}} primary={'Nombre de grupo de los eventos'}/>
+                    <ListItemText primaryTypographyProps={{variant: 'h3', color: 'primary'}} primary={'Nombre de la convocatoria'}/>
                     <Typography color={'textPrimary'} variant='h3' className={'EditGroupDetails EditGroupDetailsMargin'}>{groupName.label}</Typography>
                 </ListItem>
                 <ListItem>
