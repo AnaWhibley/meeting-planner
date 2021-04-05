@@ -1,6 +1,7 @@
 import {RootState} from '../store';
 import {EventCreatorSlice, EventState} from './slice';
 import {GroupedEventDto} from '../../services/eventService';
+import { v4 as uuidv4 } from 'uuid';
 
 export const mapToCreateEventRequest = (state: EventCreatorSlice): GroupedEventDto => {
     const events = state.events.map((event) => {
@@ -25,19 +26,23 @@ export const mapToCreateEventRequest = (state: EventCreatorSlice): GroupedEventD
 
 export const mapJSONToState = (data: any) => {
     return {
-        from: {value: data.desde},
-        to: {value: data.hasta},
+        from: data.desde,
+        to: data.hasta,
         events: mapJSONEventsToState(data.eventos),
-        groupName: {label: data.nombreGrupoEventos, value: data.nombreGrupoEventos},
+        groupName: {label: data.convocatoria, value: data.convocatoria},
     }
 };
 
 const mapJSONEventsToState = (events: Array<any>) => {
     return events.map((event) => {
         return {
+            id: uuidv4(),
             name: {value: event.nombre},
             duration: {value: event.duracion},
-            participants: event.participantes.map((p: any) => ({email: {value: p.email}, tag: p.tag}))
+            participants: event.participantes.map((p: any) => ({email: {value: p.email}, tag: p.tag})),
+            status: 'pending',
+            date: 'pending',
+            time: 'pending'
         };
     });
 };
@@ -45,7 +50,7 @@ const mapJSONEventsToState = (events: Array<any>) => {
 export const mapJSONFromState = (state: RootState) => {
     return {
         eventos: mapJSONToStateEvents(state.eventCreator.events),
-        nombreGrupoEventos: state.eventCreator.groupName?.value.label,
+        convocatoria: state.eventCreator.groupName?.value.label,
         desde: state.eventCreator.from.value,
         hasta: state.eventCreator.to.value,
     };
