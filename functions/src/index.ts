@@ -134,9 +134,9 @@ exports.sendReminder = functions.runWith(options).pubsub.topic('sendReminder').o
                 // to: entry[0],
                 to: 'anawhibley@gmail.com',
                 message: {
-                    subject: 'Recuerda añadir tus indisponibilidades',
+                    subject: 'Recuerda que tienes eventos pendientes',
                     // Cambiar a template usando una tabla
-                    html: 'Te han sido asignados los eventos... ' + entry[1].join(', '),
+                    html: 'Añade tus indisponibilidades o confirma asistencia para los eventos' + entry[1].join(', '),
                 }
             }));
         }
