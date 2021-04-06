@@ -7,7 +7,7 @@ export const mapToCreateEventRequest = (state: EventCreatorSlice): GroupedEventD
     const events = state.events.map((event) => {
         return {
             id: event.id,
-            name: event.name.value,
+            name: event.name.value.trim(),
             participants: event.participants.map(p => ({email: p.email.value, tag: p.tag})),
             duration: event.duration.value,
             status: event.status,
@@ -17,7 +17,7 @@ export const mapToCreateEventRequest = (state: EventCreatorSlice): GroupedEventD
     });
 
     return {
-        groupName: state.groupName.value.label,
+        groupName: state.groupName.value.label.trim(),
         from: state.from.value,
         to: state.to.value,
         events
