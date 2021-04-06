@@ -6,7 +6,9 @@ enum errorMessages {
     SHORT = 'El valor es demasiado corto',
     FORMAT = 'El valor no tiene un formato válido',
     DURATION = 'La duración debe ser de entre 10 y 300 minutos',
-    DATES = 'La fecha de finalización debe ser mayor que la de comienzo'
+    DATES = 'La fecha de finalización debe ser mayor que la de comienzo',
+    SPECIAL_CHAR = 'El nombre de la convocatoria no puede incluir una barra diagonal (/)',
+    BLANK_SPACES = 'El valor no puede contener espacios'
 }
 
 const validationRules = {
@@ -40,6 +42,9 @@ const validationRules = {
         if (value.length < 5) {
             return errorMessages.SHORT
         }
+        if (value.includes('/')) {
+            return errorMessages.SPECIAL_CHAR
+        }
         return '';
     },
     participant: (value: string): string => {
@@ -48,6 +53,9 @@ const validationRules = {
         }
         if(!new RegExp(/.+\@.+\..+/).test(value)) {
             return errorMessages.FORMAT
+        }
+        if (value.includes(' ')) {
+            return errorMessages.BLANK_SPACES
         }
         return '';
     }

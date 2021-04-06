@@ -6,6 +6,7 @@ import {mapToCreateEventRequest, mapJSONToState, mapJSONFromState} from './mappe
 import {getEventService, getUserService} from '../../services/utils';
 import {search} from '../../search';
 import { v4 as uuidv4 } from 'uuid';
+import { requesting } from '../uiStateSlice';
 
 export enum ParticipantType {
     PRESIDENTE_TT = 'Presidente Tribunal Titular',
@@ -154,7 +155,7 @@ export const slice = createSlice({
 export const { next, previous, setFrom, setTo, setName, createNew, complete, setParticipants, addTutor, removeTutor, setImportedData, setGroupName, setDuration, editEvent, setInitialState } = slice.actions;
 
 export const createEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
-    //dispatch(requesting());
+    dispatch(requesting());
 
     const { eventCreator, planner } = getState();
     const groupedEvent = mapToCreateEventRequest(eventCreator);
