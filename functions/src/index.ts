@@ -1,5 +1,5 @@
 import firebase from 'firebase';
-import {EventContext} from 'firebase-functions';
+import {Change, EventContext} from 'firebase-functions';
 import QueryDocumentSnapshot = firebase.firestore.QueryDocumentSnapshot;
 import {firestore} from 'firebase-admin/lib/firestore';
 import DocumentData = firestore.DocumentData;
@@ -146,25 +146,54 @@ exports.sendReminder = functions.runWith(options).pubsub.topic('sendReminder').o
     });
 });
 
-/*
-return admin.firestore().collection('users').where('role', '!=', 'admin').get()
-    .then((snapshot: QuerySnapshot<DocumentData>) => {
-        const sendEmailTo = new Set();
-        snapshot.forEach((user) => {
-            return admin.firestore().collection('mail').add({
-                // to: user.id,
-                to: 'anawhibley@gmail.com',
-                message: {
-                    subject: 'Recordatorio: Introduce tus indisponibilidades',
-                    html: 'hola',
-                }
-            }).then(() => {
-                functions.logger.log('Executed sendReminder for ' + user.id);
-                sendEmailTo.add(user.data().userId);
-            });
+// Function to notify to admin events with search errors
+exports.notifyErrorOnGroupedEvent = functions.firestore.document('events/{groupedEventId}')
+    .onUpdate((change: Change<QueryDocumentSnapshot>, context: EventContext) => {
+        const newValue = change.after.data();
+        const eventsError = new Set<string>();
+        newValue.events.forEach((event: EventDto) => {
+            if (event.status === 'error') {
+                eventsError.add(event.name);
+            }
+        });
+        return admin.firestore().collection('mail').add({
+            // to: entry[0],
+            to: 'meetingplannertfg@gmail.com',
+            message: {
+                subject: 'Hay eventos con errores',
+                // Cambiar a template usando una tabla
+                html: 'Añade tus indisponibilidades o confirma asistencia para los eventos',
+            }
         });
     });
-    */
+
+
+// Function to notify to admin events with search errors
+exports.updateEventStatus = functions.firestore.document('events/{groupedEventId}')
+    .onUpdate((change: Change<QueryDocumentSnapshot>, context: EventContext) => {
+        const groupedEventId = context.params.groupedEventId;
+        const newValue = change.after.data();
+        newValue.events.forEach((event: EventDto) => {
+            if (event.status === 'pending') {
+                if (event.participants.every((participant) => participant.confirmed)) {
+                    const newEvents = newValue.events;
+                    const index = newEvents.findIndex((e: EventDto) => e.id === event.id);
+                    if (index > -1) {
+                        newEvents.splice(index, 1);
+                        const newEventData = {
+                            ...event,
+                            status: 'confirmed'
+                        };
+                        newEvents.push(newEventData);
+                    }
+                    return admin.firestore().doc(`events/${groupedEventId}`)
+                        .set({events: newEvents}, {merge: true}).then(() => {
+                            functions.logger.info('Successfully executed updateEventStatus for ', event.id);
+                        });
+                }
+            }
+        });
+    });
 
 const welcomeTemplate = `<html>
 <head>
