@@ -7,6 +7,7 @@ import QuerySnapshot = firestore.QuerySnapshot;
 
 export interface ParticipantDto {
     email: string;
+    confirmed: boolean;
     tag: string;
 }
 
@@ -20,18 +21,18 @@ export interface EventDto {
     time: string;
     color?: string;
 }
+
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const {DateTime} = require('luxon');
 admin.initializeApp();
 
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
 const options = {
     memory: '2GB',
     timeoutSeconds: 540
 };
 
+// Function for creating an auth account on adding user
 exports.createUser = functions.firestore
     .document('users/{userId}')
     .onCreate((snapshot: QueryDocumentSnapshot, context: EventContext) => {
@@ -43,24 +44,30 @@ exports.createUser = functions.firestore
         });
     });
 
+// Function for sending email to participants of events when a grouped event is created
 exports.sendEmailGroupedEventCreated = functions.firestore
     .document('events/{groupedEventId}')
     .onCreate((snapshot: QueryDocumentSnapshot, context: EventContext) => {
-        // const groupedEventId = context.params.groupedEventId;
         const events: Array<EventDto> = snapshot.data().events;
-        const mapParticipants = new Map<string, Array<string>>();
+        const mapParticipants = new Map<string, Array<{event: string, date: string, time: string}>>();
         events.forEach((event) =>
             event.participants.forEach((participant) => {
                 const array = mapParticipants.get(participant.email) || [];
-                array.push(event.name);
+                array.push({
+                    event: event.name,
+                    date: event.date,
+                    time: event.time
+                });
                 mapParticipants.set(participant.email, array);
             }));
         const promises = [];
         for (const entry of mapParticipants) {
             promises.push(admin.firestore().collection('mail').add({
-                to: entry[0],
+                // to: entry[0],
+                to: 'anawhibley@gmail.com',
                 message: {
                     subject: 'Tienes eventos',
+                    // Cambiar a template usando una tabla
                     html: 'Te han sido asignados los eventos... ' + entry[1].join(', '),
                 }
             }));
@@ -71,10 +78,12 @@ exports.sendEmailGroupedEventCreated = functions.firestore
         });
     });
 
+// Function for sending welcome emails
 exports.sendEmailNewUsers = functions.firestore
     .document('users/{userId}')
     .onCreate((snapshot: QueryDocumentSnapshot, context: EventContext) => {
         return admin.firestore().collection('mail').add({
+            // to: context.params.userId
             to: 'anawhibley@gmail.com',
             message: {
                 subject: 'Meeting Planner te da la bienvenida',
@@ -85,26 +94,77 @@ exports.sendEmailNewUsers = functions.firestore
         });
     });
 
+// Function for sending reminders
 exports.sendReminder = functions.runWith(options).pubsub.topic('sendReminder').onPublish(() => {
-    // Leer si hay groupedEvent y comparamos el start del groupedEvent
-    return admin.firestore().collection('users').where('role', '!=', 'admin').get()
-        .then((snapshot: QuerySnapshot<DocumentData>) => {
-            const sendEmailTo = new Set();
-            snapshot.forEach((user) => {
-                return admin.firestore().collection('mail').add({
-                    // to: user.id,
-                    to: 'anawhibley@gmail.com',
-                    message: {
-                        subject: 'Recordatorio: Introduce tus indisponibilidades',
-                        html: 'hola',
+    return admin.firestore().collection('events').get().then((snapshot: QuerySnapshot<DocumentData>) => {
+        const mapParticipants = new Map<string, Array<{ event: string, date: string, time: string }>>();
+        snapshot.forEach((groupedEvent) => {
+            const groupedEventStart = DateTime.fromFormat(groupedEvent.data().start, 'dd/MM/yyyy');
+            const groupedEventEnd = DateTime.fromFormat(groupedEvent.data().end, 'dd/MM/yyyy');
+            const diffStart = groupedEventStart.diffNow('days');
+            const diffEnd = groupedEventEnd.diffNow('days');
+
+            if (diffEnd < 0 || diffStart < 0) {
+                return;
+            } else if (diffStart > 0 && diffStart < 31) {
+                const events: Array<EventDto> = groupedEvent.data().events;
+                events.forEach((event) => {
+                    // If not a confirmed event
+                    if (event.status !== 'confirmed') {
+                        const participants = event.participants;
+                        participants.forEach((participant) => {
+                            // If participant has not confirmed attendance
+                            if (!participant.confirmed) {
+                                const array = mapParticipants.get(participant.email) || [];
+                                array.push({
+                                    event: event.name,
+                                    date: event.date,
+                                    time: event.time
+                                });
+                                mapParticipants.set(participant.email, array);
+                            }
+                        });
                     }
-                }).then(() => {
-                    functions.logger.log('Executed sendReminder for ' + user.id);
-                    sendEmailTo.add(user.data().userId);
                 });
+            }
+        });
+        const promises = [];
+        for (const entry of mapParticipants) {
+            promises.push(admin.firestore().collection('mail').add({
+                // to: entry[0],
+                to: 'anawhibley@gmail.com',
+                message: {
+                    subject: 'Recuerda añadir tus indisponibilidades',
+                    // Cambiar a template usando una tabla
+                    html: 'Te han sido asignados los eventos... ' + entry[1].join(', '),
+                }
+            }));
+        }
+        return Promise.all(promises).then(() => {
+            functions.logger.info('Executed sendReminder');
+        });
+    });
+});
+
+/*
+return admin.firestore().collection('users').where('role', '!=', 'admin').get()
+    .then((snapshot: QuerySnapshot<DocumentData>) => {
+        const sendEmailTo = new Set();
+        snapshot.forEach((user) => {
+            return admin.firestore().collection('mail').add({
+                // to: user.id,
+                to: 'anawhibley@gmail.com',
+                message: {
+                    subject: 'Recordatorio: Introduce tus indisponibilidades',
+                    html: 'hola',
+                }
+            }).then(() => {
+                functions.logger.log('Executed sendReminder for ' + user.id);
+                sendEmailTo.add(user.data().userId);
             });
         });
     });
+    */
 
 const welcomeTemplate = `<html>
 <head>
