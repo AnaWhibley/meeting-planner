@@ -78,12 +78,15 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    button:hover {
+    .TrashIcon:hover {
       fill: #F44336;
     }
     svg {
       display: flex;
       flex: 0 0 auto;
+    }
+    .VerifiedIcon:hover, .ConfirmedVerifiedIcon {
+      fill: #17AE57;
     }
   }
 }
@@ -134,7 +137,8 @@
 }
 
 .fc-day-today {
-  background: rgba(108, 99, 255, 0.05) !important;
+  background: #e9e7ff !important;
+  font-weight: bolder;
 }
 .fc .fc-timegrid-axis-cushion {
   text-align: center;
