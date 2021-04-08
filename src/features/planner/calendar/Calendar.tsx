@@ -29,7 +29,7 @@ import {
 import {selectLoggedInUser} from '../../../app/login/selectors';
 import {Role} from '../../../services/userService';
 import {Alert} from '../../../components/alert/Alert';
-import {ReactComponent as WarningIcon} from '../../../assets/icons/evericons/alert-triangle.svg';
+import {ReactComponent as InfoIcon} from '../../../assets/icons/evericons/info.svg';
 import {DateTime} from 'luxon';
 
 export function Calendar() {
@@ -48,12 +48,10 @@ export function Calendar() {
 
     const [openDialog, setOpenDialog] = React.useState(false);
     const [selectInfo, setSelectInfo] = React.useState<DateSelectArg>();
-    const [eventOverlaps, setEventOverlaps] = React.useState(false);
 
-    const [openSnackbarAdmin, setOpenSnackbarAdmin] = React.useState(false);
-    const [openSnackbarCreateBusyDates, setOpenSnackbarCreateBusyDates] = React.useState(false);
-    const [openSnackbarHasBusyDate, setOpenSnackbarHasBusyDate] = React.useState(false);
-    const [openSnackbarEventIsConfirmed, setOpenSnackbarEventIsConfirmed] = React.useState(false);
+    type Severity = 'success' | 'info' | 'warning' | 'error';
+    const defaultStateSnackbar: {state: boolean, data: {severity: Severity, message: string}} = {state: false, data: {severity: 'info', message: ''}}
+    const [openSnackbar, setOpenSnackbar] = React.useState(defaultStateSnackbar);
 
     const handleOpenDialog = (event: DateSelectArg) => {
         setOpenDialog(true);
@@ -62,7 +60,6 @@ export function Calendar() {
 
     const handleCloseDialog = () => {
         setOpenDialog(false);
-        setEventOverlaps(false);
     };
 
     const calendarView = useSelector(selectCalendarView);
@@ -138,50 +135,65 @@ export function Calendar() {
                 select={!isAdmin ?
                     isBusyDatesView ?
                         (event: DateSelectArg) => handleOpenDialog(event) :
-                        () => setOpenSnackbarCreateBusyDates(true)
-                    : () => setOpenSnackbarAdmin(true)}
+                        () => setOpenSnackbar({state: true,
+                            data: {
+                                severity: 'warning',
+                                message: 'No se pueden crear indisponibilidades en la vista de eventos.'
+                            }
+                        })
+                    : () => setOpenSnackbar({state: true,
+                        data: {
+                            severity: 'warning',
+                            message: 'No se pueden crear indisponibilidades con el perfil de administrador'
+                        }
+                    })}
                 eventContent={(props: EventContentArg) => <EventContent {...props}/>}
                 selectOverlap={(event: EventApi) => {
-                    setEventOverlaps(false);
-
                     const hasBusyDateAlready = event.groupId === 'currentUser';
                     const isEvent = event.extendedProps.eventId;
-                    const isAlreadyConfirmed = event.extendedProps.isAlreadyConfirmed;
-                    const isConfirmed = event.extendedProps.status === 'confirmed';
+                    const isAlreadyConfirmedByUser = event.extendedProps.isAlreadyConfirmed;
+                    const isEventConfirmed = event.extendedProps.status === 'confirmed';
 
-                    if(hasBusyDateAlready && !isEvent) setOpenSnackbarHasBusyDate(true);
-                    if(hasBusyDateAlready && isEvent && !isConfirmed) setEventOverlaps(true);
-                    if(hasBusyDateAlready && isEvent && isConfirmed) setOpenSnackbarEventIsConfirmed(true);
+                    if(hasBusyDateAlready && !isEvent) {
+                        setOpenSnackbar({state: true,
+                            data: {
+                                severity: 'error',
+                                message: 'Ya existe una indisponibilidad para el horario seleccionado.'
+                            }
+                        });
+                        return false;
+                    }
 
-                    if(isAlreadyConfirmed) return false;
+                    if(isEventConfirmed) {
+                        setOpenSnackbar({state: true,
+                            data: {
+                                severity: 'error',
+                                message: 'Existe un evento confirmado en el rango que intentas crear la indisponibilidad.'
+                            }
+                        });
+                        return false;
+                    }
 
-                    return (isEvent && !isConfirmed) || !hasBusyDateAlready;
+                    if(isAlreadyConfirmedByUser && !isEventConfirmed) {
+                        setOpenSnackbar({state: true,
+                            data: {
+                                severity: 'error',
+                                message: 'Existe un evento confirmado (sólo por ti) en el rango que intentas crear la indisponibilidad.'
+                            }
+                        });
+                        return false;
+                    }
+
+                    return true;
                 } }
             />
 
-            <Snackbar open={openSnackbarAdmin} autoHideDuration={6000} onClose={() => setOpenSnackbarAdmin(false)}>
-                <Alert severity="error" onClose={() => setOpenSnackbarAdmin(false)}>
-                    No se pueden crear indisponibilidades con el perfil de administrador.
-                </Alert>
-            </Snackbar>
-
-            <Snackbar open={openSnackbarCreateBusyDates} autoHideDuration={6000} onClose={() => setOpenSnackbarCreateBusyDates(false)}>
-                <Alert severity="warning" onClose={() => setOpenSnackbarCreateBusyDates(false)}>
-                    No se pueden crear indisponibilidades en la vista de eventos.
-                </Alert>
-            </Snackbar>
-
-            <Snackbar open={openSnackbarHasBusyDate} autoHideDuration={6000} onClose={() => setOpenSnackbarHasBusyDate(false)}>
-                <Alert severity="warning" onClose={() => setOpenSnackbarHasBusyDate(false)}>
-                    Ya existe una indisponibilidad para el horario seleccionado.
-                </Alert>
-            </Snackbar>
-
-            <Snackbar open={openSnackbarEventIsConfirmed} autoHideDuration={6000} onClose={() => setOpenSnackbarEventIsConfirmed(false)}>
-                <Alert severity="error" onClose={() => setOpenSnackbarEventIsConfirmed(false)}>
-                    Existe un evento confirmado en el rango que intentas crear la indisponibilidad.
-                </Alert>
-            </Snackbar>
+            {openSnackbar.state ?
+                <Snackbar open={openSnackbar.state} autoHideDuration={6000} onClose={() => setOpenSnackbar(defaultStateSnackbar)}>
+                    <Alert severity={openSnackbar.data.severity} onClose={() => setOpenSnackbar(defaultStateSnackbar)}>
+                        {openSnackbar.data.message}
+                    </Alert>
+                </Snackbar> : null }
 
             <Dialog open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>{"¿Quieres crear una nueva indisponibilidad?"}</DialogTitle>
@@ -190,11 +202,9 @@ export function Calendar() {
                             Se creará una nueva indisponibilidad para todo el{'\u00A0'}
                             {selectInfo ? toLuxonDateTime(selectInfo.start, calendarRef.current.getApi()).toFormat("cccc d 'de' LLLL") : null}.
                             <br/><br/>
-                            {eventOverlaps ?
-                                <span className={'EventOverlaps'}>
-                                    <WarningIcon/> Hay eventos que se solapan con esta indisponibilidad.
-                                </span> : null
-                            }
+                            <span className={'EventOverlaps'}>
+                                <InfoIcon/> Si esta indisponibilidad solapase con un evento programado, realizaremos una nueva búsqueda para el mismo.
+                            </span>
                         </DialogContentText> :
                         <DialogContentText>
                             Se creará una nueva indisponibilidad el{'\u00A0'}
@@ -204,11 +214,9 @@ export function Calendar() {
                             {'\u00A0'}hasta las{'\u00A0'}
                             {selectInfo ? toLuxonDateTime(selectInfo.end, calendarRef.current.getApi()).toFormat(TIME_FORMAT) : null}.
                             <br/><br/>
-                            {eventOverlaps ?
-                                <span className={'EventOverlaps'}>
-                                    <WarningIcon/> Hay eventos que se solapan con esta indisponibilidad.
-                                </span> : null
-                            }
+                            <span className={'EventOverlaps'}>
+                                <InfoIcon/> Si esta indisponibilidad solapase con un evento programado, realizaremos una nueva búsqueda para el mismo.
+                            </span>
                         </DialogContentText>}
                 </DialogContent>
                 <DialogActions>

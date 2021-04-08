@@ -28,6 +28,8 @@ export function EventContent(eventInfo: EventContentArg) {
     const end = eventInfo.event.end ? toLuxonDateTime(eventInfo.event.end, eventInfo.view.calendar) : null;
     const diff : Duration = start && end ? end.diff(start, ['minutes']) : Duration.fromMillis(0);
 
+    const isAlreadyConfirmed = eventInfo.event.extendedProps.isAlreadyConfirmed;
+
     const handleDeleteBusyDate = () => {
         if(start && end) {
             const busy = {
@@ -41,8 +43,9 @@ export function EventContent(eventInfo: EventContentArg) {
     };
 
     const handleConfirm = () => {
-        console.log('Confirm')
-        dispatch(confirmAttendance(eventInfo.event.extendedProps.eventId));
+        if(!isAlreadyConfirmed) {
+            dispatch(confirmAttendance(eventInfo.event.extendedProps.eventId));
+        }
     };
 
     const divRef: React.RefObject<any> = React.useRef();
@@ -54,7 +57,6 @@ export function EventContent(eventInfo: EventContentArg) {
     const isMonthView = eventInfo.view.type === 'dayGridMonth';
     const canDelete = eventInfo.event.extendedProps.canDelete;
     const canConfirm = eventInfo.event.extendedProps.canConfirm;
-    const isAlreadyConfirmed = eventInfo.event.extendedProps.isAlreadyConfirmed;
     const title = eventInfo.event.title;
 
     const style = isMonthView ? {
