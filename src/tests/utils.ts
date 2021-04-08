@@ -14,7 +14,7 @@ export function mockEvents(events: Array<MockedEvents>, from: string, to: string
             date: '',
             time: '',
             duration: ev.duration,
-            participants: ev.participants.map(p => ({email: p, tag: ''}))
+            participants: ev.participants.map(p => ({email: p, tag: '', confirmed: false}))
         }));
         return {
             groupName: 'Test 20/21',
