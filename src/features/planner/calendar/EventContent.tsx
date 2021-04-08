@@ -1,13 +1,14 @@
 import {EventContentArg} from '@fullcalendar/react';
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {deleteBusy} from '../../../app/planner/slice';
+import {confirmAttendance, deleteBusy} from '../../../app/planner/slice';
 import {toLuxonDateTime} from '@fullcalendar/luxon';
 import {Duration} from 'luxon';
 import cn from 'classnames';
 import {Popover} from '@material-ui/core';
 import {Tooltip} from '../../../components/tooltip/Tooltip';
 import {ReactComponent as TrashIcon} from '../../../assets/icons/evericons/trash-empty.svg';
+import {ReactComponent as VerifiedIcon} from '../../../assets/icons/evericons/verified.svg';
 import './Calendar.scss';
 import {statusMapper} from '../eventsGrid/EventsGrid';
 import {selectCurrentViewPlanner, ViewPlanner} from '../../../app/uiStateSlice';
@@ -39,6 +40,10 @@ export function EventContent(eventInfo: EventContentArg) {
         }
     };
 
+    const handleConfirm = () => {
+        console.log('Confirm')
+        dispatch(confirmAttendance(eventInfo.event.extendedProps.eventId));
+    };
 
     const divRef: React.RefObject<any> = React.useRef();
 
@@ -48,6 +53,8 @@ export function EventContent(eventInfo: EventContentArg) {
     const isAllDay = eventInfo.event.allDay;
     const isMonthView = eventInfo.view.type === 'dayGridMonth';
     const canDelete = eventInfo.event.extendedProps.canDelete;
+    const canConfirm = eventInfo.event.extendedProps.canConfirm;
+    const isAlreadyConfirmed = eventInfo.event.extendedProps.isAlreadyConfirmed;
     const title = eventInfo.event.title;
 
     const style = isMonthView ? {
@@ -107,11 +114,14 @@ export function EventContent(eventInfo: EventContentArg) {
                         <hr/>
                         <span>{title}</span><br/>
                     </div>
-                    {canDelete ?
+                    {canDelete || canConfirm || isAlreadyConfirmed ?
                         <div className={'ActionsContainer'}>
-                            <Tooltip icon={<TrashIcon/>}
+                            {canDelete ? <Tooltip icon={<TrashIcon className={'TrashIcon'}/>}
                                      text={''}
-                                     onClick={handleDeleteBusyDate}/>
+                                     onClick={handleDeleteBusyDate}/> : null}
+                            {canConfirm || isAlreadyConfirmed ? <Tooltip icon={<VerifiedIcon className={cn({'VerifiedIcon': canConfirm, 'ConfirmedVerifiedIcon': isAlreadyConfirmed})}/>}
+                                                  text={isAlreadyConfirmed ? 'Asistencia confirmada' : 'Confirmar asistencia'}
+                                                  onClick={handleConfirm}/> : null}
                         </div> : null
                     }
                 </div>

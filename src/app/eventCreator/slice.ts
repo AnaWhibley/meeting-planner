@@ -26,7 +26,7 @@ const createDefaultEvent = (): EventState => {
     return {
         id: uuidv4(),
         name: createFieldState(''),
-        participants: Object.keys(ParticipantType).map((k: string) => ( { email: createFieldState(''), tag: (ParticipantType as any)[k] })),
+        participants: Object.keys(ParticipantType).map((k: string) => ( { email: createFieldState(''), tag: (ParticipantType as any)[k], confirmed: false })),
         duration: createFieldState(60),
         status: 'pending',
         date: 'pending',
@@ -49,6 +49,7 @@ export interface EventState {
     name: FieldState<string>;
     participants: Array<{
         email: FieldState<string>;
+        confirmed: boolean;
         tag: string;
     }>;
     duration: FieldState<number>;
@@ -122,7 +123,7 @@ export const slice = createSlice({
             state.groupName.value = action.payload;
         },
         addTutor: (state) => {
-            state.events[state.currentIndex].participants.push({email: createFieldState(''), tag: 'Tutor'});
+            state.events[state.currentIndex].participants.push({email: createFieldState(''), tag: 'Tutor', confirmed: false});
         },
         removeTutor: (state) => {
             state.events[state.currentIndex].participants.pop();

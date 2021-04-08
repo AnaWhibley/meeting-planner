@@ -8,7 +8,7 @@ export const mapToCreateEventRequest = (state: EventCreatorSlice): GroupedEventD
         return {
             id: event.id,
             name: event.name.value.trim(),
-            participants: event.participants.map(p => ({email: p.email.value, tag: p.tag})),
+            participants: event.participants.map(p => ({email: p.email.value, tag: p.tag, confirmed: p.confirmed})),
             duration: event.duration.value,
             status: event.status,
             date: event.date,
@@ -39,7 +39,7 @@ const mapJSONEventsToState = (events: Array<any>) => {
             id: uuidv4(),
             name: {value: event.nombre},
             duration: {value: event.duracion},
-            participants: event.participantes.map((p: any) => ({email: {value: p.email}, tag: p.tag})),
+            participants: event.participantes.map((p: any) => ({email: {value: p.email}, tag: p.tag, confirmed: false})),
             status: 'pending',
             date: 'pending',
             time: 'pending'

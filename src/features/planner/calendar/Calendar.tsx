@@ -22,8 +22,8 @@ import {Color} from '../../../styles/theme';
 import {EventContent} from './EventContent';
 import {
     selectCalendarView,
-    selectCurrentViewPlanner, selectGoToDate, selectShowCalendar,
-    setGoToDate, toggleShowCalendar,
+    selectCurrentViewPlanner, selectGoToDate,
+    setGoToDate,
     ViewPlanner
 } from '../../../app/uiStateSlice';
 import {selectLoggedInUser} from '../../../app/login/selectors';
@@ -96,7 +96,7 @@ export function Calendar() {
     }
 
     if(drawerClickedDate){
-        const date = DateTime.fromFormat(drawerClickedDate, DATE_FORMAT).toJSDate();
+        const date = DateTime.fromFormat(drawerClickedDate, DATE_FORMAT).plus({hours: 8}).toJSDate();
         requestAnimationFrame(() => {
             goToDate(date);
             dispatch(setGoToDate(''));
@@ -145,12 +145,15 @@ export function Calendar() {
                     setEventOverlaps(false);
 
                     const hasBusyDateAlready = event.groupId === 'currentUser';
-                    const isEvent = event._def.extendedProps.eventId;
-                    const isConfirmed = event._def.extendedProps.status === 'confirmed';
+                    const isEvent = event.extendedProps.eventId;
+                    const isAlreadyConfirmed = event.extendedProps.isAlreadyConfirmed;
+                    const isConfirmed = event.extendedProps.status === 'confirmed';
 
                     if(hasBusyDateAlready && !isEvent) setOpenSnackbarHasBusyDate(true);
                     if(hasBusyDateAlready && isEvent && !isConfirmed) setEventOverlaps(true);
                     if(hasBusyDateAlready && isEvent && isConfirmed) setOpenSnackbarEventIsConfirmed(true);
+
+                    if(isAlreadyConfirmed) return false;
 
                     return (isEvent && !isConfirmed) || !hasBusyDateAlready;
                 } }

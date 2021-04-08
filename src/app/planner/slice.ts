@@ -219,6 +219,16 @@ export const deleteBusy = (busyDate: BusyState) => (dispatch: Dispatch<any>, get
     }
 };
 
+export const confirmAttendance = (eventId: string) => (dispatch: Dispatch<any>, getState: () => RootState) => {
+    const { login } = getState();
+    const currentUser = login.loggedInUser;
+    if (currentUser) {
+        getEventService().confirmAttendance(currentUser.id, eventId).subscribe((response) => {
+            console.log('response', response)
+        });
+    }
+};
+
 const searchSlotsEvents = (state: RootState, busyDates: Array<BusyDateState>, busyDate: BusyState) => {
     const start = DateTime.fromFormat(busyDate.start, DATE_TIME_FORMAT);
     const end = DateTime.fromFormat(busyDate.end, DATE_TIME_FORMAT);
