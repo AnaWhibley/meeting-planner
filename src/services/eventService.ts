@@ -904,14 +904,38 @@ export class EventService {
         });
     }
 
-    public static confirmAttendance(userId: string, eventId: string): Observable<boolean> {
-
+    public static confirmAttendance(userId: string, groupName: string, eventId: string): Observable<boolean> {
         return new Observable((subscriber) => {
 
             const database = firebase.firestore();
+            const eventRef = database.collection('events').doc(groupName);
 
-            subscriber.next(true);
-        });
+                database.runTransaction((transaction) => {
+                    return transaction.get(eventRef).then((doc) => {
+                        if (!doc.exists) {
+                            subscriber.next(false);
+                        }else{
+                            const events = doc.data()?.events;
+                            const index = events.findIndex((event: EventDto) => event.id === eventId);
+                            if(index > -1) {
+                                events[index].participants = events.participants.map((participant: ParticipantDto) => {
+                                    if (participant.email === userId) {
+                                        participant.confirmed = true;
+                                    }
+                                    return participant;
+                                });
+                                transaction.update(eventRef, {events});
+                            }else{
+                                subscriber.next(false);
+                            }
+                        }
+                    });
+                }).then((response) => {
+                    subscriber.next(true);
+                }).catch((err) => {
+                    subscriber.error(false);
+                });
+            });
     }
 }
 
@@ -1032,8 +1056,8 @@ export class MockEventService {
         }
     }
 
-    public static confirmAttendance(userId: string, eventId: string): Observable<boolean> {
-        const groupedEventIndex = groupedEvents.findIndex((groupedEvent: GroupedEventDto) => groupedEvent.events.find((event) => event.id === eventId));
+    public static confirmAttendance(userId: string, groupName: string, eventId: string): Observable<boolean> {
+        const groupedEventIndex = groupedEvents.findIndex((groupedEvent: GroupedEventDto) => groupedEvent.groupName === groupName);
         if(groupedEventIndex > -1) {
             const eventIndex = groupedEvents[groupedEventIndex].events.findIndex((event) => event.id === eventId);
             if(eventIndex > -1) {
