@@ -220,12 +220,15 @@ export const deleteBusy = (busyDate: BusyState) => (dispatch: Dispatch<any>, get
 };
 
 export const confirmAttendance = (eventId: string) => (dispatch: Dispatch<any>, getState: () => RootState) => {
-    const { login } = getState();
+    const { login, planner } = getState();
     const currentUser = login.loggedInUser;
     if (currentUser) {
-        getEventService().confirmAttendance(currentUser.id, eventId).subscribe((response) => {
-            console.log('response', response)
-        });
+        const groupName = planner.events.find((groupedEvent) => groupedEvent.events.find(event => eventId === event.id))?.groupName;
+        if (groupName) {
+            getEventService().confirmAttendance(currentUser.id, groupName, eventId).subscribe((response) => {
+                console.log('response', response)
+            });
+        }
     }
 };
 
