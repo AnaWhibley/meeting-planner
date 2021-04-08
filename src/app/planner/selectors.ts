@@ -1,12 +1,24 @@
 import {RootState} from '../store';
 import {BusyState} from './slice';
 import {DateTime} from 'luxon';
-import {DATE_TIME_FORMAT} from '../eventCreator/slice';
+import {DATE_FORMAT, DATE_TIME_FORMAT} from '../eventCreator/slice';
 import {Role} from '../../services/userService';
 import {EventDto, GroupedEventDto} from '../../services/eventService';
 
 export const selectBusyDatesCurrentUser = (state: RootState) => state.planner.busyDatesCurrentUser.map((date: BusyState) => {
     const event = findEventById(state, date.eventId);
+    const currentUserId = state.login.loggedInUser.id;
+    const groupedEvent = findGroupedEventByEventId(state, date.eventId);
+    const isAlreadyConfirmed = groupedEvent?.events.find(event => date.eventId === event.id)?.participants.find(participant => participant.email === currentUserId)?.confirmed;
+    let canConfirm = false;
+    if(!isAlreadyConfirmed && groupedEvent) {
+        const start = DateTime.fromFormat(groupedEvent?.from, DATE_FORMAT);
+        const oneWeekEarly = start.minus({ week: 1 }); //Cambiar aquí para ampliar la confirmación de eventos (después del periodo de confirmación)
+        const diffWithNow = oneWeekEarly.diffNow('days').days;
+        if(diffWithNow < 7 && diffWithNow > 0) {
+            canConfirm = true;
+        }
+    }
 
     return {
         ...date,
@@ -17,7 +29,9 @@ export const selectBusyDatesCurrentUser = (state: RootState) => state.planner.bu
         textColor: 'black',
         canDelete: !date.eventId,
         groupId: 'currentUser',
-        status: event?.status
+        status: event?.status,
+        isAlreadyConfirmed,
+        canConfirm
     }
 });
 export const selectBusyDatesOtherUsers = (state: RootState) => state.planner.busyDatesOtherUsers.filter((user) => state.planner.selectedParticipants.includes(user.userId)).flatMap((user) => {
@@ -78,6 +92,7 @@ export const selectEventsFiltered = (state: RootState) => {
     busyDates.forEach(ev => {
         if(!eventMap.has(ev.eventId)) {
             const eventDetails = findEventById(state, ev.eventId);
+
             const eventWithProperties = {
                 ...ev,
                 start: getJSDateFromString(ev.start),
@@ -97,8 +112,12 @@ export const selectEventsFiltered = (state: RootState) => {
 
 const getJSDateFromString = (date: string): Date => DateTime.fromFormat(date, DATE_TIME_FORMAT, {zone: 'UTC'}).toJSDate();
 
-export const findEventById = (state: RootState, id?: string): EventDto | undefined => {
-    return id ? state.planner.events.slice().flatMap((groupedEvent: GroupedEventDto) => groupedEvent.events.find((event) => event.id === id)).filter(x => !!x)[0] : undefined;
+const findEventById = (state: RootState, id?: string): EventDto | undefined => {
+    return id ? state.planner.events.flatMap((groupedEvent: GroupedEventDto) => groupedEvent.events.find((event) => event.id === id)).filter(x => !!x)[0] : undefined;
+}
+
+const findGroupedEventByEventId = (state: RootState, id?: string): GroupedEventDto | undefined => {
+    return id ? state.planner.events.find((groupedEvent: GroupedEventDto) => groupedEvent.events.find((event) => event.id === id)) : undefined;
 }
 
 export const selectNameByEmail = (state: RootState, email: string): string => {
