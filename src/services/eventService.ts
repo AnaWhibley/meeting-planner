@@ -50,20 +50,20 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '3',
             allDay: false,
         }, {
-            start: '03/05/2021 08:30',
-            end: '03/05/2021 09:30',
+            start: '19/04/2021 08:30',
+            end: '19/04/2021 09:30',
             id: 'aa',
             eventId: '21',
             allDay: false,
         }, {
-            start: '03/05/2021 09:30',
-            end: '03/05/2021 10:30',
+            start: '19/04/2021 09:30',
+            end: '19/04/2021 10:30',
             id: 'mm',
             eventId: '23',
             allDay: false,
         }, {
-            start: '03/05/2021 08:30',
-            end: '03/05/2021 09:30',
+            start: '19/04/2021 10:30',
+            end: '19/04/2021 11:30',
             id: 'll232',
             eventId: '22',
             allDay: false,
@@ -94,14 +94,14 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '3',
             allDay: false,
         }, {
-            start: '03/05/2021 08:30',
-            end: '03/05/2021 09:30',
+            start: '19/04/2021 08:30',
+            end: '19/04/2021 09:30',
             id: 'bb',
             eventId: '21',
             allDay: false,
         }, {
-            start: '03/05/2021 09:30',
-            end: '03/05/2021 10:30',
+            start: '19/04/2021 09:30',
+            end: '19/04/2021 10:30',
             id: 'nn',
             eventId: '23',
             allDay: false,
@@ -119,26 +119,26 @@ const busyDates: Array<BusyDateDto> = [
             id: 'h',
             allDay: false
         }, {
-            start: '03/03/2021 08:30',
-            end: '03/03/2021 09:30',
-            id: 'i',
-            eventId: '1',
-            allDay: false,
-        }, {
             start: '03/03/2021 09:30',
             end: '03/03/2021 10:30',
             id: 'v',
             eventId: '3',
             allDay: false,
         }, {
-            start: '03/05/2021 08:30',
-            end: '03/05/2021 09:30',
+            start: '03/03/2021 08:30',
+            end: '03/03/2021 09:30',
+            id: 'i',
+            eventId: '1',
+            allDay: false,
+        }, {
+            start: '19/04/2021 08:30',
+            end: '19/04/2021 09:30',
             id: 'cc',
             eventId: '21',
             allDay: false,
         }, {
-            start: '03/05/2021 09:30',
-            end: '03/05/2021 10:30',
+            start: '19/04/2021 09:30',
+            end: '19/04/2021 10:30',
             id: 'qq',
             eventId: '23',
             allDay: false,
@@ -158,8 +158,8 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '1',
             allDay: false,
         }, {
-            start: '03/05/2021 08:30',
-            end: '03/05/2021 09:30',
+            start: '19/04/2021 08:30',
+            end: '19/04/2021 09:30',
             id: 'ee',
             eventId: '21',
             allDay: false,
@@ -173,8 +173,8 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '1',
             allDay: false,
         }, {
-            start: '03/05/2021 08:30',
-            end: '03/05/2021 09:30',
+            start: '19/04/2021 08:30',
+            end: '19/04/2021 09:30',
             id: 'dd',
             eventId: '21',
             allDay: false,
@@ -194,20 +194,20 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '3',
             allDay: false,
         }, {
-            start: '03/05/2021 08:30',
-            end: '03/05/2021 09:30',
+            start: '19/04/2021 10:30',
+            end: '19/04/2021 11:30',
             id: 'gg',
             eventId: '22',
             allDay: false,
         }, {
-            start: '03/05/2021 09:30',
-            end: '03/05/2021 10:30',
+            start: '19/04/2021 09:30',
+            end: '19/04/2021 10:30',
             id: 'pp',
             eventId: '23',
             allDay: false,
         }, {
-            start: '03/05/2021 08:30',
-            end: '03/05/2021 09:30',
+            start: '19/04/2021 08:30',
+            end: '19/04/2021 09:30',
             id: 'fsdf1f',
             eventId: '21',
             allDay: false,
@@ -227,14 +227,14 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '3',
             allDay: false,
         }, {
-            start: '03/05/2021 08:30',
-            end: '03/05/2021 09:30',
+            start: '19/04/2021 10:30',
+            end: '19/04/2021 11:30',
             id: 'hh',
             eventId: '22',
             allDay: false,
         }, {
-            start: '03/05/2021 09:30',
-            end: '03/05/2021 10:30',
+            start: '19/04/2021 09:30',
+            end: '19/04/2021 10:30',
             id: 'oo',
             eventId: '23',
             allDay: false,
@@ -254,14 +254,14 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '3',
             allDay: false,
         }, {
-            start: '03/05/2021 08:30',
-            end: '03/05/2021 09:30',
+            start: '19/04/2021 10:30',
+            end: '19/04/2021 11:30',
             id: 'ii',
             eventId: '22',
             allDay: false,
         }, {
-            start: '03/05/2021 09:30',
-            end: '03/05/2021 10:30',
+            start: '19/04/2021 09:30',
+            end: '19/04/2021 10:30',
             id: 'rr',
             eventId: '23',
             allDay: false,
@@ -275,8 +275,8 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '2',
             allDay: false,
         }, {
-            start: '03/05/2021 08:30',
-            end: '03/05/2021 09:30',
+            start: '19/04/2021 10:30',
+            end: '19/04/2021 11:30',
             id: 'jj',
             eventId: '22',
             allDay: false,
@@ -290,8 +290,8 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '2',
             allDay: false,
         }, {
-            start: '03/05/2021 08:30',
-            end: '03/05/2021 09:30',
+            start: '19/04/2021 10:30',
+            end: '19/04/2021 11:30',
             id: 'kk',
             eventId: '22',
             allDay: false,
@@ -311,14 +311,14 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '2',
             allDay: false,
         }, {
-            start: '03/05/2021 08:30',
-            end: '03/05/2021 09:30',
+            start: '19/04/2021 10:30',
+            end: '19/04/2021 11:30',
             id: 'll',
             eventId: '22',
             allDay: false,
         }, {
-            start: '03/05/2021 09:30',
-            end: '03/05/2021 10:30',
+            start: '19/04/2021 09:30',
+            end: '19/04/2021 10:30',
             id: '434dsds',
             eventId: '23',
             allDay: false,
@@ -338,8 +338,8 @@ const busyDates: Array<BusyDateDto> = [
             eventId: '1',
             allDay: false,
         }, {
-            start: '03/05/2021 08:30',
-            end: '03/05/2021 09:30',
+            start: '19/04/2021 08:30',
+            end: '19/04/2021 09:30',
             id: 'ff',
             eventId: '21',
             allDay: false,
@@ -367,6 +367,7 @@ export interface EventDto {
 
 export interface ParticipantDto {
     email: string;
+    confirmed: boolean;
     tag: string;
 }
 
@@ -377,35 +378,86 @@ const groupedEvents: Array<GroupedEventDto> = [
         to: '19/03/2021',
         events: [
             {
+                id: '3',
+                name: 'Defensa TFT Juan Sánchez',
+                participants: [
+                    {
+                        email: 'abraham.rodriguez@ulpgc.es',  //1
+                        confirmed: true,
+                        tag: 'Presidente Tribunal Titular'
+                    },
+                    {
+                        email: 'francisco.alayon@ulpgc.es', //2
+                        confirmed: true,
+                        tag: 'Secretario Tribunal Titular'
+                    },
+                    {
+                        email: 'daniel.hernandez@ulpgc.es',    //3
+                        confirmed: true,
+                        tag: 'Vocal Tribunal Titular'
+                    },
+                    {
+                        email: 'octavio.mayor@ulpgc.es',  //7
+                        confirmed: true,
+                        tag: 'Presidente Tribunal Suplente'
+                    },
+                    {
+                        email: 'alexis.quesada@ulpgc.es', //8
+                        confirmed: true,
+                        tag: 'Secretario Tribunal Suplente'
+                    },
+                    {
+                        email: 'francisca.quintana@ulpgc.es',    //9
+                        confirmed: true,
+                        tag: 'Vocal Tribunal Suplente'
+                    },
+                    {
+                        email: 'jc.rodriguezdelpino@ulpgc.es',  //6
+                        confirmed: true,
+                        tag: 'Tutor'
+                    }],
+                duration: 60,
+                status: 'confirmed',
+                date: '03/03/2021',
+                time: '09:30'
+            },
+            {
                 id: '1',
                 name: 'Defensa TFT Ana Santana',
                 participants: [
                     {
                         email: 'abraham.rodriguez@ulpgc.es',  //1
+                        confirmed: false,
                         tag: 'Presidente Tribunal Titular'
                     },
                     {
                         email: 'alexis.quesada@ulpgc.es', //8
+                        confirmed: false,
                         tag: 'Secretario Tribunal Titular'
                     },
                     {
                         email: 'daniel.hernandez@ulpgc.es',    //3
+                        confirmed: false,
                         tag: 'Vocal Tribunal Titular'
                     },
                     {
                         email: 'carmelo.cuenca@ulpgc.es',  //10
+                        confirmed: false,
                         tag: 'Presidente Tribunal Suplente'
                     },
                     {
                         email: 'antonio.ocon@ulpgc.es',  //5
+                        confirmed: false,
                         tag: 'Secretario Tribunal Suplente'
                     },
                     {
                         email: 'eduardo.rodriguez@ulpgc.es',  //12
+                        confirmed: false,
                         tag: 'Vocal Tribunal Suplente'
                     },
                     {
                         email: 'david.freire@ulpgc.es',  //5
+                        confirmed: false,
                         tag: 'Tutor'
                     }],
                 duration: 60,
@@ -419,116 +471,93 @@ const groupedEvents: Array<GroupedEventDto> = [
                 participants: [
                     {
                         email: 'octavio.mayor@ulpgc.es',  //7
+                        confirmed: false,
                         tag: 'Presidente Tribunal Titular'
                     },
                     {
                         email: 'francisco.alayon@ulpgc.es', //2
+                        confirmed: false,
                         tag: 'Secretario Tribunal Titular'
                     },
                     {
                         email: 'francisca.quintana@ulpgc.es',    //9
+                        confirmed: false,
                         tag: 'Vocal Tribunal Titular'
                     },
                     {
                         email: 'domingo.benitez@ulpgc.es',  //4
+                        confirmed: false,
                         tag: 'Presidente Tribunal Suplente'
                     },
                     {
                         email: 'david.freire@ulpgc.es',  //11
+                        confirmed: false,
                         tag: 'Secretario Tribunal Suplente'
                     },
                     {
                         email: 'jc.rodriguezdelpino@ulpgc.es',  //6
+                        confirmed: false,
                         tag: 'Vocal Tribunal Suplente'
                     },
                     {
                         email: 'alexis.quesada@ulpgc.es',  //6
+                        confirmed: false,
                         tag: 'Tutor'
                     }],
                 duration: 60,
                 status: 'pending',
                 date: '01/03/2021',
                 time: '08:30'
-            },
-            {
-                id: '3',
-                name: 'Defensa TFT Juan Sánchez',
-                participants: [
-                    {
-                        email: 'abraham.rodriguez@ulpgc.es',  //1
-                        tag: 'Presidente Tribunal Titular'
-                    },
-                    {
-                        email: 'francisco.alayon@ulpgc.es', //2
-                        tag: 'Secretario Tribunal Titular'
-                    },
-                    {
-                        email: 'daniel.hernandez@ulpgc.es',    //3
-                        tag: 'Vocal Tribunal Titular'
-                    },
-                    {
-                        email: 'octavio.mayor@ulpgc.es',  //7
-                        tag: 'Presidente Tribunal Suplente'
-                    },
-                    {
-                        email: 'alexis.quesada@ulpgc.es', //8
-                        tag: 'Secretario Tribunal Suplente'
-                    },
-                    {
-                        email: 'francisca.quintana@ulpgc.es',    //9
-                        tag: 'Vocal Tribunal Suplente'
-                    },
-                    {
-                        email: 'jc.rodriguezdelpino@ulpgc.es',  //6
-                        tag: 'Tutor'
-                    }],
-                duration: 60,
-                status: 'confirmed',
-                date: '03/03/2021',
-                time: '09:30'
             }
         ]
     },
     {
         groupName: 'Extraordinaria 20/21',
-        from: '03/05/2021',
+        from: '19/04/2021',
         to: '31/05/2021',
         events: [
             {
                 id: '21',
-                name: 'Defensa TFT Juan Sánchez',
+                name: 'Defensa TFT Juan Martín',
                 participants: [
                     {
                         email: 'abraham.rodriguez@ulpgc.es',  //1
+                        confirmed: false,
                         tag: 'Presidente Tribunal Titular'
                     },
                     {
                         email: 'alexis.quesada@ulpgc.es', //8
+                        confirmed: false,
                         tag: 'Secretario Tribunal Titular'
                     },
                     {
                         email: 'daniel.hernandez@ulpgc.es',    //3
+                        confirmed: false,
                         tag: 'Vocal Tribunal Titular'
                     },
                     {
                         email: 'carmelo.cuenca@ulpgc.es',  //10
+                        confirmed: false,
                         tag: 'Presidente Tribunal Suplente'
                     },
                     {
                         email: 'antonio.ocon@ulpgc.es',  //5
+                        confirmed: false,
                         tag: 'Secretario Tribunal Suplente'
                     },
                     {
                         email: 'eduardo.rodriguez@ulpgc.es',  //12
+                        confirmed: false,
                         tag: 'Vocal Tribunal Suplente'
                     },
                     {
                         email: 'octavio.mayor@ulpgc.es',  //7
+                        confirmed: false,
                         tag: 'Tutor'
                     }],
                 duration: 60,
                 status: 'pending',
-                date: '03/05/2021',
+                date: '19/04/2021',
                 time: '08:30'
             },
             {
@@ -537,35 +566,42 @@ const groupedEvents: Array<GroupedEventDto> = [
                 participants: [
                     {
                         email: 'octavio.mayor@ulpgc.es',  //7
+                        confirmed: false,
                         tag: 'Presidente Tribunal Titular'
                     },
                     {
                         email: 'francisco.alayon@ulpgc.es', //2
+                        confirmed: false,
                         tag: 'Secretario Tribunal Titular'
                     },
                     {
                         email: 'francisca.quintana@ulpgc.es',    //9
+                        confirmed: false,
                         tag: 'Vocal Tribunal Titular'
                     },
                     {
                         email: 'domingo.benitez@ulpgc.es',  //4
+                        confirmed: false,
                         tag: 'Presidente Tribunal Suplente'
                     },
                     {
                         email: 'david.freire@ulpgc.es',  //11
+                        confirmed: false,
                         tag: 'Secretario Tribunal Suplente'
                     },
                     {
                         email: 'jc.rodriguezdelpino@ulpgc.es',  //6
+                        confirmed: false,
                         tag: 'Vocal Tribunal Suplente'
                     },
                     {
                         email: 'abraham.rodriguez@ulpgc.es',    //9
+                        confirmed: false,
                         tag: 'Tutor'
                     }],
                 duration: 60,
                 status: 'pending',
-                date: '03/05/2021',
+                date: '19/04/2021',
                 time: '08:30'
             },
             {
@@ -574,35 +610,42 @@ const groupedEvents: Array<GroupedEventDto> = [
                 participants: [
                     {
                         email: 'abraham.rodriguez@ulpgc.es',  //1
+                        confirmed: false,
                         tag: 'Presidente Tribunal Titular'
                     },
                     {
                         email: 'francisco.alayon@ulpgc.es', //2
+                        confirmed: false,
                         tag: 'Secretario Tribunal Titular'
                     },
                     {
                         email: 'daniel.hernandez@ulpgc.es',    //3
+                        confirmed: false,
                         tag: 'Vocal Tribunal Titular'
                     },
                     {
                         email: 'octavio.mayor@ulpgc.es',  //7
+                        confirmed: false,
                         tag: 'Presidente Tribunal Suplente'
                     },
                     {
                         email: 'alexis.quesada@ulpgc.es', //8
+                        confirmed: false,
                         tag: 'Secretario Tribunal Suplente'
                     },
                     {
                         email: 'francisca.quintana@ulpgc.es',    //9
+                        confirmed: false,
                         tag: 'Vocal Tribunal Suplente'
                     },
                     {
                         email: 'jc.rodriguezdelpino@ulpgc.es',    //9
+                        confirmed: false,
                         tag: 'Tutor'
                     }],
                 duration: 60,
                 status: 'pending',
-                date: '03/05/2021',
+                date: '19/04/2021',
                 time: '09:30'
             }
         ]
@@ -860,6 +903,16 @@ export class EventService {
             });
         });
     }
+
+    public static confirmAttendance(userId: string, eventId: string): Observable<boolean> {
+
+        return new Observable((subscriber) => {
+
+            const database = firebase.firestore();
+
+            subscriber.next(true);
+        });
+    }
 }
 
 
@@ -977,5 +1030,26 @@ export class MockEventService {
         }else{
             return of(false);
         }
+    }
+
+    public static confirmAttendance(userId: string, eventId: string): Observable<boolean> {
+        const groupedEventIndex = groupedEvents.findIndex((groupedEvent: GroupedEventDto) => groupedEvent.events.find((event) => event.id === eventId));
+        if(groupedEventIndex > -1) {
+            const eventIndex = groupedEvents[groupedEventIndex].events.findIndex((event) => event.id === eventId);
+            if(eventIndex > -1) {
+                groupedEvents[groupedEventIndex].events[eventIndex].participants = groupedEvents[groupedEventIndex].events[eventIndex].participants.map((participant) => {
+                    let participantCopy = {...participant};
+                    if (participant.email === userId) {
+                        participantCopy.confirmed = true;
+                    }
+                    return participantCopy;
+                });
+                this.groupedEventsSubject.next(groupedEvents.slice());
+                return of(true);
+            }else{
+                return of(false);
+            }
+        }
+        return of(true);
     }
 }
