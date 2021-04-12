@@ -136,7 +136,7 @@ export class UserService {
 
     public static forgotPassword(email: string): Observable<boolean> {
         return new Observable((subscriber) => {
-            firebase.auth().sendPasswordResetEmail(email).then(() => {
+            firebase.auth().sendPasswordResetEmail('anawhibley@gmail.com').then(() => { //Change to email
                 subscriber.next(true);
             }).catch((error) => {
                 subscriber.next(false);
