@@ -245,6 +245,10 @@ export function EventsGrid() {
     const deleteGroupedEventCompleted = useSelector(selectDeleteGroupedEventCompleted);
     const deleteEventCompleted = useSelector(selectDeleteEventCompleted);
 
+    const start = DateTime.fromFormat(groupedEvents[currentTab].from, DATE_FORMAT);
+    const endConfirmationWeek = start.minus({ week: 1, days: 1 });
+    const startConfirmationWeek = start.minus({ week: 2 }); //Cambiar aquí para ampliar la confirmación de eventos (después del periodo de confirmación)
+    const confirmationDate = endConfirmationWeek.plus({days: 1});
     return (
         <>
             {groupedEvents.length > 0 ? <div className={'EventsGridContainer'}>
@@ -272,15 +276,15 @@ export function EventsGrid() {
                                          text={'Rango de fecha para confirmar asistencia a las defensas e introducir últimas indisponibilidades si fuera necesario.'}
                                          placement={'bottom'}/>
                                 <Typography color={'primary'}  display={'inline'} variant={'body1'} className={'Bold'}>Rango de confirmación: </Typography>
-                                <Typography color={'textSecondary'} variant={'body1'} display={'inline'}> {groupedEvents[currentTab].from} - </Typography>
-                                <Typography color={'textSecondary'} variant={'body1'} display={'inline'}>{groupedEvents[currentTab].to}</Typography>
+                                <Typography color={'textSecondary'} variant={'body1'} display={'inline'}>{startConfirmationWeek.toFormat(DATE_FORMAT)} - </Typography>
+                                <Typography color={'textSecondary'} variant={'body1'} display={'inline'}>{endConfirmationWeek.toFormat(DATE_FORMAT)}</Typography>
                             </div>
                             <div className={'DateRangeContainer'}>
                                 <Tooltip icon={<InfoIcon className={'FillPrimary'}/>}
                                          text={'Fecha a partir de la cual todos los eventos de la convocatoria quedan confirmados.'}
                                          placement={'bottom'}/>
                                 <Typography color={'primary'}  display={'inline'} variant={'body1'} className={'Bold'}>Confirmación de fechas: </Typography>
-                                <Typography color={'textSecondary'} variant={'body1'} display={'inline'}> {groupedEvents[currentTab].from}</Typography>
+                                <Typography color={'textSecondary'} variant={'body1'} display={'inline'}> {confirmationDate.toFormat(DATE_FORMAT)}</Typography>
                             </div>
                         </div>
                         {loggedInUser && loggedInUser.role === Role.ADMIN ?
