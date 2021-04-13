@@ -1,10 +1,12 @@
-import {BusyDateDto} from "../services/eventService";
+import {BusyDateDto, BusyDto, EventDto} from "../services/eventService";
 
 declare global {
     namespace jest {
         export interface Matchers<R> {
             toHaveBusyDates(userId: string, start: string, end: string, eventId?: string): R;
             toHaveNBusyDates(userId: string, n: number): R;
+            toHaveStatus(status: string, eventId: string): R;
+            toBusyDatesBeEqual(busyDates: Array<BusyDateDto>): R;
         }
     }
 }
@@ -52,7 +54,65 @@ expect.extend({
                 message: () => `Expected ${userId} not to have ${n} unavailabilities`
             }) : ({
                 pass: false,
-                message: () => `Expected ${received} to have ${n} unavailabilities`
+                message: () => `Expected ${userId} to have ${n} unavailabilities`
+            });
+        }
+    }
+);
+
+expect.extend({
+        toHaveStatus(received, status, eventId) {
+
+            const event: EventDto = received.events.find((event: EventDto) => event.id === eventId);
+            expect(event).toBeDefined();
+
+            return (event.status === status) ? ({
+                pass: true,
+                message: () => `Expected ${eventId} not to have status:${status}`
+            }) : ({
+                pass: false,
+                message: () => `Expected ${eventId} to have status:${status}`
+            });
+        }
+    }
+);
+
+expect.extend({
+        toBusyDatesBeEqual(searchBusyDates, resultBusyDates) {
+
+            const searchBusyDatesMap = new Map();
+            searchBusyDates.forEach((busyDate: BusyDateDto) => {
+                searchBusyDatesMap.set(busyDate.userId, busyDate.busy);
+            });
+
+            const resultBusyDatesMap = new Map();
+            resultBusyDates.forEach((busyDate: BusyDateDto) => {
+                resultBusyDatesMap.set(busyDate.userId, busyDate.busy);
+            });
+
+            if(searchBusyDatesMap.size !== resultBusyDatesMap.size) {
+                return ({
+                    pass: false,
+                    message: () => `Expected search busy dates to have ${resultBusyDatesMap.size} elements`
+                })
+            }
+
+            for(let entry of resultBusyDatesMap) {
+                if(searchBusyDatesMap.has(entry[0])) {
+                    const searchBusyArray = resultBusyDatesMap.get(entry[0]);
+                    const resultBusyArray = entry[1];
+                    expect(resultBusyArray).toEqual(expect.arrayContaining(searchBusyArray));
+                }else{
+                    return ({
+                        pass: false,
+                        message: () => `Expected search busy dates to have ${entry[0]} between its elements`
+                    })
+                }
+            }
+
+            return ({
+                pass: true,
+                message: () => `Expected search busy dates to be equal to result busy dates`
             });
         }
     }
