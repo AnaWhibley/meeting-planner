@@ -6,6 +6,7 @@ import DocumentData = firestore.DocumentData;
 import QuerySnapshot = firestore.QuerySnapshot;
 import {welcomeTemplate} from './templates/welcomeTemplate';
 import {newEventsTemplate} from './templates/newEventsTemplate';
+import {reminderTemplate} from './templates/reminderTemplate';
 
 export interface ParticipantDto {
     email: string;
@@ -71,7 +72,42 @@ exports.sendEmailGroupedEventCreated = functions.firestore
         }
 
         return Promise.all(promises).then(() => {
-            functions.logger.info('Executed sendEmailNewUsers for ', context.params.userId);
+            functions.logger.info('Executed sendEmailGroupedEventCreated for ', context.params.userId);
+        });
+    });
+
+// Function for sending email to participants of events when an event is created
+exports.sendEmailEventCreated = functions.firestore
+    .document('events/{groupedEventId}')
+    .onUpdate((change: Change<QueryDocumentSnapshot>, context: EventContext) => {
+        const eventsBefore = change.before.data().events;
+        const eventsAfter = change.after.data().events;
+        if (eventsAfter.length <= eventsBefore) {
+            return;
+        }
+        const eventsIdsBefore = eventsBefore.map((event: EventDto) => event.id);
+        const newEvents = eventsAfter.filter((event: EventDto) => !eventsIdsBefore.includes(event.id));
+        const mapParticipants = new Map<string, Array<string>>();
+        newEvents.forEach((event: EventDto) =>
+            event.participants.forEach((participant) => {
+                const array = mapParticipants.get(participant.email) || [];
+                array.push(event.name);
+                mapParticipants.set(participant.email, array);
+            }));
+        const promises = [];
+        for (const entry of mapParticipants) {
+            promises.push(admin.firestore().collection('mail').add({
+                // to: entry[0],
+                to: 'anawhibley@gmail.com',
+                message: {
+                    subject: 'Tienes nuevas lecturas asignadas',
+                    html: newEventsTemplate(change.before.data().groupName, entry[1]),
+                }
+            }));
+        }
+
+        return Promise.all(promises).then(() => {
+            functions.logger.info('Executed sendEmailEventCreated for ', context.params.userId);
         });
     });
 
@@ -94,13 +130,12 @@ exports.sendEmailNewUsers = functions.firestore
 // Function for sending reminders
 exports.sendReminder = functions.runWith(options).pubsub.topic('sendReminder').onPublish(() => {
     return admin.firestore().collection('events').get().then((snapshot: QuerySnapshot<DocumentData>) => {
-        const mapParticipants = new Map<string, Array<{ event: string, date: string, time: string }>>();
+        const mapParticipants = new Map<string, Array<string>>();
         snapshot.forEach((groupedEvent) => {
-            const groupedEventStart = DateTime.fromFormat(groupedEvent.data().start, 'dd/MM/yyyy');
-            const groupedEventEnd = DateTime.fromFormat(groupedEvent.data().end, 'dd/MM/yyyy');
-            const diffStart = groupedEventStart.diffNow('days');
-            const diffEnd = groupedEventEnd.diffNow('days');
-
+            const groupedEventStart = DateTime.fromFormat(groupedEvent.data().from, 'dd/MM/yyyy');
+            const groupedEventEnd = DateTime.fromFormat(groupedEvent.data().to, 'dd/MM/yyyy');
+            const diffStart = groupedEventStart.diffNow('days').days;
+            const diffEnd = groupedEventEnd.diffNow('days').days;
             if (diffEnd < 0 || diffStart < 0) {
                 return;
             } else if (diffStart > 0 && diffStart < 31) {
@@ -113,11 +148,7 @@ exports.sendReminder = functions.runWith(options).pubsub.topic('sendReminder').o
                             // If participant has not confirmed attendance
                             if (!participant.confirmed) {
                                 const array = mapParticipants.get(participant.email) || [];
-                                array.push({
-                                    event: event.name,
-                                    date: event.date,
-                                    time: event.time
-                                });
+                                array.push(event.name);
                                 mapParticipants.set(participant.email, array);
                             }
                         });
@@ -133,7 +164,7 @@ exports.sendReminder = functions.runWith(options).pubsub.topic('sendReminder').o
                 message: {
                     subject: 'Recuerda que tienes eventos pendientes',
                     // Cambiar a template usando una tabla
-                    html: 'Añade tus indisponibilidades o confirma asistencia para los eventos' + entry[1].join(', '),
+                    html: reminderTemplate(entry[1]),
                 }
             }));
         }
