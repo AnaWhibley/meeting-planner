@@ -71,7 +71,6 @@ export const login = () => (dispatch: Dispatch<any>, getState: () => RootState) 
 };
 
 export const logout = () => (dispatch: Dispatch<any>) => {
-    //dispatch(requesting());
     getUserService().logout().subscribe((success: boolean) => {
         if(success){
             dispatch(setUser(undefined));
