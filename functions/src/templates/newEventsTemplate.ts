@@ -321,7 +321,7 @@ export function newEventsTemplate(groupName: string, events: Array<string>) {
 <!--<p style="font-size: 14px; line-height: 1.5; word-break: break-word; text-align: center; font-family: Open Sans, Helvetica Neue, Helvetica, Arial, sans-serif; mso-line-height-alt: 21px; margin: 0;">Defensa TFG Ana Isabel Santana Medina</p>
 <p style="font-size: 14px; line-height: 1.5; word-break: break-word; text-align: center; font-family: Open Sans, Helvetica Neue, Helvetica, Arial, sans-serif; mso-line-height-alt: 21px; margin: 0;">Defensa TFG Lara Viera Lara</p>
 <p style="font-size: 14px; line-height: 1.5; word-break: break-word; text-align: center; font-family: Open Sans, Helvetica Neue, Helvetica, Arial, sans-serif; mso-line-height-alt: 21px; margin: 0;">Defensa TFG Juan Manuel Ruiz Sánchez</p>-->
-${eventsHTML}
+${eventsHTML.join(' ')}
 </div>
 </div>
 <!--[if mso]></td></tr></table><![endif]-->
