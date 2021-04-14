@@ -8,8 +8,6 @@ import { createEventsCompleted } from './eventCreator/slice';
 const populateBusyDates = createAction<ServiceResponse<User>>('planner/populateBusyDates');
 const showErrorMessage = createAction<ServiceResponse<User>>('login/showErrorMessage');
 const populateEvents = createAction<Array<GroupedEventDto>>('planner/populateEvents');
-const deleteGroupedEvent = createAction<boolean>('planner/deleteGroupedEvent');
-const deleteEvent = createAction<boolean>('planner/deleteEvent');
 
 interface uiStateSlice {
     isLoading: boolean;
@@ -148,13 +146,7 @@ export const slice = createSlice({
             })
             .addCase(showErrorMessage, (state) => {
                 state.isLoading = false;
-            })/*
-            .addCase(deleteGroupedEvent, (state) => {
-                state.deleteGroupedEventCompleted = false;
             })
-            .addCase(deleteEvent, (state) => {
-                state.deleteGroupedEventCompleted = false;
-            })*/
             .addCase(populateEvents, (state, action) => {
                 const availableStatus: Set<string> = new Set();
                 action.payload.forEach(ev => ev.events.forEach(e => availableStatus.add(e.status)));
@@ -162,8 +154,6 @@ export const slice = createSlice({
                 state.availableOptionsStatusFilter = Array.from(availableStatus);
 
                 state.expandedGroupedEventsDrawer = action.payload.map(groupedEvent => groupedEvent.groupName);
-
-                //state.isBusy = false;
             })
             .addDefaultCase((state, action) => {})
     },
@@ -201,7 +191,6 @@ export const toggleDrawerSelectorTransition = () => (dispatch: Dispatch<any>, ge
 }
 
 export const forgotPassword = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
-    //dispatch(requesting());
     const { login } = getState();
 
     if (!login.email) {
