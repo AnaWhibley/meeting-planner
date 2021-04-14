@@ -356,9 +356,9 @@ export function EventsGrid() {
                     <Typography  color={'textSecondary'} variant={'body2'} className={'Bold'}>Participantes</Typography><br/>
                     <Typography  color={'textSecondary'} variant={'subtitle2'} className={'GroupTitle'}>Tribunal Titular</Typography>
                     <div className={'ParticipantList'}>
-                        {selectedRow.participants.slice(0,3).map((participant: ParticipantDto) => {
+                        {selectedRow.participants.slice(0,3).map((participant: ParticipantDto, index: number) => {
                             return (
-                                <div className={'Participant'} key={participant.email}>
+                                <div className={'Participant'} key={index}>
                                     <ParticipantInfo participant={participant}/>
                                 </div>
                             )
@@ -366,9 +366,9 @@ export function EventsGrid() {
                     </div><br/>
                     <Typography color={'textSecondary'} variant={'subtitle2'} className={'GroupTitle'}>Tribunal Suplente</Typography>
                     <div className={'ParticipantList'}>
-                        {selectedRow.participants.slice(3,6).map((participant: ParticipantDto) => {
+                        {selectedRow.participants.slice(3,6).map((participant: ParticipantDto, index: number) => {
                             return (
-                                <div className={'Participant'} key={participant.email}>
+                                <div className={'Participant'} key={index}>
                                     <ParticipantInfo participant={participant}/>
                                 </div>
                             )
@@ -376,9 +376,9 @@ export function EventsGrid() {
                     </div><br/>
                     <Typography color={'textSecondary'} variant={'subtitle2'} className={'GroupTitle'}>Tutor/es</Typography>
                     <div className={'ParticipantList'}>
-                        {selectedRow.participants.slice(6).map((participant: ParticipantDto) => {
+                        {selectedRow.participants.slice(6).map((participant: ParticipantDto, index: number) => {
                             return (
-                                <div className={'Participant'} key={participant.email}>
+                                <div className={'Participant'} key={index}>
                                     <ParticipantInfo participant={participant}/>
                                 </div>
                             )

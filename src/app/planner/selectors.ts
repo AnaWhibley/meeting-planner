@@ -3,7 +3,7 @@ import {BusyState} from './slice';
 import {DateTime} from 'luxon';
 import {DATE_FORMAT, DATE_TIME_FORMAT} from '../eventCreator/slice';
 import {Role} from '../../services/userService';
-import {EventDto, GroupedEventDto} from '../../services/eventService';
+import {BusyDto, EventDto, GroupedEventDto} from '../../services/eventService';
 
 export const selectBusyDatesCurrentUser = (state: RootState) => state.planner.busyDatesCurrentUser.map((date: BusyState) => {
     const event = findEventById(state, date.eventId);
@@ -126,6 +126,14 @@ export const selectNameByEmail = (state: RootState, email: string): string => {
 }
 
 export const selectBusyByEmail = (state: RootState, email: string): boolean => {
-    const participant = state.planner.busyDatesOtherUsers.find((p) => p.userId === email);
-    return !!participant;
+    if(state.login.loggedInUser.id !== email){
+        const participantBusyDates = state.planner.busyDatesOtherUsers.find((p) => p.userId === email);
+        if(participantBusyDates) {
+            return participantBusyDates.busy.filter((busyDate: BusyDto) => busyDate.eventId === undefined).length > 0;
+        }else{
+            return false;
+        }
+    }else{
+        return state.planner.busyDatesCurrentUser.filter((busyDate: BusyDto) => busyDate.eventId === undefined).length > 0;
+    }
 }
