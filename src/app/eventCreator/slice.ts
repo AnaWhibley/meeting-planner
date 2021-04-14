@@ -6,7 +6,7 @@ import {mapToCreateEventRequest, mapJSONToState, mapJSONFromState} from './mappe
 import {getEventService, getUserService} from '../../services/utils';
 import {search} from '../../search';
 import { v4 as uuidv4 } from 'uuid';
-import { requesting } from '../uiStateSlice';
+import { creatingEvents } from '../uiStateSlice';
 
 export enum ParticipantType {
     PRESIDENTE_TT = 'Presidente Tribunal Titular',
@@ -133,7 +133,7 @@ export const slice = createSlice({
             state.currentIndex = state.currentIndex + 1;
             state.stage = 0;
         },
-        complete: (state) => {
+        createEventsCompleted: (state) => {
             state.stage = 4;
         },
         setImportedData: (state,action) => {
@@ -153,10 +153,10 @@ export const slice = createSlice({
     },
 });
 
-export const { next, previous, setFrom, setTo, setName, createNew, complete, setParticipants, addTutor, removeTutor, setImportedData, setGroupName, setDuration, editEvent, setInitialState } = slice.actions;
+export const { next, previous, setFrom, setTo, setName, createNew, createEventsCompleted, setParticipants, addTutor, removeTutor, setImportedData, setGroupName, setDuration, editEvent, setInitialState } = slice.actions;
 
 export const createEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
-    dispatch(requesting());
+    dispatch(creatingEvents());
 
     const { eventCreator, planner } = getState();
     const groupedEvent = mapToCreateEventRequest(eventCreator);
@@ -169,7 +169,7 @@ export const createEvents = () => (dispatch: Dispatch<any>, getState: () => Root
         getEventService().createGroupedEvent(groupedEvent).subscribe((groupedEventResponse) => {
             getUserService().createUsers(groupedEvent.events).subscribe((createUsersResponse) => {
                 if(busyDatesResponse && groupedEventResponse && createUsersResponse) {
-                    dispatch(complete());
+                    dispatch(createEventsCompleted());
                 }
             })
         })
