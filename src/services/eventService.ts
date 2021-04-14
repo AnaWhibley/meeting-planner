@@ -1014,7 +1014,6 @@ export class MockEventService {
         const index = groupedEvents.findIndex((groupedEvent) => groupedEvent.groupName === groupName);
 
         if(index > -1) {
-            console.log(groupedEvents[index]);
             const eventsId = groupedEvents[index].events.length > 0 ? groupedEvents[index].events.map(event => event.id) : [];
             if(eventsId.length > 0){
                 const newBusyDates = busyDates.map(busyDate => ({
