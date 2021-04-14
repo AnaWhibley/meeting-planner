@@ -7,10 +7,6 @@ import {colors} from '../styles/theme';
 import firebase from '../firebase-config';
 import {ServiceResponse} from './utils';
 
-export interface CreateResponse {
-    success: boolean;
-}
-
 export interface BusyDto {
     id: string;
     start: string;
@@ -373,7 +369,7 @@ export interface ParticipantDto {
 
 const groupedEvents: Array<GroupedEventDto> = [
     {
-        groupName: 'Ordinaria 20/21',
+        groupName: 'Ordinaria 20-21',
         from: '01/03/2021',
         to: '19/03/2021',
         events: [
@@ -512,7 +508,7 @@ const groupedEvents: Array<GroupedEventDto> = [
         ]
     },
     {
-        groupName: 'Extraordinaria 20/21',
+        groupName: 'Extraordinaria 20-21',
         from: '19/04/2021',
         to: '31/05/2021',
         events: [
@@ -980,16 +976,18 @@ export class MockEventService {
 
     public static createGroupedEvent(event: GroupedEventDto): Observable<boolean> {
         groupedEvents.push(event);
+        this.groupedEventsSubject.next(groupedEvents.slice());
         return of(true).pipe(delay(500))
     }
 
     public static updateBusyDates(modified: Array<BusyDateState>): Observable<boolean> {
         modified.forEach((m) => {
             let index = busyDates.findIndex((busy) => busy.userId ===  m.userId);
-
             if(index > -1) {
                 busyDates.splice(index, 1);
                 busyDates.splice(index, 0, m);
+            } else {
+                busyDates.push(m);
             }
         });
 
@@ -1016,16 +1014,17 @@ export class MockEventService {
         const index = groupedEvents.findIndex((groupedEvent) => groupedEvent.groupName === groupName);
 
         if(index > -1) {
-            const eventsId = groupedEvents[index].events.map(event => event.id);
-            const newBusyDates = busyDates.map(busyDate => ({
-                ...busyDate,
-                busy: busyDate.busy.filter((date) => !(eventsId.includes(date.eventId || '')))
-            }));
-            this.busyDatesSubject.next(newBusyDates);
-
+            console.log(groupedEvents[index]);
+            const eventsId = groupedEvents[index].events.length > 0 ? groupedEvents[index].events.map(event => event.id) : [];
+            if(eventsId.length > 0){
+                const newBusyDates = busyDates.map(busyDate => ({
+                    ...busyDate,
+                    busy: busyDate.busy.filter((date) => !(eventsId.includes(date.eventId || '')))
+                }));
+                this.busyDatesSubject.next(newBusyDates);
+            }
             groupedEvents.splice(index, 1);
             this.groupedEventsSubject.next(groupedEvents.slice());
-
             return of(true);
         }else{
             return of(false);

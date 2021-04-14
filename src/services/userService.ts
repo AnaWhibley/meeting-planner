@@ -1,4 +1,4 @@
-import {Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {delay, map} from 'rxjs/operators';
 import {User} from '../app/login/slice';
 import {colors} from '../styles/theme';
@@ -241,18 +241,19 @@ export class UserService {
 
 export class MockUserService {
 
+    private static usersSubject = new BehaviorSubject(users.slice());
+
     public static login(email: string, password: string): Observable<ServiceResponse<User>> {
         if(email === 'daniel.hernandez@ulpgc.es' && password === 'anaTFG') {
-            return of({
+            return this.usersSubject.pipe(map(users => ({
                 data: {name: 'José Daniel Hernández Sosa', role: Role.USER, id: 'daniel.hernandez@ulpgc.es'},
                 success: true
-            }).pipe(delay(1000))
+            })));
         }else{
-            return of(
-                {
-                    data: {name: 'Administración Meeting Planner', role: Role.ADMIN, id: 'meetingplannertfg@gmail.com'},
-                    success: true
-                }).pipe(delay(1000))
+            return this.usersSubject.pipe(map(users => ({
+                data: {name: 'Administración Meeting Planner', role: Role.ADMIN, id: 'meetingplannertfg@gmail.com'},
+                success: true
+            })));
         }
     }
 
@@ -262,14 +263,14 @@ export class MockUserService {
 
     public static getParticipants(userIds?: Array<string>): Observable<ServiceResponse<Array<User>>> {
         if(!userIds){
-            return of(users).pipe(
+            return this.usersSubject.pipe(
                 delay(500),
                 map((dto: Array<UserDto>) => dto.map((u, i) => ({...u, color: colors[i % colors.length]}))),
                 map(dto => ({success: true, data: dto}))
             );
         }
 
-        return of(users)
+        return this.usersSubject
             .pipe(
                 delay(500),
                 map((dto: Array<UserDto>) => dto.filter(u => userIds.includes(u.id)).map((u, i) => ({...u, color: colors[i % colors.length]}))),
@@ -286,6 +287,19 @@ export class MockUserService {
     }
 
     public static createUsers(events: Array<EventDto>): Observable<boolean> {
+        events.forEach(event => {
+            const participants = event.participants;
+            return participants.forEach((participant) => {
+                const userIndex = users.findIndex((user) => user.id === participant.email);
+                if(userIndex === -1){
+                    users.push({
+                        name: participant.email,
+                        id: participant.email
+                    })
+                }
+            })
+        });
+        this.usersSubject.next(users.slice());
         return of(true).pipe(delay(1000));
     }
 }

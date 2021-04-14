@@ -15,7 +15,7 @@ import {Form} from './features/eventCreator/form/Form';
 import {selectLoggedInUser} from './app/login/selectors';
 import {Planner} from './features/planner/Planner';
 import {User} from './app/login/slice';
-import {selectIsBusy} from './app/uiStateSlice';
+import {selectIsCreatingEvents, selectIsLoading} from './app/uiStateSlice';
 
 function App() {
 
@@ -36,16 +36,27 @@ function App() {
         )
     };
 
-    const isBusy = useSelector(selectIsBusy);
+    const isLoading = useSelector(selectIsLoading);
+    const isCreatingEvents = useSelector(selectIsCreatingEvents);
 
     return (
         <>
             <ThemeProvider theme={theme}>
-                {isBusy ?
+                {isLoading ?
                     <div className={'CircularProgressContainer'}>
                         <div className={'CircularProgressWrapper'}>
                             <CircularProgress className={'CircularProgress'} size={80} thickness={5}/>
                             <Typography color={'primary'} variant={'body1'}>Cargando contenido</Typography>
+                        </div>
+                    </div>
+                    :
+                    null
+                }
+                {isCreatingEvents ?
+                    <div className={'CircularProgressContainer'}>
+                        <div className={'CircularProgressWrapper'}>
+                            <CircularProgress className={'CircularProgress'} size={80} thickness={5}/>
+                            <Typography color={'primary'} variant={'body1'}>Creando eventos</Typography>
                         </div>
                     </div>
                     :
