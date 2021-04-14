@@ -3,16 +3,17 @@ import {RootState} from './store';
 import {GroupedEventDto} from '../services/eventService';
 import {getUserService, ServiceResponse} from "../services/utils";
 import {User} from './login/slice';
+import { createEventsCompleted } from './eventCreator/slice';
 
 const populateBusyDates = createAction<ServiceResponse<User>>('planner/populateBusyDates');
 const showErrorMessage = createAction<ServiceResponse<User>>('login/showErrorMessage');
 const populateEvents = createAction<Array<GroupedEventDto>>('planner/populateEvents');
-const complete = createAction<Array<GroupedEventDto>>('eventCreator/complete');
 const deleteGroupedEvent = createAction<boolean>('planner/deleteGroupedEvent');
 const deleteEvent = createAction<boolean>('planner/deleteEvent');
 
 interface uiStateSlice {
-    isBusy: boolean;
+    isLoading: boolean;
+    isCreatingEvents: boolean;
     currentViewPlanner: string;
     drawerSelector: boolean;
     showCalendar: boolean;
@@ -41,7 +42,8 @@ export enum ViewPlanner {
 export const slice = createSlice({
     name: 'uiState',
     initialState: {
-        isBusy: false,
+        isLoading: false,
+        isCreatingEvents: false,
         currentViewPlanner: ViewPlanner.EVENTS,
         drawerSelector: false,
         showCalendar: true,
@@ -62,7 +64,10 @@ export const slice = createSlice({
     } as uiStateSlice,
     reducers: {
         requesting: state => {
-            state.isBusy = true;
+            state.isLoading = true;
+        },
+        creatingEvents: state => {
+            state.isCreatingEvents = true;
         },
         setCurrentViewPlanner: (state, action) => {
             state.currentViewPlanner = action.payload;
@@ -118,14 +123,16 @@ export const slice = createSlice({
         deleteGroupedEventCompleted: (state) => {
             state.deleteGroupedEventCompleted = true;
             state.eventsGridSelectedTab = 0;
-            state.isBusy = false;
+            state.isLoading = false;
+            state.selectedRowInformation = undefined;
         },
         setDeleteGroupedEventCompleted: (state, action) => {
             state.deleteGroupedEventCompleted = action.payload;
         },
         deleteEventCompleted: (state) => {
             state.deleteEventCompleted = true;
-            state.isBusy = false;
+            state.selectedRowInformation = undefined;
+            state.isLoading = false;
         },
         setDeleteEventCompleted: (state, action) => {
             state.deleteEventCompleted = action.payload;
@@ -134,13 +141,13 @@ export const slice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(populateBusyDates, (state) => {
-                state.isBusy = false;
+                state.isLoading = false;
             })
-            .addCase(complete, (state) => {
-                state.isBusy = false;
+            .addCase(createEventsCompleted, (state) => {
+                state.isCreatingEvents = false;
             })
             .addCase(showErrorMessage, (state) => {
-                state.isBusy = false;
+                state.isLoading = false;
             })/*
             .addCase(deleteGroupedEvent, (state) => {
                 state.deleteGroupedEventCompleted = false;
@@ -156,16 +163,18 @@ export const slice = createSlice({
 
                 state.expandedGroupedEventsDrawer = action.payload.map(groupedEvent => groupedEvent.groupName);
 
-                state.isBusy = false;
+                //state.isBusy = false;
             })
             .addDefaultCase((state, action) => {})
     },
 });
 export const { requesting, setCurrentViewPlanner, setDrawerSelector, toggleShowCalendar, setSelectedOptionsStatusFilter,
     resetStatusFilter, setSelectedRowInformation, setForgotPasswordDialogProperty, showGrid, setEventsGridSelectedTab,
-    setExpandedGroupedEvent, setGoToDate, deleteGroupedEventCompleted, deleteEventCompleted, setDeleteEventCompleted, setDeleteGroupedEventCompleted } = slice.actions;
+    setExpandedGroupedEvent, setGoToDate, deleteGroupedEventCompleted, deleteEventCompleted, setDeleteEventCompleted,
+    setDeleteGroupedEventCompleted, creatingEvents } = slice.actions;
 
-export const selectIsBusy = (state: RootState) => state.uiState.isBusy;
+export const selectIsLoading = (state: RootState) => state.uiState.isLoading;
+export const selectIsCreatingEvents = (state: RootState) => state.uiState.isCreatingEvents;
 export const selectGoToDate = (state: RootState) => state.uiState.goToDate;
 export const selectEventsGridSelectedTab = (state: RootState) => state.uiState.eventsGridSelectedTab;
 export const selectCurrentViewPlanner = (state: RootState) => state.uiState.currentViewPlanner;

@@ -119,14 +119,12 @@ export const { populateBusyDates, populateEvents, populateParticipants, setSelec
     toggleSelectAllEvents, toggleSelectAllParticipants } = slice.actions;
 
 export const getEvents = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
-    //dispatch(requesting());
     const { login } = getState();
     const currentUser = login.loggedInUser;
     // Get grouped events in which user participates (for admin get all events)
     getEventService().getEvents(currentUser).subscribe((response: ServiceResponse<Array<GroupedEventDto>>) => {
         if(response.success){
             dispatch(populateEvents(response.data));
-
             if(currentUser.role === Role.ADMIN){
                 dispatch(getBusyDatesAdmin())
             }else{
