@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './App.scss';
 import {Login} from './features/login/Login';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
 import {Role} from './services/userService';
 import {Dashboard} from './features/dashboard/Dashboard';
@@ -14,10 +14,16 @@ import './styles/common.scss';
 import {Form} from './features/eventCreator/form/Form';
 import {selectLoggedInUser} from './app/login/selectors';
 import {Planner} from './features/planner/Planner';
-import {User} from './app/login/slice';
+import {checkUserSession, User} from './app/login/slice';
 import {selectIsCreatingEvents, selectIsLoading} from './app/uiStateSlice';
 
 function App() {
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(checkUserSession());
+    },[]);
 
     const PrivateRoute = (props: {path: string, component: JSX.Element, admin?: boolean}) => {
         const loggedInUser: User = useSelector(selectLoggedInUser);

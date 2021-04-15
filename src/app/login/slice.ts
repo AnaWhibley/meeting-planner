@@ -57,6 +57,16 @@ export const slice = createSlice({
 
 export const { setEmail, setPassword, showErrorMessage, setUser, editName } = slice.actions;
 
+export const checkUserSession = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
+    getUserService().userPersistence().subscribe((response) => {
+        if(!response.success) {
+            dispatch(setUser(undefined));
+        }else{
+            dispatch(setUser(response.data))
+        }
+    });
+}
+
 export const login = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     dispatch(requesting());
     const { login } = getState();

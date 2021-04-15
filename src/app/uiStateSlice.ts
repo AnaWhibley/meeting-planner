@@ -8,6 +8,7 @@ import { createEventsCompleted } from './eventCreator/slice';
 const populateBusyDates = createAction<ServiceResponse<User>>('planner/populateBusyDates');
 const showErrorMessage = createAction<ServiceResponse<User>>('login/showErrorMessage');
 const populateEvents = createAction<Array<GroupedEventDto>>('planner/populateEvents');
+const checkUserSession = createAction<ServiceResponse<User>>('login/checkUserSession');
 
 interface uiStateSlice {
     isLoading: boolean;
@@ -154,6 +155,8 @@ export const slice = createSlice({
                 state.availableOptionsStatusFilter = Array.from(availableStatus);
 
                 state.expandedGroupedEventsDrawer = action.payload.map(groupedEvent => groupedEvent.groupName);
+
+                state.isLoading = false;
             })
             .addDefaultCase((state, action) => {})
     },
