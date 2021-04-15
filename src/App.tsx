@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.scss';
 import {Login} from './features/login/Login';
 import {useDispatch, useSelector} from 'react-redux';
@@ -6,16 +6,29 @@ import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom
 import {Role} from './services/userService';
 import {Dashboard} from './features/dashboard/Dashboard';
 import {Profile} from './features/profile/Profile';
-import {theme} from './styles/theme';
-import {CircularProgress, ThemeProvider, Typography} from '@material-ui/core';
+import {Color, theme} from './styles/theme';
+import {
+    CircularProgress, Dialog, DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    ThemeProvider,
+    Typography
+} from '@material-ui/core';
 import {ErrorPage} from './components/errorPage/errorPage';
 import { EventCreator } from './features/eventCreator/EventCreator';
 import './styles/common.scss';
 import {Form} from './features/eventCreator/form/Form';
-import {selectLoggedInUser} from './app/login/selectors';
+import {selectLoggedInUser, selectNameErrorMessage} from './app/login/selectors';
 import {Planner} from './features/planner/Planner';
-import {checkUserSession, User} from './app/login/slice';
-import {selectIsCreatingEvents, selectIsLoading} from './app/uiStateSlice';
+import {checkUserSession, editUserName, User} from './app/login/slice';
+import {
+    selectFirstTimeLoggingDialogOpen,
+    selectIsCreatingEvents,
+    selectIsLoading
+} from './app/uiStateSlice';
+import TextInput from './components/textInput/TextInput';
+import ActionButton, {ButtonVariant} from './components/actionButton/ActionButton';
 
 function App() {
 
@@ -45,6 +58,11 @@ function App() {
     const isLoading = useSelector(selectIsLoading);
     const isCreatingEvents = useSelector(selectIsCreatingEvents);
 
+    const dialogOpen = useSelector(selectFirstTimeLoggingDialogOpen);
+    const usernameError = useSelector(selectNameErrorMessage);
+
+    const [userName, setUserName] = useState('');
+
     return (
         <>
             <ThemeProvider theme={theme}>
@@ -68,6 +86,37 @@ function App() {
                     :
                     null
                 }
+
+                <Dialog
+                    open={dialogOpen}>
+                    <DialogTitle >{"¡Bienvenido a Meeting Planner!"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Antes de comenzar, nos gustaría saber tu nombre:
+                        </DialogContentText>
+                        <TextInput
+                            className={'InputForgotPassword'}
+                            label="Nombre"
+                            fullWidth={true}
+                            value={userName}
+                            onChange={(value: string) => setUserName(value)}
+                        />
+                        {usernameError ?
+                            <Typography variant="subtitle1"
+                                        className={"ErrorMessage ErrorMessageForgotPassword"}
+                                        color={"error"}>
+                                {usernameError}
+                            </Typography>
+                            : null}
+                    </DialogContent>
+                    <DialogActions>
+                        <ActionButton onClick={() => dispatch(editUserName(userName))}
+                                      color={Color.PRIMARY}
+                                      innerText={'Confirmar'}
+                                      variant={ButtonVariant.TEXT}/>
+                    </DialogActions>
+                </Dialog>
+
                 <Router>
                     <Switch>
                         <Route path="/login">

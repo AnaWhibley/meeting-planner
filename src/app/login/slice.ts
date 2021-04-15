@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { requesting } from '../uiStateSlice';
+import {requesting, setFirstTimeLoggingDialogOpen} from '../uiStateSlice';
 import {Role} from '../../services/userService';
 import { Dispatch } from '@reduxjs/toolkit';
 import {RootState} from '../store';
@@ -14,6 +14,7 @@ export interface LoginSlice {
         show: boolean;
         error: string;
     };
+    nameErrorMessage: string;
 }
 
 export interface User {
@@ -28,7 +29,8 @@ export const slice = createSlice({
     initialState: {
         email: '',
         password: '',
-        errorMessage: { show: false, error: '' }
+        errorMessage: { show: false, error: '' },
+        nameErrorMessage: ''
     } as LoginSlice,
     reducers: {
         setEmail: (state, action) => {
@@ -49,13 +51,16 @@ export const slice = createSlice({
             state.email = '';
             state.password = '';
         },
+        setNameError: (state, action) => {
+            state.nameErrorMessage = action.payload;
+        },
         editName: (state, action) => {
             if (state.loggedInUser) state.loggedInUser.name = action.payload;
         }
     },
 });
 
-export const { setEmail, setPassword, showErrorMessage, setUser, editName } = slice.actions;
+export const { setEmail, setPassword, showErrorMessage, setUser, editName, setNameError } = slice.actions;
 
 export const checkUserSession = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     getUserService().userPersistence().subscribe((response) => {
@@ -72,6 +77,10 @@ export const login = () => (dispatch: Dispatch<any>, getState: () => RootState) 
     const { login } = getState();
     getUserService().login(login.email, login.password).subscribe((response: ServiceResponse<User>) => {
         if(response.success){
+            const re = /.+\@.+\..+/;
+            if(re.test(String(response.data.name).toLowerCase())) {
+                dispatch(setFirstTimeLoggingDialogOpen(true));
+            }
             dispatch(setUser(response.data));
             dispatch(getEvents());
         } else {
@@ -92,11 +101,18 @@ export const editUserName = (newName: string) => (dispatch: Dispatch<any>, getSt
     const { login } = getState();
     const user = login.loggedInUser;
     if(user){
-        getUserService().editUserName(user.id, newName).subscribe((success: boolean) => {
-            if(success){
-                dispatch(editName(newName))
-            }
-        });
+        const re = /.+\@.+\..+/;
+        if (newName !== '' && !(re.test(String(newName).toLowerCase()))){
+            getUserService().editUserName(user.id, newName).subscribe((success: boolean) => {
+                if(success){
+                    dispatch(editName(newName));
+                    dispatch(setFirstTimeLoggingDialogOpen(false));
+                    dispatch(setNameError(''));
+                }
+            });
+        }else{
+            dispatch(setNameError('El nombre no puede ser tu correo o estar vacío'));
+        }
     }
 };
 
