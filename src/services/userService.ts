@@ -3,7 +3,7 @@ import {delay, map} from 'rxjs/operators';
 import {User} from '../app/login/slice';
 import {colors} from '../styles/theme';
 import firebase from '../firebase-config';
-import {ServiceResponse} from './utils';
+import {getUserService, ServiceResponse} from './utils';
 import {EventDto} from './eventService';
 
 interface UserDto {
@@ -122,6 +122,23 @@ export class UserService {
             }
             return errorMessage;
         }
+    }
+
+    public static userPersistence(): Observable<ServiceResponse<User>> {
+        return new Observable((subscriber) => {
+            firebase.auth().onAuthStateChanged((user) => {
+                if(user) {
+                    this.getUserById(user.email || '').subscribe((response: ServiceResponse<User>) => {
+                        subscriber.next(response);
+                    });
+                } else {
+                    subscriber.next({
+                        success: false,
+                        data: {name: '', id: ''}
+                    });
+                }
+            });
+        })
     }
 
     public static logout(): Observable<boolean> {
@@ -255,6 +272,13 @@ export class MockUserService {
                 success: true
             })));
         }
+    }
+
+    public static userPersistence(): Observable<ServiceResponse<User>> {
+        return this.usersSubject.pipe(map(users => ({
+            data: {name: 'Administración Meeting Planner', role: Role.ADMIN, id: 'meetingplannertfg@gmail.com'},
+            success: true
+        })));
     }
 
     public static logout() {
