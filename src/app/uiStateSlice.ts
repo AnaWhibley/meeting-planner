@@ -26,6 +26,7 @@ interface uiStateSlice {
         emailSent: boolean;
         emailSentError: boolean;
     };
+    firstTimeLoggingDialog: boolean;
     eventsGridSelectedTab: number;
     expandedGroupedEventsDrawer: Array<string>;
     goToDate: string;
@@ -55,6 +56,7 @@ export const slice = createSlice({
             emailSent: false,
             emailSentError: false
         },
+        firstTimeLoggingDialog: false,
         eventsGridSelectedTab: 0,
         expandedGroupedEventsDrawer: [],
         goToDate: '',
@@ -103,6 +105,9 @@ export const slice = createSlice({
         },
         setForgotPasswordDialogProperty: (state, action) => {
             state.forgotPasswordDialog = {...state.forgotPasswordDialog, ...action.payload};
+        },
+        setFirstTimeLoggingDialogOpen: (state, action) => {
+            state.firstTimeLoggingDialog = action.payload;
         },
         setEventsGridSelectedTab: (state, action) => {
             state.eventsGridSelectedTab = action.payload;
@@ -164,7 +169,7 @@ export const slice = createSlice({
 export const { requesting, setCurrentViewPlanner, setDrawerSelector, toggleShowCalendar, setSelectedOptionsStatusFilter,
     resetStatusFilter, setSelectedRowInformation, setForgotPasswordDialogProperty, showGrid, setEventsGridSelectedTab,
     setExpandedGroupedEvent, setGoToDate, deleteGroupedEventCompleted, deleteEventCompleted, setDeleteEventCompleted,
-    setDeleteGroupedEventCompleted, creatingEvents } = slice.actions;
+    setDeleteGroupedEventCompleted, creatingEvents, setFirstTimeLoggingDialogOpen } = slice.actions;
 
 export const selectIsLoading = (state: RootState) => state.uiState.isLoading;
 export const selectIsCreatingEvents = (state: RootState) => state.uiState.isCreatingEvents;
@@ -184,6 +189,7 @@ export const selectSelectedRowInformation = (state: RootState) => {
     }
 };
 export const selectForgotPasswordDialogInfo = (state: RootState) => state.uiState.forgotPasswordDialog;
+export const selectFirstTimeLoggingDialogOpen = (state: RootState) => state.uiState.firstTimeLoggingDialog;
 export const selectDeleteEventCompleted = (state: RootState) => state.uiState.deleteEventCompleted;
 export const selectDeleteGroupedEventCompleted = (state: RootState) => state.uiState.deleteGroupedEventCompleted;
 
