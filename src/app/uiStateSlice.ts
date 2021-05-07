@@ -3,12 +3,11 @@ import {RootState} from './store';
 import {GroupedEventDto} from '../services/eventService';
 import {getUserService, ServiceResponse} from "../services/utils";
 import {User} from './login/slice';
-import { createEventsCompleted } from './eventCreator/slice';
 
 const populateBusyDates = createAction<ServiceResponse<User>>('planner/populateBusyDates');
 const showErrorMessage = createAction<ServiceResponse<User>>('login/showErrorMessage');
 const populateEvents = createAction<Array<GroupedEventDto>>('planner/populateEvents');
-const checkUserSession = createAction<ServiceResponse<User>>('login/checkUserSession');
+const createEventsCompleted = createAction<any>('eventCreator/createEventsCompleted');
 
 interface uiStateSlice {
     isLoading: boolean;
