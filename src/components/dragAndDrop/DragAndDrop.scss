@@ -5,6 +5,8 @@
   flex-direction: column;
   align-items: center;
   width: 500px;
+  margin-bottom: 50px;
+  background-color: white;
 
   .Row {
     width: auto;
@@ -49,6 +51,9 @@
 
   .InvalidFiles, .ValidFiles, .FilesTitle {
     text-align: center;
+    .FileIcon {
+      vertical-align: sub;
+    }
   }
 
   .InvalidFiles > *, .ValidFiles > * {

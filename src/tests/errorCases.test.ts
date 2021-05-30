@@ -9,11 +9,9 @@ import './customMatchers';
 
 describe('Error case (1 events) (2 participants)', () => {
 
-    let eventsMap: Map<string, {status: string; date?: string; time?: string}>;
     let busyDatesMap: Map<string, Array<{start: string; end: string;}>>;
 
     beforeEach(() => {
-        eventsMap = new Map();
         busyDatesMap = new Map();
     });
 
