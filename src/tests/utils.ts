@@ -117,5 +117,6 @@ export const juancarlos = 'jc.rodriguezdelpino@ulpgc.es';
 export const josemi = 'josemiguel.santos@ulpgc.es';
 export const juanca = 'juancarlos.quevedo@ulpgc.es';
 export const josejuan = 'josejuan.hernandez@ulpgc.es';
+export const julio = 'julio.esclarin@ulpgc.es'
 export const idFn = () => '';
 
