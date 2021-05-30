@@ -77,6 +77,22 @@ describe('Basic case (1 event) (2 participants)', () => {
         expect(result).toHaveBusyDates(alexis, '04/05/2021 10:00', '04/05/2021 11:00', '0');
         expect(result).toHaveBusyDates(abraham, '04/05/2021 10:00', '04/05/2021 11:00', '0');
     });
+
+    it('should fit in third day 10:30 - 11:30 (5 unavailabilities)', () => {
+
+        busyDatesMap.set(alexis, [
+            {start: '03/05/2021 08:30', end:'03/05/2021 18:00'},
+            {start: '04/05/2021 08:30', end:'04/05/2021 18:00'}]
+        );
+        busyDatesMap.set(abraham, [
+            {start: '03/05/2021 08:30', end:'03/05/2021 18:00'},
+            {start: '04/05/2021 08:30', end:'04/05/2021 18:00'},
+            {start: '04/05/2021 08:30', end:'05/05/2021 10:30'}]);
+        const result = search(groupedEvent, mockBusyDates(busyDatesMap), idFn);
+
+        expect(result).toHaveBusyDates(alexis, '05/05/2021 10:30', '05/05/2021 11:30', '0');
+        expect(result).toHaveBusyDates(abraham, '05/05/2021 10:30', '05/05/2021 11:30', '0');
+    });
 });
 
 describe('Basic case (1 event) (7 participants)', () => {
@@ -98,6 +114,39 @@ describe('Basic case (1 event) (7 participants)', () => {
     beforeEach(() => {
         eventsMap = new Map();
         busyDatesMap = new Map();
+    });
+
+    it('should fit in first day at 08:30 - 09:30 (0 unavailabilities)', () => {
+
+        groupedEvent.events.forEach((ev) => eventsMap.set(ev.id, {status: 'pending', date: '03/05/2021', time: '08:30'}));
+        eventsResult = mockEventsResult(groupedEvent.events, eventsMap);
+        busyDatesResult = mockBusyDatesResult([], generateBusyDatesResultMap(eventsResult));
+
+        const result = search(groupedEvent, [], idFn);
+
+        expect(result.events).toEqual(eventsResult);
+        expect(result.busyDates).toBusyDatesBeEqual(busyDatesResult);
+        expect(result).toHaveNBusyDates(abraham, 1);
+        expect(result).not.toHaveBusyDates(abraham, '05/05/2021 08:30', '05/05/2021 09:30');
+    });
+
+    it('should fit in last slot of the day 17:30 - 18:30 (1 unavailability)', () => {
+
+        busyDatesMap.set(alexis, [{start: '03/05/2021 08:30', end:'03/05/2021 17:30'}]);
+        const result = search(groupedEvent, mockBusyDates(busyDatesMap), idFn);
+
+        expect(result).toHaveBusyDates(alexis, '03/05/2021 08:30', '03/05/2021 17:30');
+        expect(result).toHaveBusyDates(alexis, '03/05/2021 17:30', '03/05/2021 18:30', '0');
+        expect(result).toHaveBusyDates(abraham, '03/05/2021 17:30', '03/05/2021 18:30', '0');
+    });
+
+    it('should fit in first slot of the first day 08:30 - 09:30 because the unavailability does not affect (1 unavailability)', () => {
+
+        busyDatesMap.set(alexis, [{start: '04/05/2021 08:30', end:'04/05/2021 18:00'}]);
+        const result = search(groupedEvent, mockBusyDates(busyDatesMap), idFn);
+
+        expect(result).toHaveBusyDates(abraham, '03/05/2021 08:30', '03/05/2021 09:30', '0');
+        expect(result).toHaveBusyDates(alexis, '03/05/2021 08:30', '03/05/2021 09:30', '0');
     });
 
     it('should fit in last slot of the day 17:30 - 18:30 (5 unavailabilities)', () => {

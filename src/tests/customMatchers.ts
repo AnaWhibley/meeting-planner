@@ -1,4 +1,4 @@
-import {BusyDateDto, BusyDto, EventDto} from "../services/eventService";
+import {BusyDateDto, EventDto} from "../services/eventService";
 
 declare global {
     namespace jest {

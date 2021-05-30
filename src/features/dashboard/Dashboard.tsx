@@ -52,7 +52,7 @@ export function Dashboard() {
                     <div className={'Button ButtonRight'}>
                         <ActionButton color={Color.PRIMARY}
                                       onClick={() => history.push('/')}
-                                      innerText={'Editar eventos existentes'}
+                                      innerText={'Ver eventos existentes'}
                                       variant={ButtonVariant.OUTLINED}
                                       labelClassName={'Label'}
                                       icon={<CalendarDatesIcon className={'FillPrimary'}/>}
