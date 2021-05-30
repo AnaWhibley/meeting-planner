@@ -276,8 +276,8 @@ export class MockUserService {
 
     public static userPersistence(): Observable<ServiceResponse<User>> {
         return this.usersSubject.pipe(map(users => ({
-            data: {name: 'Administración Meeting Planner', role: Role.ADMIN, id: 'meetingplannertfg@gmail.com'},
-            success: true
+            data: {name: '', role: Role.USER, id: ''},
+            success: false
         })));
     }
 

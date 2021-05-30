@@ -144,7 +144,7 @@ class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
                         : null}
                     {this.state.validFiles.length ? this.state.validFiles.map((file: File, i) => {
                         return (<div key={i} className={'ValidFiles'}>
-                            <FileIcon/>
+                            <FileIcon className={'FileIcon'}/>
                             <Typography variant="subtitle1"
                                         display="inline"
                                         color='textPrimary'>
@@ -167,7 +167,7 @@ class DragAndDrop extends Component<DragAndDropProps, DragAndDropState> {
                         : null}
                     {this.state.invalidFiles.length ? this.state.invalidFiles.map((file: File, i) => {
                         return (<div key={i} className={'InvalidFiles'}>
-                            <FileIcon/>
+                            <FileIcon className={'FileIcon'}/>
                             <Typography variant="subtitle1"
                                         display="inline"
                                         color='textPrimary'>

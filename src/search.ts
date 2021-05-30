@@ -28,7 +28,6 @@ export function search(groupedEvent: GroupedEventDto, busyDates: Array<BusyDateS
 
         const userIds = events[i].participants.map(p => p.email);
 
-        //Si el usuario que creó la indisponibilidad no está entre los participantes no tenemos que cambiar el evento
         for(let j = from; j < to; j = j.plus({minutes: 15})){
 
             //Último slot posible
