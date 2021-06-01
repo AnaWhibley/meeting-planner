@@ -69,6 +69,7 @@ export const checkUserSession = () => (dispatch: Dispatch<any>, getState: () => 
             dispatch(setUser(undefined));
         }else{
             dispatch(setUser(response.data || getState().login.loggedInUser));
+            dispatch(getEvents());
         }
     });
 }
