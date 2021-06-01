@@ -975,7 +975,12 @@ export class MockEventService {
     }
 
     public static createGroupedEvent(event: GroupedEventDto): Observable<boolean> {
-        groupedEvents.push(event);
+        const groupedEventIndex = groupedEvents.findIndex((groupedEvent) => groupedEvent.groupName === event.groupName);
+        if(groupedEventIndex > -1) {
+            groupedEvents[groupedEventIndex].events = groupedEvents[groupedEventIndex].events.concat(event.events);
+        }else{
+            groupedEvents.push(event);
+        }
         this.groupedEventsSubject.next(groupedEvents.slice());
         return of(true).pipe(delay(500))
     }
