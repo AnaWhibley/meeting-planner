@@ -119,6 +119,7 @@ export function EventsGrid() {
     const [gridColumnApi, setGridColumnApi] = useState<ColumnApi | null>(null);
 
     const groupedEvents = useSelector(selectEvents);
+    console.log(groupedEvents, groupedEvents.length, groupedEvents.length > 0);
 
     const columnDefs: Array<ColDef> = [
         {
@@ -245,10 +246,17 @@ export function EventsGrid() {
     const deleteGroupedEventCompleted = useSelector(selectDeleteGroupedEventCompleted);
     const deleteEventCompleted = useSelector(selectDeleteEventCompleted);
 
-    const start = DateTime.fromFormat(groupedEvents[currentTab].from, DATE_FORMAT);
-    const endConfirmationWeek = start.minus({ week: 1, days: 1 });
-    const startConfirmationWeek = start.minus({ week: 2 }); //Cambiar aquí para ampliar la confirmación de eventos (después del periodo de confirmación)
-    const confirmationDate = endConfirmationWeek.plus({days: 1});
+    let startConfirmationWeek = DateTime.utc();
+    let confirmationDate = DateTime.utc();
+    let endConfirmationWeek = DateTime.utc();
+
+    if(groupedEvents.length > 0){
+        const start = DateTime.fromFormat(groupedEvents[currentTab].from, DATE_FORMAT);
+        endConfirmationWeek = start.minus({ week: 1, days: 1 });
+        startConfirmationWeek = start.minus({ week: 2 }); //Cambiar aquí para ampliar la confirmación de eventos (después del periodo de confirmación)
+        confirmationDate = endConfirmationWeek.plus({days: 1});
+    }
+
     return (
         <>
             {groupedEvents.length > 0 ? <div className={'EventsGridContainer'}>
