@@ -276,8 +276,8 @@ export class MockUserService {
 
     public static userPersistence(): Observable<ServiceResponse<User>> {
         return this.usersSubject.pipe(map(users => ({
-            data: {name: '', role: Role.USER, id: ''},
-            success: false
+            data: null as any,
+            success: true
         })));
     }
 
