@@ -914,7 +914,7 @@ export class EventService {
                             const events = doc.data()?.events;
                             const index = events.findIndex((event: EventDto) => event.id === eventId);
                             if(index > -1) {
-                                events[index].participants = events.participants.map((participant: ParticipantDto) => {
+                                events[index].participants = events[index].participants.map((participant: ParticipantDto) => {
                                     if (participant.email === userId) {
                                         participant.confirmed = true;
                                     }
