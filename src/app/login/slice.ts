@@ -5,6 +5,7 @@ import { Dispatch } from '@reduxjs/toolkit';
 import {RootState} from '../store';
 import {getUserService, ServiceResponse} from "../../services/utils";
 import {getEvents} from '../planner/slice';
+import {take} from "rxjs/operators";
 
 export interface LoginSlice {
     email: string;
@@ -67,7 +68,7 @@ export const checkUserSession = () => (dispatch: Dispatch<any>, getState: () => 
         if(!response.success) {
             dispatch(setUser(undefined));
         }else{
-            dispatch(setUser(response.data))
+            dispatch(setUser(response.data || getState().login.loggedInUser));
         }
     });
 }
@@ -75,7 +76,7 @@ export const checkUserSession = () => (dispatch: Dispatch<any>, getState: () => 
 export const login = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     dispatch(requesting());
     const { login } = getState();
-    getUserService().login(login.email, login.password).subscribe((response: ServiceResponse<User>) => {
+    getUserService().login(login.email, login.password).pipe(take(1)).subscribe((response: ServiceResponse<User>) => {
         if(response.success){
             const re = /.+\@.+\..+/;
             if(re.test(String(response.data.name).toLowerCase())) {
