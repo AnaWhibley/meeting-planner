@@ -71,18 +71,20 @@ export interface EventCreatorSlice {
     events: Array<EventState>;
 }
 
-const initialState = {
-    stage: 0,
-    currentIndex: 0,
-    groupName: createFieldState({label: '', value: ''}),
-    from: createFieldState(DateTime.utc().toFormat(DATE_FORMAT)),
-    to: createFieldState(DateTime.utc().toFormat(DATE_FORMAT)),
-    events: [createDefaultEvent()]
+const getInitialState = () => {
+    return {
+        stage: 0,
+        currentIndex: 0,
+        groupName: createFieldState({label: '', value: ''}),
+        from: createFieldState(DateTime.utc().toFormat(DATE_FORMAT)),
+        to: createFieldState(DateTime.utc().toFormat(DATE_FORMAT)),
+        events: [createDefaultEvent()]
+    };
 };
 
 export const slice = createSlice({
     name: 'eventCreator',
-    initialState: initialState as EventCreatorSlice,
+    initialState: getInitialState() as EventCreatorSlice,
     reducers: {
         next: state => {
             const validationHasErrors = validateFields(state);
@@ -148,7 +150,7 @@ export const slice = createSlice({
             state.currentIndex = action.payload.currentIndex;
         },
         setInitialState: (state) => {
-            return initialState;
+            return getInitialState();
         },
     },
 });
