@@ -163,7 +163,6 @@ exports.sendReminder = functions.runWith(options).pubsub.topic('sendReminder').o
                 to: 'anawhibley@gmail.com',
                 message: {
                     subject: 'Recuerda que tienes eventos pendientes',
-                    // Cambiar a template usando una tabla
                     html: reminderTemplate(entry[1]),
                 }
             }));
@@ -171,6 +170,42 @@ exports.sendReminder = functions.runWith(options).pubsub.topic('sendReminder').o
         return Promise.all(promises).then(() => {
             functions.logger.info('Executed sendReminder');
         });
+    });
+});
+
+// Function to update event status to confirmed when the confirmation period starts
+exports.confirmEvents = functions.runWith(options).pubsub.topic('confirmEvents').onPublish(() => {
+    return admin.firestore().collection('events').get().then((snapshot: QuerySnapshot<DocumentData>) => {
+        snapshot.forEach((groupedEvent) => {
+            const groupedEventStart = DateTime.fromFormat(groupedEvent.data().from, 'dd/MM/yyyy');
+            const endConfirmationWeek = groupedEventStart.minus({week: 1, days: 1});
+            const confirmationDate = endConfirmationWeek.plus({days: 1});
+            const diffConfirmationDate = confirmationDate.diffNow('days').days;
+            if (diffConfirmationDate <= 0) {
+                const events: Array<EventDto> = groupedEvent.data().events;
+                events.forEach((event) => {
+                    if (event.status === 'pending') {
+                        const newEvents = [...events];
+                        const index = newEvents.findIndex((e: EventDto) => e.id === event.id);
+                        if (index > -1) {
+                            newEvents.splice(index, 1);
+                            const newEventData = {
+                                ...event,
+                                status: 'confirmed'
+                            };
+                            newEvents.push(newEventData);
+                        }
+                        admin.firestore().doc(`events/${groupedEvent.id}`)
+                            .set({events: newEvents}, {merge: true}).then(() => {
+                            functions.logger.info('Successfully executed confirmEvents for ', groupedEvent.id);
+                        });
+                    }
+                });
+            } else {
+                return;
+            }
+        });
+        functions.logger.info('Executed confirmEvents');
     });
 });
 
@@ -196,7 +231,7 @@ exports.notifyErrorOnGroupedEvent = functions.firestore.document('events/{groupe
     });
 
 
-// Function to update event status to confirmed
+// Function to update event status to confirmed when everybody has confirmed
 exports.updateEventStatus = functions.firestore.document('events/{groupedEventId}')
     .onUpdate((change: Change<QueryDocumentSnapshot>, context: EventContext) => {
         const groupedEventId = context.params.groupedEventId;
@@ -214,12 +249,62 @@ exports.updateEventStatus = functions.firestore.document('events/{groupedEventId
                         };
                         newEvents.push(newEventData);
                     }
-                    return admin.firestore().doc(`events/${groupedEventId}`)
+                    admin.firestore().doc(`events/${groupedEventId}`)
                         .set({events: newEvents}, {merge: true}).then(() => {
-                            functions.logger.info('Successfully executed updateEventStatus for ', event.id);
+                            functions.logger.info('Successfully executed updateEventStatus for ', groupedEventId);
                         });
                 }
             }
         });
     });
 
+// Function to update event status to unconfirm participant status when a busy date changes an event date or hour
+exports.changeToUnconfirmed = functions.firestore.document('events/{groupedEventId}')
+    .onUpdate((change: Change<QueryDocumentSnapshot>, context: EventContext) => {
+        const groupedEventId = context.params.groupedEventId;
+        const mapParticipants = new Map<string, Array<string>>();
+        const previousValue = change.before.data();
+        const newValue = change.after.data();
+        const resultValue = change.after.data();
+        if (previousValue.events.length === newValue.events.length) {
+            for (let i = 0; i < newValue.events.length; i++) {
+                if (previousValue.events[i].id === newValue.events[i].id) {
+                    if (previousValue.events[i].date !== newValue.events[i].date ||
+                        (previousValue.events[i].date === newValue.events[i].date &&
+                            previousValue.events[i].time !== newValue.events[i].time)) {
+                        const newParticipants = resultValue.events[i].participants.map((participant: ParticipantDto) => {
+                            if (participant.confirmed) {
+                                const array = mapParticipants.get(participant.email) || [];
+                                array.push(resultValue.events[i].name);
+                                mapParticipants.set(participant.email, array);
+                            }
+                            return {
+                                ...participant,
+                                confirmed: false
+                            };
+                        });
+                        resultValue.events[i].participants = newParticipants;
+                        functions.logger.info('changeToUnconfirmed events[i] and its participants', resultValue.events[i], resultValue.events[i].participants);
+                        admin.firestore().doc(`events/${groupedEventId}`)
+                            .set({events: resultValue.events}, {merge: true}).then(() => {
+                            functions.logger.info('Successfully executed changeToUnconfirmed for ', resultValue.events[i].name);
+                        });
+                    }
+                }
+            }
+        }
+        const promises = [];
+        for (const entry of mapParticipants) {
+            promises.push(admin.firestore().collection('mail').add({
+                // to: entry[0],
+                to: 'anawhibley@gmail.com',
+                message: {
+                    subject: 'Un evento que habías confirmado ha cambiado debido a una indisponibilidad',
+                    html: reminderTemplate(entry[1]),
+                }
+            }));
+        }
+        return Promise.all(promises).then(() => {
+            functions.logger.info('Executed sendReminder');
+        });
+    });
