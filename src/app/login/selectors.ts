@@ -5,3 +5,4 @@ export const selectPassword = (state: RootState) => state.login.password;
 export const selectLoggedInUser = (state: RootState) => state.login.loggedInUser;
 export const selectErrorMessage = (state: RootState) => state.login.errorMessage;
 export const selectNameErrorMessage = (state: RootState) => state.login.nameErrorMessage;
+export const selectName = (state: RootState) => state.login.name;

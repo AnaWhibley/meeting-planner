@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import './App.scss';
 import {Login} from './features/login/Login';
 import {useDispatch, useSelector} from 'react-redux';
@@ -19,9 +19,9 @@ import {ErrorPage} from './components/errorPage/errorPage';
 import { EventCreator } from './features/eventCreator/EventCreator';
 import './styles/common.scss';
 import {Form} from './features/eventCreator/form/Form';
-import {selectLoggedInUser, selectNameErrorMessage} from './app/login/selectors';
+import {selectLoggedInUser, selectNameErrorMessage, selectName} from './app/login/selectors';
 import {Planner} from './features/planner/Planner';
-import {checkUserSession, editUserName, User} from './app/login/slice';
+import {checkUserSession, editUserName, setName, User} from './app/login/slice';
 import {
     selectFirstTimeLoggingDialogOpen,
     selectIsCreatingEvents,
@@ -60,8 +60,7 @@ function App() {
 
     const dialogOpen = useSelector(selectFirstTimeLoggingDialogOpen);
     const usernameError = useSelector(selectNameErrorMessage);
-
-    const [userName, setUserName] = useState('');
+    const name = useSelector(selectName);
 
     return (
         <>
@@ -98,8 +97,8 @@ function App() {
                             className={'InputForgotPassword'}
                             label="Nombre"
                             fullWidth={true}
-                            value={userName}
-                            onChange={(value: string) => setUserName(value)}
+                            value={name}
+                            onChange={(value) => dispatch(setName(value))}
                         />
                         {usernameError ?
                             <Typography variant="subtitle1"
@@ -110,7 +109,7 @@ function App() {
                             : null}
                     </DialogContent>
                     <DialogActions>
-                        <ActionButton onClick={() => dispatch(editUserName(userName))}
+                        <ActionButton onClick={() => dispatch(editUserName(name))}
                                       color={Color.PRIMARY}
                                       innerText={'Confirmar'}
                                       variant={ButtonVariant.TEXT}/>

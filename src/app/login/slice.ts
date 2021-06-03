@@ -16,6 +16,7 @@ export interface LoginSlice {
         error: string;
     };
     nameErrorMessage: string;
+    name: string;
 }
 
 export interface User {
@@ -31,7 +32,8 @@ export const slice = createSlice({
         email: '',
         password: '',
         errorMessage: { show: false, error: '' },
-        nameErrorMessage: ''
+        nameErrorMessage: '',
+        name: ''
     } as LoginSlice,
     reducers: {
         setEmail: (state, action) => {
@@ -55,13 +57,16 @@ export const slice = createSlice({
         setNameError: (state, action) => {
             state.nameErrorMessage = action.payload;
         },
+        setName: (state, action) => {
+            state.name = action.payload;
+        },
         editName: (state, action) => {
             if (state.loggedInUser) state.loggedInUser.name = action.payload;
         }
     },
 });
 
-export const { setEmail, setPassword, showErrorMessage, setUser, editName, setNameError } = slice.actions;
+export const { setEmail, setPassword, showErrorMessage, setUser, editName, setNameError, setName } = slice.actions;
 
 export const checkUserSession = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     getUserService().userPersistence().subscribe((response) => {
